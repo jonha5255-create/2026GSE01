@@ -1,0 +1,33 @@
+---
+Language: Cpp
+BasedOnStyle: Microsoft
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+NamespaceIndentation: All
+ColumnLimit: 100
+BreakBeforeBraces: Allman
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: true
+InsertBraces: true
+SeparateDefinitionBlocks: Always
+EmptyLineBeforeAccessModifier: Always
+MaxEmptyLinesToKeep: 1
+SortIncludes: Never
+IncludeBlocks: Preserve
+DerivePointerAlignment: false
+PointerAlignment: Left
+ReferenceAlignment: Left
+BreakBeforeBinaryOperators: NonAssignment
+BinPackArguments: false
+BinPackParameters: false
+RawStringFormats:
+  - Language: Cpp
+    Delimiters: ['glsl']
+    CanonicalDelimiter: glsl
+    BasedOnStyle: Microsoft

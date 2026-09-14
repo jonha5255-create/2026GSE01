@@ -33,10 +33,16 @@
     <ClInclude Include="PrototypeRenderer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="LevelOne.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="PrototypeWorld.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="PostProcessor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,10 +56,16 @@
     <ClCompile Include="PrototypeRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="LevelOne.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="PrototypeWorld.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="PostProcessor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,6 +73,11 @@
     <None Include="Shaders\SolidRect.fs">
       <Filter>소스 파일\Shaders</Filter>
     </None>
+    <None Include="Shaders\Scene.vs"><Filter>소스 파일\Shaders</Filter></None>
+    <None Include="Shaders\Scene.fs"><Filter>소스 파일\Shaders</Filter></None>
+    <None Include="Shaders\Fullscreen.vs"><Filter>소스 파일\Shaders</Filter></None>
+    <None Include="Shaders\Blur.fs"><Filter>소스 파일\Shaders</Filter></None>
+    <None Include="Shaders\Composite.fs"><Filter>소스 파일\Shaders</Filter></None>
     <None Include="Shaders\SolidRect.vs">
       <Filter>소스 파일\Shaders</Filter>
     </None>

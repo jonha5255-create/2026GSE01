@@ -167,14 +167,18 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
+    <ClInclude Include="LevelOne.h" />
     <ClInclude Include="PostProcessor.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PrototypeRenderer.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
+    <ClCompile Include="LevelOne.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SimpleGame.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -187,12 +191,20 @@
     <None Include="Shaders\SolidRect.fs" />
     <None Include="Shaders\SolidRect.vs" />
     <None Include="Renderer.cpp" />
+    <None Include="Shaders\Scene.vs" />
+    <None Include="Shaders\Scene.fs" />
+    <None Include="Shaders\Fullscreen.vs" />
+    <None Include="Shaders\Blur.fs" />
+    <None Include="Shaders\Composite.fs" />
+    <ShaderAsset Include="$(ProjectDir)Shaders\*.vs;$(ProjectDir)Shaders\*.fs" />
     <RuntimeDll Include="$(ProjectDir)Dependencies\Runtime\$(Platform)\*.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="CopyPrototypeRuntime" AfterTargets="Build">
     <Error Condition="'@(RuntimeDll)' == ''" Text="Missing runtime DLLs for $(Platform)." />
     <Copy SourceFiles="@(RuntimeDll)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <MakeDir Directories="$(OutDir)Shaders" />
+    <Copy SourceFiles="@(ShaderAsset)" DestinationFolder="$(OutDir)Shaders" SkipUnchangedFiles="true" />
   </Target>
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
