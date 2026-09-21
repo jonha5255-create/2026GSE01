@@ -9,6 +9,7 @@ Prototype scene extensions, 2026.
 #include "stdafx.h"
 #include "PrototypeRenderer.h"
 #include "PrototypeWorld.h"
+#include "FrameProfiler.h"
 #include "Dependencies/freeglut.h"
 #include <windows.h>
 #include <algorithm>
@@ -23,6 +24,8 @@ namespace
     std::unique_ptr<PrototypeWorld> world;
     int width = 1280, height = 800;
     bool initialized = false;
+    bool profileTest = false;
+    int profileFrames = 0;
     bool effectKeys[256] = {};
     auto lastTick = std::chrono::steady_clock::now();
 
@@ -51,6 +54,11 @@ namespace
         world->DrawUI(renderer);
         renderer.Flush();
         glutSwapBuffers();
+        FrameProfiler::Get().EndFrame();
+        if (profileTest && ++profileFrames >= 180)
+        {
+            glutLeaveMainLoop();
+        }
     }
 
     void Resize(int w, int h)
@@ -153,6 +161,7 @@ namespace
         bool ok = renderer.Capture(ExecutableDirectory() + name);
         GLenum error = glGetError();
         std::cout << "Snapshot: " << ok << " GL error: " << error << '\n';
+        std::cout << "DrawCalls/frame: " << FrameProfiler::Get().DrawCalls() << '\n';
         return ok && error == GL_NO_ERROR;
     }
 
@@ -203,8 +212,11 @@ namespace
         neutral.bloom = neutral.vignette = neutral.edgeBlur = false;
         renderer.Effects() = neutral;
         auto baseline = draw();
+        const auto baselineCalls = FrameProfiler::Get().DrawCalls();
         renderer.Effects().bloom = true;
         auto bloom = draw();
+        check(FrameProfiler::Get().DrawCalls() == baselineCalls + 4,
+              "draw counter includes all four bloom GL submissions");
         check(changed(baseline, bloom), "bloom changes rendered highlights");
         renderer.Effects() = neutral;
         renderer.Effects().vignette = true;
@@ -213,6 +225,8 @@ namespace
         renderer.Effects() = neutral;
         renderer.Effects().edgeBlur = true;
         auto blur = draw();
+        check(FrameProfiler::Get().DrawCalls() == baselineCalls + 4,
+              "draw counter resets per frame and includes edge blur");
         check(changed(baseline, blur), "edge blur changes scene edges");
         renderer.Effects() = saved;
         renderer.Effects().exposure = 2.5f;
@@ -230,6 +244,8 @@ namespace
         renderer.Effects() = neutral;
         renderer.Effects().enabled = false;
         auto bypassB = draw();
+        check(FrameProfiler::Get().DrawCalls() == baselineCalls,
+              "draw counter excludes disabled post passes");
         check(!bypassA.empty() && bypassA == bypassB, "master bypass ignores all effect settings");
         renderer.Effects() = saved;
         return ok && glGetError() == GL_NO_ERROR;
@@ -243,6 +259,7 @@ int main(int argc, char** argv)
     {
         smoke |= std::string(argv[i]) == "--smoke-test";
         selfTest |= std::string(argv[i]) == "--self-test";
+        profileTest |= std::string(argv[i]) == "--profile-test";
     }
     if ((selfTest || smoke) && !PrototypeWorld::SelfTest())
     {
@@ -378,6 +395,9 @@ int main(int argc, char** argv)
         glutDestroyWindow(window);
         return ok ? 0 : 6;
     }
+    lastTick = std::chrono::steady_clock::now();
+    FrameProfiler::Get().StartLogging();
+    std::cout << "[PERF] Logging every 1s: FPS and actual GL draw calls (scene + post + UI).\n";
     glutTimerFunc(16, Timer, 0);
     glutMainLoop();
     if (initialized)

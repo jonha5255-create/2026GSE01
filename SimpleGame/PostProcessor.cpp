@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PostProcessor.h"
+#include "FrameProfiler.h"
 #include "ShaderProgram.h"
 #include <algorithm>
 #include <iostream>
@@ -130,6 +131,7 @@ void PostProcessor::Filter(GLuint source, const Target& target, float dx, float 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, source);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    FrameProfiler::Get().RecordDrawCall();
 }
 
 void PostProcessor::Composite()
@@ -172,6 +174,7 @@ void PostProcessor::Composite()
                 settings.vignette ? settings.vignetteStrength : 0,
                 settings.edgeBlur ? settings.edgeBlurStrength : 0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    FrameProfiler::Get().RecordDrawCall();
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

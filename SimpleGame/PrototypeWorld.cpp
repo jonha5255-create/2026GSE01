@@ -98,6 +98,8 @@ CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
 
 PrototypeWorld::PrototypeWorld(uint32_t seed) : seed_(seed), level_(seed)
 {
+    level_.Graph().Spawn<RainActor>(NoActor);
+    level_.Graph().Spawn<HudActor>(NoActor);
     Stream();
 }
 
@@ -119,11 +121,85 @@ void PrototypeWorld::Stream()
         }
     }
     chunks_.swap(next);
+    auto& graph = level_.Graph();
+    for (auto it = chunkActors_.begin(); it != chunkActors_.end();)
+    {
+        if (!chunks_.count(it->first))
+        {
+            graph.Destroy(it->second);
+            it = chunkActors_.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+    graph.CollectDestroyed();
+    for (const auto& entry : chunks_)
+    {
+        ActorId id = NoActor;
+        auto found = chunkActors_.find(entry.first);
+        if (found != chunkActors_.end() && graph.Get(found->second))
+        {
+            id = found->second;
+        }
+        else
+        {
+            auto& chunk = graph.Spawn<ChunkActor>(NoActor, entry.second);
+            id = chunk.Id();
+            chunkActors_[entry.first] = id;
+            graph.Spawn<FloorActor>(id, entry.second);
+            for (int i = 0; i < 4; ++i)
+            {
+                const auto& plot = entry.second.plots[i];
+                auto& building = graph.Spawn<BuildingActor>(id,
+                                                            plot.width,
+                                                            plot.depth,
+                                                            entry.second.heights[i],
+                                                            entry.second.seed + uint32_t(i));
+                building.local = {plot.x, plot.y};
+                chunk.buildings[i] = building.Id();
+            }
+            graph.Spawn<LampActor>(id).local = {123, 20};
+        }
+        graph.Get(id)->SetPosition(
+            {float(entry.first.first - player_.cx) * Side - float(player_.x),
+             float(entry.first.second - player_.cy) * Side - float(player_.y)});
+    }
 }
 
 bool PrototypeWorld::Blocked(const Location& p, float radius) const
 {
-    // Collision uses the same footprints as rendering, with a player-radius margin.
+    // Resident collision is controlled by the same actors as rendering.
+    auto placed = chunkActors_.find({p.cx, p.cy});
+    if (placed != chunkActors_.end())
+    {
+        const auto& graph = level_.Graph();
+        auto* chunk = graph.Get<ChunkActor>(placed->second);
+        if (!chunk || !graph.Active(chunk->Id()))
+        {
+            return false;
+        }
+        float x = float(p.cx - player_.cx) * Side + float(p.x - player_.x);
+        float y = float(p.cy - player_.cy) * Side + float(p.y - player_.y);
+        for (auto id : chunk->buildings)
+        {
+            auto* building = graph.Get<BuildingActor>(id);
+            if (!building || !graph.Active(id))
+            {
+                continue;
+            }
+            auto position = building->Position();
+            float dx = std::max(position.x - x, std::max(0.f, x - position.x - building->width));
+            float dy = std::max(position.y - y, std::max(0.f, y - position.y - building->depth));
+            if (dx * dx + dy * dy < radius * radius)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    // Unloaded procedural chunks still support navigation/collision queries.
     auto it = chunks_.find({p.cx, p.cy});
     CityChunk chunk = it == chunks_.end() ? Generate({p.cx, p.cy}, seed_) : it->second;
     for (int i = 0; i < 4; ++i)
@@ -191,8 +267,8 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     }
     if (key == 'q')
     {
-        weapon_ = !weapon_;
-        transform_ = 1;
+        level_.Player().weapon = !level_.Player().weapon;
+        level_.Player().transformPhase = 1;
     }
     if (key == 'c')
     {
@@ -223,31 +299,22 @@ void PrototypeWorld::Key(unsigned char key, bool down)
 
 void PrototypeWorld::Update(float dt)
 {
-    dt = std::min(dt, .05f);
+    dt = std::max(0.f, std::min(dt, .05f));
     time_ += dt;
-    attack_ = std::max(0.f, attack_ - dt);
-    transform_ = std::max(0.f, transform_ - dt * 1.5f);
-    float sx = float(keys_['d']) - float(keys_['a']), sy = float(keys_['s']) - float(keys_['w']);
-    float length = Distance(sx, sy);
-    if (length > 0 && level_.state != RunState::Lost)
-    {
-        sx /= length;
-        sy /= length;
-        facing_ = {sx, sy};
-        walk_ += dt * 11;
-        // Invert the isometric projection: WASD remains screen-relative.
-        float dx = sx + sy * 2, dy = -sx + sy * 2;
-        float norm = Distance(dx, dy);
-        Move(dx / norm * level_.MoveSpeed() * dt, dy / norm * level_.MoveSpeed() * dt);
-    }
+    level_.Player().moveInput = {float(keys_['d']) - float(keys_['a']),
+                                 float(keys_['s']) - float(keys_['w'])};
+    level_.Update(
+        dt,
+        [&](float x, float y, float radius)
+        {
+            return Walkable(x, y, radius);
+        },
+        [&](float dx, float dy)
+        {
+            Move(dx, dy);
+        });
     float follow = 1 - std::exp(-10 * dt);
     cameraLag_ = Lerp(cameraLag_, {0, 0}, follow);
-    level_.Update(dt,
-                  weapon_,
-                  [&](float x, float y, float radius)
-                  {
-                      return Walkable(x, y, radius);
-                  });
 }
 
 Point PrototypeWorld::Project(float x, float y, float z) const
@@ -464,10 +531,11 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
     }
 }
 
-void PrototypeWorld::Player(PrototypeRenderer& r)
+void PrototypeWorld::Player(PrototypeRenderer& r, const PlayerActor& actor)
 {
-    Point p = Project(0, 0);
-    float z = zoom_, step = std::sin(walk_) * 3;
+    auto position = actor.Position();
+    Point p = Project(position.x, position.y);
+    float z = zoom_, step = std::sin(level_.Player().walkPhase) * 3;
     r.Ellipse({p.x, p.y + 2 * z}, 20 * z, 7 * z, Color(0, 0, 0, .65f));
     r.Glow({p.x, p.y - 20 * z}, 44 * z, Color(64, 217, 194, .3f));
     r.Line({p.x - 5 * z, p.y - 18 * z}, {p.x - 7 * z, p.y - step * z}, 6 * z, Color(12, 18, 28));
@@ -489,11 +557,23 @@ void PrototypeWorld::Player(PrototypeRenderer& r)
                {p.x - 28 * z, p.y - 29 * z + std::sin(time_ * 4) * 4 * z},
                {p.x - 9 * z, p.y - 34 * z},
                Color(141, 38, 64));
-    if (weapon_)
+}
+
+void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
+{
+    auto* owner = level_.Graph().Get<PlayerActor>(actor.Parent());
+    if (!owner)
+    {
+        return;
+    }
+    auto position = actor.Position();
+    Point p = Project(position.x, position.y);
+    float z = zoom_;
+    if (owner->weapon)
     {
         Point hand{p.x + 9 * z, p.y - 29 * z};
-        float dx = (level_.aim.x - level_.aim.y) * .85f;
-        float dy = (level_.aim.x + level_.aim.y) * .425f;
+        float dx = (actor.aim.x - actor.aim.y) * .85f;
+        float dy = (actor.aim.x + actor.aim.y) * .425f;
         float length = std::max(.01f, Distance(dx, dy));
         dx /= length;
         dy /= length;
@@ -505,7 +585,7 @@ void PrototypeWorld::Player(PrototypeRenderer& r)
                2 * z,
                Color(220, 181, 120));
         r.Ellipse(hand, 6 * z, 6 * z, Color(167, 137, 105));
-        if (level_.muzzleFlash > 0)
+        if (actor.muzzleFlash > 0)
         {
             r.Glow(tip, 38 * z, Emissive(Color(124, 255, 232), 5));
             r.Ellipse(tip, 8 * z, 8 * z, Emissive(Color(199, 255, 237), 6));
@@ -532,9 +612,9 @@ void PrototypeWorld::Player(PrototypeRenderer& r)
         r.Rect(ghost.x - 7 * z, ghost.y - 3 * z, 4 * z, 3 * z, Color(8, 35, 49));
         r.Rect(ghost.x + 3 * z, ghost.y - 3 * z, 4 * z, 3 * z, Color(8, 35, 49));
     }
-    if (transform_ > 0)
+    if (owner->transformPhase > 0)
     {
-        float radius = (1 - transform_) * 85 * z;
+        float radius = (1 - owner->transformPhase) * 85 * z;
         for (int i = 0; i < 32; ++i)
         {
             float a = i * Pi / 16;
@@ -542,7 +622,7 @@ void PrototypeWorld::Player(PrototypeRenderer& r)
                 {p.x + std::cos(a) * radius, p.y - 24 * z + std::sin(a) * radius * .5f},
                 {p.x + std::cos(a + .1f) * radius, p.y - 24 * z + std::sin(a + .1f) * radius * .5f},
                 2 * z,
-                Color(145, 255, 222, transform_));
+                Color(145, 255, 222, owner->transformPhase));
         }
     }
 }
@@ -586,29 +666,32 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.Text(27, 35, "이름 없는 거리", white, 1.35f);
     r.Text(500,
            10,
-           "체력 " + std::to_string(int(level_.health)) + " / "
+           "체력 " + std::to_string(int(level_.Player().health)) + " / "
                + std::to_string(int(level_.MaximumHealth())),
            white,
            .7f);
     r.Rect(500, 36, 240, 9, Color(52, 40, 54));
-    r.Rect(500, 36, 240 * level_.health / level_.MaximumHealth(), 9, red);
-    std::string xp = level_.level >= 10 ? "최대 레벨"
-                                        : "경험치 " + std::to_string(level_.experience) + " / "
-                                              + std::to_string(level_.ExperienceRequired());
-    r.Text(500, 51, "LV." + std::to_string(level_.level) + "   " + xp, cyan, .68f);
+    r.Rect(500, 36, 240 * level_.Player().health / level_.MaximumHealth(), 9, red);
+    std::string xp = level_.Player().level >= 10
+                         ? "최대 레벨"
+                         : "경험치 " + std::to_string(level_.Player().experience) + " / "
+                               + std::to_string(level_.ExperienceRequired());
+    r.Text(500, 51, "LV." + std::to_string(level_.Player().level) + "   " + xp, cyan, .68f);
     r.Rect(500, 76, 240, 4, Color(34, 55, 62));
-    r.Rect(
-        500,
-        76,
-        240 * (level_.level >= 10 ? 1.f : float(level_.experience) / level_.ExperienceRequired()),
-        4,
-        cyan);
+    r.Rect(500,
+           76,
+           240
+               * (level_.Player().level >= 10
+                      ? 1.f
+                      : float(level_.Player().experience) / level_.ExperienceRequired()),
+           4,
+           cyan);
     std::ostringstream seed;
     seed << "SEED " << seed_;
     r.Text(w - 302, 16, seed.str(), muted, .68f);
     r.Text(w - 302,
            42,
-           "영혼포 +" + std::to_string(level_.weaponRank) + " / 처치 "
+           "영혼포 +" + std::to_string(level_.Player().weaponRank) + " / 처치 "
                + std::to_string(level_.kills),
            gold,
            .83f);
@@ -618,8 +701,9 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.Text(42, 149, level_.Objective(), white, .66f);
     r.Text(42,
            174,
-           "처치 " + std::to_string(level_.kills) + "/12   레벨 " + std::to_string(level_.level)
-               + "/3   강화 " + std::to_string(level_.weaponRank) + "/1",
+           "처치 " + std::to_string(level_.kills) + "/12   레벨 "
+               + std::to_string(level_.Player().level) + "/3   강화 "
+               + std::to_string(level_.Player().weaponRank) + "/1",
            gold,
            .67f);
     std::ostringstream stats;
@@ -628,8 +712,9 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.Text(42, 199, stats.str(), muted, .66f);
     r.Text(42,
            223,
-           level_.magnetTime > 0
-               ? "자석 " + std::to_string(int(level_.magnetTime) + 1) + "초 / 획득 범위 440"
+           level_.Player().magnetTime > 0
+               ? "자석 " + std::to_string(int(level_.Player().magnetTime) + 1)
+                     + "초 / 획득 범위 440"
                : "기본 자동 줍기 / 회복은 체력이 부족할 때",
            cyan,
            .65f);
@@ -641,44 +726,51 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.Line({mx, my - 55}, {mx, my + 55}, 1, Color(40, 66, 71));
     for (const auto& e : level_.Enemies())
     {
-        float x = std::max(-65.f, std::min(65.f, e.position.x * .12f));
-        float y = std::max(-54.f, std::min(54.f, e.position.y * .12f));
-        r.Ellipse({mx + x, my + y}, e.boss ? 5.f : 3.f, e.boss ? 5.f : 3.f, red);
+        float x = std::max(-65.f, std::min(65.f, e->Position().x * .12f));
+        float y = std::max(-54.f, std::min(54.f, e->Position().y * .12f));
+        r.Ellipse({mx + x, my + y}, e->boss ? 5.f : 3.f, e->boss ? 5.f : 3.f, red);
     }
     for (const auto& item : level_.Loot())
     {
-        if (Distance(item.position.x, item.position.y) < 500)
+        if (Distance(item->Position().x, item->Position().y) < 500)
         {
-            r.Rect(mx + item.position.x * .12f, my + item.position.y * .12f, 2, 2, gold);
+            r.Rect(mx + item->Position().x * .12f, my + item->Position().y * .12f, 2, 2, gold);
         }
     }
     if (level_.state == RunState::BossReady)
     {
-        float d = Distance(level_.portal.x, level_.portal.y);
+        float d = Distance(level_.Portal().Position().x, level_.Portal().Position().y);
         float factor = .12f * std::min(1.f, 480.f / std::max(1.f, d));
-        r.Ellipse({mx + level_.portal.x * factor, my + level_.portal.y * factor}, 5, 5, red);
+        r.Ellipse({mx + level_.Portal().Position().x * factor,
+                   my + level_.Portal().Position().y * factor},
+                  5,
+                  5,
+                  red);
         r.Text(w - 177, 260, "균열까지 " + std::to_string(int(d)), red, .65f);
     }
     r.Ellipse({mx, my}, 4, 4, cyan);
     for (const auto& enemy : level_.Enemies())
     {
-        if (enemy.boss)
+        if (enemy->boss)
         {
             float bx = w * .5f - 200;
             r.Rect(bx - 12, 104, 424, 57, Color(15, 10, 21, .95f));
             r.Text(bx, 111, "보스 / 균열의 수문장", red, .85f);
             r.Rect(bx, 140, 400, 8, Color(52, 26, 40));
-            r.Rect(bx, 140, 400 * enemy.health / enemy.maximumHealth, 8, red);
+            r.Rect(bx, 140, 400 * enemy->health / enemy->maximumHealth, 8, red);
         }
     }
     float foot = h - 146;
     r.Rect(26, foot, 300, 77, Color(8, 17, 24, .96f));
     r.Text(43, foot + 9, "요괴 / 원거리 자동 조준", muted, .7f);
-    r.Text(
-        43, foot + 34, weapon_ ? "영혼포 / 자동 사격 중" : "동행 중 / Q로 무기 변신", cyan, .84f);
+    r.Text(43,
+           foot + 34,
+           level_.Player().weapon ? "영혼포 / 자동 사격 중" : "동행 중 / Q로 무기 변신",
+           cyan,
+           .84f);
     r.Rect(345, foot, w - 371, 77, Color(8, 17, 24, .96f));
     r.Text(363, foot + 9, "동료의 조언", muted, .67f);
-    r.Text(363, foot + 32, level_.Dialogue(weapon_), white, .78f);
+    r.Text(363, foot + 32, level_.Dialogue(level_.Player().weapon), white, .78f);
     r.Rect(0, h - 49, w, 49, Color(8, 15, 23, .99f));
     r.Text(27,
            h - 40,
@@ -717,132 +809,9 @@ void PrototypeWorld::Draw(PrototypeRenderer& r)
 {
     zoom_ = std::min(r.Width() / 1280.f, r.Height() / 800.f);
     center_ = {r.Width() * .48f, r.Height() * .54f};
-
-    struct Item
-    {
-        float x, y, w, d, h, depth;
-        uint32_t seed;
-        int kind;
-    };
-
-    std::vector<Item> items;
-    for (const auto& entry : chunks_)
-    {
-        float x = float(entry.first.first - player_.cx) * Side - float(player_.x);
-        float y = float(entry.first.second - player_.cy) * Side - float(player_.y);
-        Floor(r, x, y, entry.second);
-        for (int i = 0; i < 4; ++i)
-        {
-            const auto& plot = entry.second.plots[i];
-            float bx = x + plot.x, by = y + plot.y;
-            Point p = Project(bx + 72, by + 70);
-            if (p.x < -250 || p.x > r.Width() + 250 || p.y < 0 || p.y > r.Height() + 350)
-            {
-                continue;
-            }
-            items.push_back({bx,
-                             by,
-                             plot.width,
-                             plot.depth,
-                             entry.second.heights[i],
-                             bx + by + plot.width + plot.depth,
-                             entry.second.seed + uint32_t(i),
-                             0});
-        }
-        items.push_back({x + 123, y + 20, 0, 0, 95, x + y + 143, 0, 1});
-    }
-    items.push_back({0, 0, 0, 0, 0, 0, 0, 2});
-    if (weapon_ && level_.showRange)
-    {
-        Ring(r, 0, 0, level_.Range(), Color(90, 220, 199, .4f));
-    }
-    for (size_t n = 0; n < level_.Enemies().size(); ++n)
-    {
-        const auto& e = level_.Enemies()[n];
-        items.push_back(
-            {e.position.x, e.position.y, 0, 0, 0, e.position.x + e.position.y, uint32_t(n), 4});
-        if (e.windup > 0)
-        {
-            Ring(
-                r, e.attackPosition.x, e.attackPosition.y, 105, Emissive(Color(255, 60, 90), 2), 3);
-            Ring(r,
-                 e.attackPosition.x,
-                 e.attackPosition.y,
-                 105 * (1 - e.windup / 1.1f),
-                 Color(255, 130, 120),
-                 2);
-        }
-    }
-    for (size_t n = 0; n < level_.Loot().size(); ++n)
-    {
-        const auto& l = level_.Loot()[n];
-        items.push_back(
-            {l.position.x, l.position.y, 0, 0, 0, l.position.x + l.position.y, uint32_t(n), 5});
-    }
-    if (level_.state == RunState::BossReady)
-    {
-        float x = level_.portal.x, y = level_.portal.y;
-        items.push_back({x, y, 0, 0, 0, x + y, 0, 3});
-    }
-    std::sort(items.begin(),
-              items.end(),
-              [](const Item& a, const Item& b)
-              {
-                  return a.depth < b.depth;
-              });
-    for (const Item& i : items)
-    {
-        if (i.kind == 0)
-        {
-            Building(r, i.x, i.y, i.w, i.d, i.h, i.seed);
-        }
-        else if (i.kind == 2)
-        {
-            Player(r);
-        }
-        else if (i.kind == 3)
-        {
-            Rift(r, i.x, i.y);
-        }
-        else if (i.kind == 4)
-        {
-            Enemy(r, level_.Enemies()[i.seed]);
-        }
-        else if (i.kind == 5)
-        {
-            Loot(r, level_.Loot()[i.seed]);
-        }
-        else
-        {
-            Point a = Project(i.x, i.y), b = Project(i.x, i.y, 95), c{b.x + 24 * zoom_, b.y};
-            r.Ellipse(a, 43 * zoom_, 15 * zoom_, Color(79, 199, 177, .09f));
-            r.Line(a, b, 3 * zoom_, Color(69, 90, 100));
-            r.Line(b, c, 3 * zoom_, Color(114, 148, 146));
-            r.Glow(c, 65 * zoom_, Color(87, 218, 190, .9f));
-            r.Line(c, {c.x - 13 * zoom_, c.y}, 3 * zoom_, Emissive(Color(183, 251, 215), 5));
-        }
-    }
-    for (const auto& bullet : level_.Bullets())
-    {
-        Point p = Project(bullet.position.x, bullet.position.y, 29);
-        Point tail = Project(bullet.position.x - bullet.velocity.x * .025f,
-                             bullet.position.y - bullet.velocity.y * .025f,
-                             29);
-        r.Line(tail, p, 4 * zoom_, Emissive(Color(136, 255, 225), 5));
-        r.Glow(p, 15 * zoom_, Color(94, 244, 215));
-    }
-    for (const auto& effect : level_.Effects())
-    {
-        Point p = Project(effect.position.x, effect.position.y, 65 + (1 - effect.life) * 25);
-        r.Text(p.x, p.y, effect.text, Color(255, 225, 173, effect.life), .7f * zoom_);
-    }
-    // Rain is decorative, deterministic and independent of world generation.
-    for (int i = 0; i < 145; ++i)
-    {
-        float x = std::fmod(float(Mix(i) % 10000) + time_ * 42, float(r.Width()));
-        float y = std::fmod(float(Mix(i + 150) % 10000) + time_ * 380, float(r.Height()));
-        r.Line({x, y}, {x - 5, y + 16}, 1, Color(117, 155, 171, .16f));
-    }
+    activeRenderer_ = &r;
+    level_.Graph().Render(*this, RenderLayer::Ground, RenderLayer::Weather);
+    activeRenderer_ = nullptr;
 }
 
 void PrototypeWorld::Ring(
@@ -858,9 +827,9 @@ void PrototypeWorld::Ring(
     }
 }
 
-void PrototypeWorld::Enemy(PrototypeRenderer& r, const FarmEnemy& enemy)
+void PrototypeWorld::Enemy(PrototypeRenderer& r, const EnemyActor& enemy)
 {
-    Point p = Project(enemy.position.x, enemy.position.y);
+    Point p = Project(enemy.Position().x, enemy.Position().y);
     float z = zoom_ * (enemy.boss ? 1.8f : 1.f);
     Ink flesh = enemy.hitFlash > 0 ? Color(255, 220, 211) : Color(126, 49, 69);
     r.Ellipse(p, 18 * z, 6 * z, Color(0, 0, 0, .7f));
@@ -894,9 +863,9 @@ void PrototypeWorld::Enemy(PrototypeRenderer& r, const FarmEnemy& enemy)
            Color(247, 94, 117));
 }
 
-void PrototypeWorld::Loot(PrototypeRenderer& r, const FarmLoot& item)
+void PrototypeWorld::Loot(PrototypeRenderer& r, const LootActor& item)
 {
-    Point p = Project(item.position.x, item.position.y, 10 + std::sin(item.age * 3) * 3);
+    Point p = Project(item.Position().x, item.Position().y, 10 + std::sin(item.age * 3) * 3);
     float z = zoom_;
     Ink color = item.kind == LootKind::Upgrade  ? Color(255, 192, 90)
                 : item.kind == LootKind::Heal   ? Color(111, 250, 135)
@@ -917,7 +886,9 @@ void PrototypeWorld::Loot(PrototypeRenderer& r, const FarmLoot& item)
 
 void PrototypeWorld::DrawUI(PrototypeRenderer& r)
 {
-    Hud(r);
+    activeRenderer_ = &r;
+    level_.Graph().Render(*this, RenderLayer::UI, RenderLayer::UI);
+    activeRenderer_ = nullptr;
 }
 
 bool PrototypeWorld::SelfTest()
@@ -942,10 +913,17 @@ bool PrototypeWorld::SelfTest()
                   "different seeds change building footprints");
     PrototypeWorld world;
     uint32_t first = world.chunks_.at({0, 0}).seed;
+    ActorId oldChunk = world.chunkActors_.at({0, 0});
+    ActorId oldBuilding = world.level_.Graph().Get<ChunkActor>(oldChunk)->buildings[0];
     world.player_.cx = 8000000000000LL;
     world.Stream();
     ok &= require(world.chunks_.size() == 25 && world.chunks_.count({0, 0}) == 0,
                   "bounded resident chunks after travel");
+    ok &= require(!world.level_.Graph().Get(oldChunk) && !world.level_.Graph().Get(oldBuilding)
+                      && world.level_.Graph().Query<ChunkActor>().size() == 25
+                      && world.level_.Graph().Query<BuildingActor>().size() == 100
+                      && world.level_.Graph().Query<LampActor>().size() == 25,
+                  "streaming removes old actor subtrees and keeps a bounded scene");
     world.player_ = Location{};
     world.Stream();
     ok &= require(world.chunks_.at({0, 0}).seed == first, "return regenerates same chunk");
@@ -955,6 +933,11 @@ bool PrototypeWorld::SelfTest()
     wall.y = plot.y + 20;
     ok &= require(world.Blocked(wall) && !world.Blocked(world.player_),
                   "building collision and clear spawn");
+    auto* chunk = world.level_.Graph().Get<ChunkActor>(world.chunkActors_.at({0, 0}));
+    auto* building = world.level_.Graph().Get<BuildingActor>(chunk->buildings[0]);
+    building->enabled = false;
+    ok &= require(!world.Blocked(wall), "building actor activation controls collision");
+    building->enabled = true;
     double before = world.player_.x;
     world.Key('d', true);
     world.Update(.04f);
@@ -962,13 +945,36 @@ bool PrototypeWorld::SelfTest()
     ok &= require(world.player_.x != before, "input movement");
     world.Key('q', true);
     world.Key('q', true);
-    ok &= require(world.weapon_, "transform is edge triggered");
+    ok &= require(world.level_.Player().weapon, "transform is edge triggered");
     world.Key('q', false);
-    world.level_.level = 5;
-    world.level_.health = 12;
+    world.level_.Player().level = 5;
+    world.level_.Player().health = 12;
     world.Key('r', true);
-    ok &= require(world.level_.level == 1 && world.level_.health == 100 && !world.weapon_,
+    ok &= require(world.level_.Player().level == 1 && world.level_.Player().health == 100
+                      && !world.level_.Player().weapon,
                   "restart resets progression and player");
+
+    world.level_.Player().enabled = false;
+    before = world.player_.x;
+    world.Key('d', true);
+    world.Update(.04f);
+    world.Key('d', false);
+    ok &= require(world.player_.x == before, "disabled player actor stops movement");
+    world.level_.Player().enabled = true;
+    // Cross a streamed boundary while PlayerActor::Update is traversing the graph.
+    world.player_.x = 639;
+    world.player_.y = 90;
+    world.Stream();
+    world.Key('d', true);
+    world.Update(.04f);
+    world.Key('d', false);
+    ok &= require(world.player_.cx == 1 && world.level_.Graph().Query<ChunkActor>().size() == 25
+                      && world.level_.Graph().Query<BuildingActor>().size() == 100,
+                  "player movement streams actor subtrees safely during scene traversal");
+    ok &= require(world.level_.Graph().Query<HudActor>().size() == 1
+                      && world.level_.Graph().Query<RainActor>().size() == 1
+                      && world.level_.Graph().Query<WeaponActor>().size() == 1,
+                  "HUD weather and attached weapon are scene actors");
 
     bool connected = true;
     for (uint32_t seed = 1; seed <= 128 && connected; ++seed)
@@ -1034,18 +1040,125 @@ bool PrototypeWorld::SelfTest()
 void PrototypeWorld::PreviewBoss()
 {
     // Only invoked by the screenshot harness, never by a gameplay key.
-    level_ = LevelOne(seed_);
-    level_.level = 4;
-    level_.weaponRank = 3;
+    *this = PrototypeWorld(seed_);
+    level_.Player().level = 4;
+    level_.Player().weaponRank = 3;
     level_.kills = 12;
     level_.pickups = 24;
-    level_.health = level_.MaximumHealth();
+    level_.Player().health = level_.MaximumHealth();
     level_.state = RunState::BossReady;
-    level_.portal = {80, 0};
+    level_.Portal().SetPosition({80, 0});
     level_.Interact(
         [&](float x, float y, float radius)
         {
             return Walkable(x, y, radius);
         });
-    weapon_ = true;
+    level_.Player().weapon = true;
+}
+
+void PrototypeWorld::Draw(const PlayerActor& actor)
+{
+    Player(*activeRenderer_, actor);
+}
+
+void PrototypeWorld::Draw(const WeaponActor& actor)
+{
+    Weapon(*activeRenderer_, actor);
+}
+
+void PrototypeWorld::Draw(const RangeActor& actor)
+{
+    auto* player = level_.Graph().Get<PlayerActor>(actor.Parent());
+    if (player && player->weapon && player->showRange)
+    {
+        auto p = actor.Position();
+        Ring(*activeRenderer_, p.x, p.y, player->Range(), Color(90, 220, 199, .4f));
+    }
+}
+
+void PrototypeWorld::Draw(const EnemyActor& actor)
+{
+    Enemy(*activeRenderer_, actor);
+}
+
+void PrototypeWorld::Draw(const LootActor& actor)
+{
+    Loot(*activeRenderer_, actor);
+}
+
+void PrototypeWorld::Draw(const PortalActor& actor)
+{
+    auto p = actor.Position();
+    Rift(*activeRenderer_, p.x, p.y);
+}
+
+void PrototypeWorld::Draw(const TelegraphActor& actor)
+{
+    auto p = actor.Position();
+    Ring(*activeRenderer_, p.x, p.y, 105, Emissive(Color(255, 60, 90), 2), 3);
+    Ring(*activeRenderer_, p.x, p.y, 105 * (1 - actor.remaining / 1.1f), Color(255, 130, 120), 2);
+}
+
+void PrototypeWorld::Draw(const ProjectileActor& actor)
+{
+    auto& r = *activeRenderer_;
+    auto position = actor.Position();
+    Point p = Project(position.x, position.y, 29);
+    Point tail =
+        Project(position.x - actor.velocity.x * .025f, position.y - actor.velocity.y * .025f, 29);
+    r.Line(tail, p, 4 * zoom_, Emissive(Color(136, 255, 225), 5));
+    r.Glow(p, 15 * zoom_, Color(94, 244, 215));
+}
+
+void PrototypeWorld::Draw(const EffectActor& actor)
+{
+    auto position = actor.Position();
+    Point p = Project(position.x, position.y, 65 + (1 - actor.life) * 25);
+    activeRenderer_->Text(p.x, p.y, actor.text, Color(255, 225, 173, actor.life), .7f * zoom_);
+}
+
+void PrototypeWorld::Draw(const FloorActor& actor)
+{
+    auto p = actor.Position();
+    Floor(*activeRenderer_, p.x, p.y, actor.data);
+}
+
+void PrototypeWorld::Draw(const BuildingActor& actor)
+{
+    auto p = actor.Position();
+    Point screen = Project(p.x + actor.width * .5f, p.y + actor.depth * .5f);
+    if (screen.x < -250 || screen.x > activeRenderer_->Width() + 250 || screen.y < 0
+        || screen.y > activeRenderer_->Height() + 350)
+    {
+        return;
+    }
+    Building(*activeRenderer_, p.x, p.y, actor.width, actor.depth, actor.height, actor.seed);
+}
+
+void PrototypeWorld::Draw(const LampActor& actor)
+{
+    auto& r = *activeRenderer_;
+    auto p = actor.Position();
+    Point a = Project(p.x, p.y), b = Project(p.x, p.y, 95), c{b.x + 24 * zoom_, b.y};
+    r.Ellipse(a, 43 * zoom_, 15 * zoom_, Color(79, 199, 177, .09f));
+    r.Line(a, b, 3 * zoom_, Color(69, 90, 100));
+    r.Line(b, c, 3 * zoom_, Color(114, 148, 146));
+    r.Glow(c, 65 * zoom_, Color(87, 218, 190, .9f));
+    r.Line(c, {c.x - 13 * zoom_, c.y}, 3 * zoom_, Emissive(Color(183, 251, 215), 5));
+}
+
+void PrototypeWorld::Draw(const RainActor&)
+{
+    auto& r = *activeRenderer_;
+    for (int i = 0; i < 145; ++i)
+    {
+        float x = std::fmod(float(Mix(i) % 10000) + time_ * 42, float(r.Width()));
+        float y = std::fmod(float(Mix(i + 150) % 10000) + time_ * 380, float(r.Height()));
+        r.Line({x, y}, {x - 5, y + 16}, 1, Color(117, 155, 171, .16f));
+    }
+}
+
+void PrototypeWorld::Draw(const HudActor&)
+{
+    Hud(*activeRenderer_);
 }

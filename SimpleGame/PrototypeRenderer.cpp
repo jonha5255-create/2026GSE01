@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PrototypeRenderer.h"
+#include "FrameProfiler.h"
 #include "ShaderProgram.h"
 #include <windows.h>
 #include <algorithm>
@@ -162,6 +163,7 @@ void PrototypeRenderer::Shutdown()
 
 bool PrototypeRenderer::Begin(int width, int height)
 {
+    FrameProfiler::Get().BeginFrame();
     width_ = std::max(width, 1);
     height_ = std::max(height, 1);
     vertices_.clear();
@@ -315,6 +317,7 @@ void PrototypeRenderer::Flush()
         glUniform1f(scaleUniform_, command.scale);
         glUniform1f(opacityUniform_, command.opacity);
         glDrawArrays(GL_TRIANGLES, command.first, command.count);
+        FrameProfiler::Get().RecordDrawCall();
     }
     vertices_.clear();
     commands_.clear();

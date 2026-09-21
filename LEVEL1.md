@@ -51,7 +51,10 @@
 - 640 단위 청크, 주변 5×5 청크만 상주. 좌표·시드 기반으로 재방문 시 같은 지형 복원
 - 서로 분리된 건물 구획과 넓은 연결 도로를 사용합니다. 건물 렌더링과 충돌 판정은 동일한 footprint를 공유합니다.
 - 적은 플레이어 주변 BFS 경로 필드와 직선 가시성 검사로 건물을 우회합니다.
-- LevelOne.h/.cpp: 전투·성장·드랍·보스 상태와 테스트
+- LevelOne.h/.cpp: 레벨 배치·스폰·목표·보상·보스 전환 규칙
+- Actor / SceneGraph: 전체 오브젝트 소유·계층·갱신·렌더 순서 및 지연 삭제
+- PlayerActor / WeaponActor / EnemyActor / ProjectileActor / LootActor: 개별 게임 동작
+- GameplayTests.cpp / SceneGraphTests.cpp: 게임플레이 및 씬 그래프 검증
 - PrototypeWorld.h/.cpp: 청크·충돌·입력·시각화·한국어 HUD
 - 기존 HDR/블룸/비네트/가장자리 흐림은 유지하며 HUD는 후처리 이후 합성합니다.
 

@@ -168,8 +168,18 @@
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
     <ClInclude Include="LevelOne.h" />
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="SceneGraph.h" />
+    <ClInclude Include="GameTypes.h" />
+    <ClInclude Include="ActorRenderContext.h" />
+    <ClInclude Include="Navigation.h" />
+    <ClInclude Include="GameplayContext.h" />
+    <ClInclude Include="GameplayActors.h" />
+    <ClInclude Include="WorldTypes.h" />
+    <ClInclude Include="WorldActors.h" />
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="FrameProfiler.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -177,8 +187,21 @@
     <ClCompile Include="PrototypeRenderer.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
     <ClCompile Include="LevelOne.cpp" />
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="SceneGraph.cpp" />
+    <ClCompile Include="Navigation.cpp" />
+    <ClCompile Include="GameplayContext.cpp" />
+    <ClCompile Include="PlayerActor.cpp" />
+    <ClCompile Include="WeaponActor.cpp" />
+    <ClCompile Include="EnemyActor.cpp" />
+    <ClCompile Include="ProjectileActor.cpp" />
+    <ClCompile Include="LootActor.cpp" />
+    <ClCompile Include="EffectActor.cpp" />
+    <ClCompile Include="GameplayTests.cpp" />
+    <ClCompile Include="SceneGraphTests.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="FrameProfiler.cpp" />
     <ClCompile Include="SimpleGame.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

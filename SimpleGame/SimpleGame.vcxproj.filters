@@ -36,6 +36,15 @@
     <ClInclude Include="LevelOne.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Actor.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="SceneGraph.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="GameTypes.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="ActorRenderContext.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="Navigation.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="GameplayContext.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="GameplayActors.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="WorldTypes.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="WorldActors.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="PrototypeWorld.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -45,6 +54,7 @@
     <ClInclude Include="ShaderProgram.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FrameProfiler.h"><Filter>헤더 파일</Filter></ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -59,6 +69,18 @@
     <ClCompile Include="LevelOne.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Actor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="SceneGraph.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="Navigation.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="GameplayContext.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="PlayerActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="WeaponActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="EnemyActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="ProjectileActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="LootActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="EffectActor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="GameplayTests.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="SceneGraphTests.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="PrototypeWorld.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -68,6 +90,7 @@
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="FrameProfiler.cpp"><Filter>소스 파일</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\SolidRect.fs">

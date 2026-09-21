@@ -1,5 +1,21 @@
 # 메시 캐시와 셰이더
 
+## 콘솔 성능 로깅
+
+일반 실행 시 자동으로 1초마다 다음 형식으로 출력합니다.
+
+```text
+[PERF] FPS=60.0 | FrameMs(avg)=16.7 | DrawCalls/frame last=82 avg=81.5 min=79 max=84
+```
+
+위 수치는 형식 예시입니다. FPS는 실제 화면 갱신 완료 횟수 / 경과 시간이며, 타이머 대기와 버퍼 교환 대기를 포함합니다. FrameMs는 이 구간의 평균 프레임 간격으로 GPU 실행 시간은 아닙니다.
+
+DrawCalls는 액터나 삼각형 개수가 아니라 실제 glDrawArrays 호출 횟수입니다. 프레임 시작에 초기화하고 캐시 메시·동적 배치·후처리·HUD 호출을 모두 포함합니다. last는 직전 완료 프레임, avg/min/max는 최근 출력 구간의 프레임별 통계입니다. GL 버퍼/텍스처 업로드와 glClear는 포함하지 않습니다.
+
+FrameProfiler.h/.cpp가 집계와 출력을 담당합니다. 현재 실행 경로의 모든 glDraw 호출을 계측했으며, 향후 glDrawElements 등 새 호출 경로를 추가할 때에도 실제 호출 지점에서 RecordDrawCall()을 호출해야 합니다. 빌드 대상에서 제외된 참고용 Renderer.cpp는 집계 대상이 아닙니다.
+
+--profile-test는 일반 게임 루프를 180프레임 실행하고 종료하는 로깅 확인용 옵션입니다. --smoke-test에서는 캡처별 drawcall 수와 후처리 패스 증감 검사를 출력하되 FPS는 성능 측정값으로 출력하지 않습니다. 정확한 게임 성능 비교는 Release 일반 실행에서 수행하세요.
+
 ## 메시 재사용
 
 - 청크 바닥과 정적인 건물은 최초 생성 시 로컬 좌표 정점을 만들고 VAO/VBO에 GL_STATIC_DRAW로 한 번 업로드합니다.
@@ -13,6 +29,7 @@
 
 사용 지점: PrototypeWorld::LocalMesh / Floor / Building.
 캐시 구현: PrototypeRenderer::CachedMesh / Flush / TrimCache.
+FloorActor / BuildingActor가 SceneGraph 렌더 순회에서 위 사용 지점으로 전달됩니다. 액터가 제거되어도 GPU 메시 캐시는 기존 예산/LRU 정책에 따라 재사용하며, 액터 수명과 메시 자원 수명을 분리합니다.
 새 메시 생성 콜백에서는 기본 도형과 텍스트만 추가해야 하며 Flush, Begin 또는 중첩 CachedMesh를 호출하지 않습니다.
 같은 키의 메시 내용은 불변입니다. 향후 런타임 메시 편집 시 키 버전 갱신 또는 명시적인 무효화 기능이 필요합니다.
 
