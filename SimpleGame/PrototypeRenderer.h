@@ -1,6 +1,7 @@
 #pragma once
 #include "Dependencies/glew.h"
 #include "PostProcessor.h"
+#include "MeshDiskCache.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -58,9 +59,15 @@ class PrototypeRenderer
                     const std::function<void()>& build);
     bool VerifyMeshCache();
 
+    void RebuildDiskCache(bool rebuild)
+    {
+        disk_.readEnabled = !rebuild;
+    }
+
     struct CacheStats
     {
         size_t hits = 0, uploads = 0, evictions = 0, bytes = 0;
+        size_t generations = 0, diskLoads = 0, diskRejects = 0, diskWrites = 0;
     };
 
     const CacheStats& MeshStats() const
@@ -101,30 +108,64 @@ class PrototypeRenderer
 
     struct Mesh
     {
-        GLuint vao = 0, vbo = 0;
+        std::vector<float> data;
+        GLint first = 0;
+        size_t page = 0;
         GLsizei count = 0;
         uint64_t lastFrame = 0;
+    };
+
+    struct InstanceData
+    {
+        float row0[4], row1[4], tint[4], uv[4], options[4];
     };
 
     struct DrawCommand
     {
         const Mesh* mesh = nullptr;
-        GLint first = 0;
-        GLsizei count = 0;
-        Point offset{0, 0};
-        float scale = 1, opacity = 1;
+        InstanceData instance{};
     };
 
-    static void ConfigureVertices();
-    void QueueDynamic();
+    struct AtlasPage
+    {
+        GLuint buffer = 0, texture = 0;
+    };
+
+    struct TriangleInstance
+    {
+        GLuint first, descriptor;
+    };
+
+    Mesh& GetMesh(const std::string& key, const std::function<void()>& build);
+    Mesh& Primitive(int kind);
+    void Submit(const Mesh& mesh,
+                Point origin,
+                Point axisX,
+                Point axisY,
+                Ink tint,
+                float u = 0,
+                float v = 0,
+                float du = 0,
+                float dv = 0,
+                bool overrideUV = false);
+    void RebuildAtlas();
     void TrimCache();
     void ClearCache();
+    void ReleasePages();
     static constexpr size_t MaxCachedMeshes = 256, MaxCachedBytes = 32 * 1024 * 1024;
     std::map<std::string, Mesh> meshes_;
     std::vector<DrawCommand> commands_;
+    std::vector<AtlasPage> pages_;
+    std::vector<InstanceData> descriptors_;
+    std::vector<TriangleInstance> triangles_;
     CacheStats cacheStats_;
+    MeshDiskCache disk_;
+    std::string cacheNamespace_;
     uint64_t frame_ = 0;
-    size_t dynamicStart_ = 0;
+    bool recording_ = false, atlasDirty_ = true, batchEnabled_ = true;
+    size_t atlasVertexLimit_ = 0, descriptorLimit_ = 0;
+    GLuint descriptorBuffer_ = 0, descriptorTexture_ = 0;
+    static constexpr size_t MaxTriangleInstances = 65536;
 
     PostProcessor post_;
     bool linearScene_ = true;
@@ -135,7 +176,6 @@ class PrototypeRenderer
     GLuint program_ = 0, vao_ = 0, vbo_ = 0, atlas_ = 0;
     GLint viewport_ = -1;
     GLint linearUniform_ = -1;
-    GLint offsetUniform_ = -1, scaleUniform_ = -1, opacityUniform_ = -1;
     int width_ = 1280, height_ = 800;
     float scale_ = 1;
     std::vector<Vertex> vertices_;

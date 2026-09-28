@@ -14,6 +14,8 @@ C++ / OpenGL 3.3 기반 2.5D 도시 탐험 데모입니다.
 
 [메시 캐시·독립 셰이더 구성 및 배포 안내](RENDERING.md)
 
+[드로 콜 배칭·파일 캐시 개선 결과와 지속 성능 분석 리포트](docs/performance/2026-09-22-drawcall-report.md)
+
 [Actor·SceneGraph 구조와 확장 방법](ACTOR_SCENE_GRAPH.md)
 
 ![실제 OpenGL 렌더링 — 파밍](docs/level1/farming.png)

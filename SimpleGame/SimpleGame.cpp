@@ -10,6 +10,7 @@ Prototype scene extensions, 2026.
 #include "PrototypeRenderer.h"
 #include "PrototypeWorld.h"
 #include "FrameProfiler.h"
+#include "RenderDiagnostics.h"
 #include "Dependencies/freeglut.h"
 #include <windows.h>
 #include <algorithm>
@@ -33,6 +34,8 @@ namespace
     {
         if (initialized)
         {
+            RenderDiagnostics::Get().Event("session_end", "renderer shutdown");
+            RenderDiagnostics::Get().Flush();
             renderer.Shutdown();
             initialized = false;
         }
@@ -53,6 +56,7 @@ namespace
         renderer.CompositeScene();
         world->DrawUI(renderer);
         renderer.Flush();
+        FrameProfiler::Get().EndRender();
         glutSwapBuffers();
         FrameProfiler::Get().EndFrame();
         if (profileTest && ++profileFrames >= 180)
@@ -63,6 +67,7 @@ namespace
 
     void Resize(int w, int h)
     {
+        RenderDiagnostics::Get().Event("resize", std::to_string(w) + "x" + std::to_string(h));
         width = std::max(w, 1);
         height = std::max(h, 1);
         glutPostRedisplay();
@@ -81,6 +86,7 @@ namespace
         }
         if (!effectKeys[key])
         {
+            RenderDiagnostics::Get().Event("key_down", std::string(1, char(key)));
             PostSettings& post = renderer.Effects();
             if (key == 'h')
             {
@@ -117,6 +123,7 @@ namespace
 
     void KeyUp(unsigned char key, int, int)
     {
+        RenderDiagnostics::Get().Event("key_up", std::string(1, char(key)));
         if (key >= 'A' && key <= 'Z')
         {
             key += 32;
@@ -134,7 +141,11 @@ namespace
         auto now = std::chrono::steady_clock::now();
         float dt = std::chrono::duration<float>(now - lastTick).count();
         lastTick = now;
+        auto updateStart = std::chrono::steady_clock::now();
         world->Update(dt);
+        FrameProfiler::Get().RecordUpdate(std::chrono::duration<double, std::milli>(
+                                              std::chrono::steady_clock::now() - updateStart)
+                                              .count());
         glutPostRedisplay();
         glutTimerFunc(16, Timer, 0);
     }
@@ -254,12 +265,13 @@ namespace
 
 int main(int argc, char** argv)
 {
-    bool smoke = false, selfTest = false;
+    bool smoke = false, selfTest = false, rebuildCache = false;
     for (int i = 1; i < argc; ++i)
     {
         smoke |= std::string(argv[i]) == "--smoke-test";
         selfTest |= std::string(argv[i]) == "--self-test";
         profileTest |= std::string(argv[i]) == "--profile-test";
+        rebuildCache |= std::string(argv[i]) == "--rebuild-mesh-cache";
     }
     if ((selfTest || smoke) && !PrototypeWorld::SelfTest())
     {
@@ -291,6 +303,10 @@ int main(int argc, char** argv)
     while (glGetError() != GL_NO_ERROR)
     {
     }
+    RenderDiagnostics::Get().Open(smoke ? "smoke-test" : profileTest ? "profile-test" : "game");
+    renderer.RebuildDiskCache(rebuildCache);
+    RenderDiagnostics::Get().Event("cache_policy",
+                                   rebuildCache ? "force_rebuild" : "load_valid_files");
     if (!renderer.Initialize())
     {
         std::cerr << "Renderer initialization failed\n";
@@ -321,6 +337,13 @@ int main(int argc, char** argv)
         }
     }
     world.reset(new PrototypeWorld(seed));
+    RenderDiagnostics::Get().Event(
+        "environment",
+        std::string("seed=") + std::to_string(seed) + "; resolution=" + std::to_string(width) + "x"
+            + std::to_string(height)
+            + "; OpenGL=" + reinterpret_cast<const char*>(glGetString(GL_VERSION))
+            + "; GPU=" + reinterpret_cast<const char*>(glGetString(GL_RENDERER))
+            + "; timer_interval_ms=16; swap_interval=driver_default");
     std::cout << "OpenGL " << glGetString(GL_VERSION) << " / " << glGetString(GL_RENDERER) << '\n';
     glutDisplayFunc(Display);
     glutReshapeFunc(Resize);
@@ -389,7 +412,7 @@ int main(int argc, char** argv)
         Resize(1280, 800);
         ok = Snapshot(L"prototype-restored.bmp") && ok;
         const auto& cache = renderer.MeshStats();
-        std::cout << "Mesh cache: " << cache.hits << " hits, " << cache.uploads << " uploads, "
+        std::cout << "Mesh cache: " << cache.hits << " hits, " << cache.uploads << " admissions, "
                   << cache.evictions << " evictions, " << cache.bytes << " resident bytes\n";
         Close();
         glutDestroyWindow(window);

@@ -2,6 +2,8 @@
 #include "PrototypeRenderer.h"
 #include "FrameProfiler.h"
 #include "ShaderProgram.h"
+#include "RenderDiagnostics.h"
+#include <stdexcept>
 #include <windows.h>
 #include <algorithm>
 #include <cmath>
@@ -36,14 +38,28 @@ bool PrototypeRenderer::Initialize()
     }
     viewport_ = glGetUniformLocation(program_, "viewport");
     linearUniform_ = glGetUniformLocation(program_, "linearScene");
-    offsetUniform_ = glGetUniformLocation(program_, "meshOffset");
-    scaleUniform_ = glGetUniformLocation(program_, "meshScale");
-    opacityUniform_ = glGetUniformLocation(program_, "meshOpacity");
+    GLint maxTexels = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &maxTexels);
+    atlasVertexLimit_ = std::min(size_t(maxTexels / 3), MaxCachedBytes / (12 * sizeof(float)));
+    atlasVertexLimit_ -= atlasVertexLimit_ % 3;
+    descriptorLimit_ = std::min(size_t(maxTexels / 5), MaxTriangleInstances);
+    if (atlasVertexLimit_ < 144 || !descriptorLimit_)
+    {
+        return false;
+    }
     glGenVertexArrays(1, &vao_);
     glBindVertexArray(vao_);
     glGenBuffers(1, &vbo_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    ConfigureVertices();
+    glEnableVertexAttribArray(0);
+    glVertexAttribIPointer(0, 2, GL_UNSIGNED_INT, sizeof(TriangleInstance), nullptr);
+    glVertexAttribDivisor(0, 1);
+    glGenBuffers(1, &descriptorBuffer_);
+    glGenTextures(1, &descriptorTexture_);
+    glUseProgram(program_);
+    glUniform1i(glGetUniformLocation(program_, "meshVertices"), 1);
+    glUniform1i(glGetUniformLocation(program_, "instances"), 2);
+    glUniform1i(glGetUniformLocation(program_, "atlas"), 0);
 
     // Preload ASCII and all 11,172 modern Hangul syllables. Text remains local;
     // UTF-8 dialogue may change without editing a hand-picked glyph list.
@@ -133,7 +149,19 @@ bool PrototypeRenderer::Initialize()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
-    vertices_.reserve(250000);
+    vertices_.reserve(4096);
+    commands_.reserve(4096);
+    descriptors_.reserve(4096);
+    triangles_.reserve(MaxTriangleInstances);
+    cacheNamespace_ =
+        "geometry-v2-layout12-font-"
+        + std::to_string(MeshDiskCache::Hash(advances_.data(), advances_.size() * sizeof(float)))
+        + ":";
+    disk_.Initialize();
+    RenderDiagnostics::Get().Event("renderer_limits",
+                                   "GL_MAX_TEXTURE_BUFFER_SIZE=" + std::to_string(maxTexels)
+                                       + "; max_triangle_instances="
+                                       + std::to_string(MaxTriangleInstances));
     return post_.Initialize() && glGetError() == GL_NO_ERROR;
 }
 
@@ -141,6 +169,9 @@ void PrototypeRenderer::Shutdown()
 {
     commands_.clear();
     ClearCache();
+    glDeleteBuffers(1, &descriptorBuffer_);
+    glDeleteTextures(1, &descriptorTexture_);
+    descriptorBuffer_ = descriptorTexture_ = 0;
     post_.Shutdown();
     if (atlas_)
     {
@@ -168,7 +199,6 @@ bool PrototypeRenderer::Begin(int width, int height)
     height_ = std::max(height, 1);
     vertices_.clear();
     commands_.clear();
-    dynamicStart_ = 0;
     ++frame_;
     TrimCache();
     scale_ = 1;
@@ -197,6 +227,20 @@ void PrototypeRenderer::Push(Point p, Ink c, float u, float v)
 
 void PrototypeRenderer::Triangle(Point a, Point b, Point c, Ink color)
 {
+    if (!recording_)
+    {
+        Submit(Primitive(0),
+               a,
+               {b.x - a.x, b.y - a.y},
+               {c.x - a.x, c.y - a.y},
+               color,
+               .5f / AtlasWidth,
+               .5f / AtlasHeight,
+               0,
+               0,
+               true);
+        return;
+    }
     Push(a, color);
     Push(b, color);
     Push(c, color);
@@ -210,6 +254,20 @@ void PrototypeRenderer::Quad(Point a, Point b, Point c, Point d, Ink color)
 
 void PrototypeRenderer::Rect(float x, float y, float w, float h, Ink c)
 {
+    if (!recording_)
+    {
+        Submit(Primitive(1),
+               {x, y},
+               {w, 0},
+               {0, h},
+               c,
+               .5f / AtlasWidth,
+               .5f / AtlasHeight,
+               0,
+               0,
+               true);
+        return;
+    }
     Quad({x, y}, {x + w, y}, {x + w, y + h}, {x, y + h}, c);
 }
 
@@ -221,11 +279,31 @@ void PrototypeRenderer::Line(Point a, Point b, float width, Ink c)
         return;
     }
     float x = -dy / len * width * .5f, y = dx / len * width * .5f;
+    if (!recording_)
+    {
+        Submit(Primitive(1),
+               {a.x + x, a.y + y},
+               {dx, dy},
+               {-2 * x, -2 * y},
+               c,
+               .5f / AtlasWidth,
+               .5f / AtlasHeight,
+               0,
+               0,
+               true);
+        return;
+    }
     Quad({a.x + x, a.y + y}, {b.x + x, b.y + y}, {b.x - x, b.y - y}, {a.x - x, a.y - y}, c);
 }
 
 void PrototypeRenderer::Ellipse(Point p, float rx, float ry, Ink c)
 {
+    if (!recording_)
+    {
+        Submit(
+            Primitive(2), p, {rx, 0}, {0, ry}, c, .5f / AtlasWidth, .5f / AtlasHeight, 0, 0, true);
+        return;
+    }
     const auto& circle = UnitCircle<32>();
     for (int i = 0; i < 32; ++i)
     {
@@ -242,6 +320,20 @@ void PrototypeRenderer::Glow(Point p, float radius, Ink c)
     // Interpolated alpha avoids visible concentric discs after tone mapping.
     c.a *= .12f;
     c.energy = 1;
+    if (!recording_)
+    {
+        Submit(Primitive(3),
+               p,
+               {radius, 0},
+               {0, radius},
+               c,
+               .5f / AtlasWidth,
+               .5f / AtlasHeight,
+               0,
+               0,
+               true);
+        return;
+    }
     Ink edge = c;
     edge.a = 0;
     const auto& circle = UnitCircle<48>();
@@ -288,62 +380,181 @@ void PrototypeRenderer::Text(float x, float y, const std::wstring& text, Ink c, 
         float v = float((i / (AtlasWidth / GlyphCell)) * GlyphCell) / AtlasHeight;
         float u2 = u + float(GlyphCell) / AtlasWidth, v2 = v + float(GlyphCell) / AtlasHeight;
         Point a{x, y}, b{x + GlyphCell * scale, y}, d{x, y + GlyphCell * scale}, e{b.x, d.y};
-        Push(a, c, u, v);
-        Push(b, c, u2, v);
-        Push(e, c, u2, v2);
-        Push(a, c, u, v);
-        Push(e, c, u2, v2);
-        Push(d, c, u, v2);
+        if (!recording_)
+        {
+            Submit(Primitive(1),
+                   a,
+                   {GlyphCell * scale, 0},
+                   {0, GlyphCell * scale},
+                   c,
+                   u,
+                   v,
+                   u2 - u,
+                   v2 - v,
+                   true);
+        }
+        else
+        {
+            Push(a, c, u, v);
+            Push(b, c, u2, v);
+            Push(e, c, u2, v2);
+            Push(a, c, u, v);
+            Push(e, c, u2, v2);
+            Push(d, c, u, v2);
+        }
         x += advances_[i] * scale;
     }
 }
 
-void PrototypeRenderer::Flush()
+PrototypeRenderer::Mesh& PrototypeRenderer::Primitive(int kind)
 {
-    QueueDynamic();
-    glUseProgram(program_);
-    glUniform2f(viewport_, float(width_), float(height_));
-    glUniform1i(linearUniform_, linearScene_);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, atlas_);
-    glBindVertexArray(vao_);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(
-        GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), vertices_.data(), GL_STREAM_DRAW);
-    for (const auto& command : commands_)
-    {
-        glBindVertexArray(command.mesh ? command.mesh->vao : vao_);
-        glUniform2f(offsetUniform_, command.offset.x, command.offset.y);
-        glUniform1f(scaleUniform_, command.scale);
-        glUniform1f(opacityUniform_, command.opacity);
-        glDrawArrays(GL_TRIANGLES, command.first, command.count);
-        FrameProfiler::Get().RecordDrawCall();
-    }
-    vertices_.clear();
-    commands_.clear();
-    dynamicStart_ = 0;
+    return GetMesh("primitive:" + std::to_string(kind),
+                   [&]()
+                   {
+                       Ink white = Color(255, 255, 255);
+                       if (kind == 0)
+                       {
+                           Triangle({0, 0}, {1, 0}, {0, 1}, white);
+                       }
+                       else if (kind == 1)
+                       {
+                           Push({0, 0}, white, 0, 0);
+                           Push({1, 0}, white, 1, 0);
+                           Push({1, 1}, white, 1, 1);
+                           Push({0, 0}, white, 0, 0);
+                           Push({1, 1}, white, 1, 1);
+                           Push({0, 1}, white, 0, 1);
+                       }
+                       else if (kind == 2)
+                       {
+                           Ellipse({0, 0}, 1, 1, white);
+                       }
+                       else
+                       {
+                           Ink edge = white;
+                           edge.a = 0;
+                           const auto& circle = UnitCircle<48>();
+                           for (int i = 0; i < 48; ++i)
+                           {
+                               Push({0, 0}, white);
+                               Push(circle[i], edge);
+                               Push(circle[i + 1], edge);
+                           }
+                       }
+                   });
 }
 
-void PrototypeRenderer::ConfigureVertices()
+PrototypeRenderer::Mesh& PrototypeRenderer::GetMesh(const std::string& key,
+                                                    const std::function<void()>& build)
 {
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(2 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(8 * sizeof(float)));
+    auto found = meshes_.find(key);
+    auto& stats = FrameProfiler::Get().Counters();
+    if (found != meshes_.end())
+    {
+        ++cacheStats_.hits;
+        ++stats.hits;
+        found->second.lastFrame = frame_;
+        return found->second;
+    }
+    ++stats.misses;
+    Mesh mesh;
+    bool persistent = key.find("test:") != 0;
+    std::string diskKey = cacheNamespace_ + key;
+    MeshLoad loaded = persistent ? disk_.Load(diskKey, mesh.data) : MeshLoad::Missing;
+    if (loaded == MeshLoad::Loaded && mesh.data.size() / 12 > atlasVertexLimit_)
+    {
+        mesh.data.clear();
+        loaded = MeshLoad::Rejected;
+    }
+    if (loaded == MeshLoad::Loaded)
+    {
+        ++cacheStats_.diskLoads;
+        ++stats.loads;
+        RenderDiagnostics::Get().Event("mesh_loaded", diskKey);
+    }
+    else
+    {
+        if (loaded == MeshLoad::Rejected)
+        {
+            ++cacheStats_.diskRejects;
+            ++stats.rejects;
+            RenderDiagnostics::Get().Event("mesh_rejected", diskKey);
+        }
+        float previousScale = scale_;
+        vertices_.clear();
+        recording_ = true;
+        scale_ = 1;
+        try
+        {
+            build();
+        }
+        catch (...)
+        {
+            recording_ = false;
+            scale_ = previousScale;
+            vertices_.clear();
+            throw;
+        }
+        recording_ = false;
+        scale_ = previousScale;
+        if (vertices_.size() > atlasVertexLimit_)
+        {
+            throw std::runtime_error("Mesh exceeds GPU atlas page limit");
+        }
+        mesh.data.reserve(vertices_.size() * 12);
+        for (const auto& v : vertices_)
+        {
+            const float packed[] = {v.x, v.y, v.u, v.v, v.r, v.g, v.b, v.a, v.energy, 0, 0, 0};
+            mesh.data.insert(mesh.data.end(), std::begin(packed), std::end(packed));
+        }
+        vertices_.clear();
+        if (!mesh.data.empty() && !MeshDiskCache::Validate(mesh.data))
+        {
+            throw std::runtime_error("Invalid generated mesh");
+        }
+        ++cacheStats_.generations;
+        ++stats.generations;
+        RenderDiagnostics::Get().Event("mesh_generated", diskKey);
+        if (persistent && !mesh.data.empty())
+        {
+            if (disk_.Save(diskKey, mesh.data))
+            {
+                ++cacheStats_.diskWrites;
+                ++stats.writes;
+                RenderDiagnostics::Get().Event("mesh_saved", diskKey);
+            }
+            else
+            {
+                RenderDiagnostics::Get().Event("mesh_write_failed", diskKey);
+            }
+        }
+    }
+    mesh.count = GLsizei(mesh.data.size() / 12);
+    mesh.lastFrame = frame_;
+    cacheStats_.bytes += mesh.data.size() * sizeof(float);
+    ++cacheStats_.uploads;
+    atlasDirty_ = true;
+    return meshes_.emplace(key, std::move(mesh)).first->second;
 }
 
-void PrototypeRenderer::QueueDynamic()
+void PrototypeRenderer::Submit(const Mesh& mesh,
+                               Point origin,
+                               Point axisX,
+                               Point axisY,
+                               Ink tint,
+                               float u,
+                               float v,
+                               float du,
+                               float dv,
+                               bool overrideUV)
 {
-    if (vertices_.size() > dynamicStart_)
-    {
-        commands_.push_back(
-            {nullptr, GLint(dynamicStart_), GLsizei(vertices_.size() - dynamicStart_)});
-        dynamicStart_ = vertices_.size();
-    }
+    InstanceData instance{{axisX.x * scale_, axisY.x * scale_, origin.x * scale_, 0},
+                          {axisX.y * scale_, axisY.y * scale_, origin.y * scale_, 0},
+                          {tint.r, tint.g, tint.b, tint.a},
+                          {u, v, du, dv},
+                          {overrideUV ? 1.f : 0.f, tint.energy, 0, 0}};
+    commands_.push_back({&mesh, instance});
+    ++FrameProfiler::Get().Counters().objects;
 }
 
 void PrototypeRenderer::CachedMesh(const std::string& key,
@@ -352,72 +563,188 @@ void PrototypeRenderer::CachedMesh(const std::string& key,
                                    float opacity,
                                    const std::function<void()>& build)
 {
-    QueueDynamic();
-    auto it = meshes_.find(key);
-    if (it == meshes_.end())
+    if (recording_)
     {
-        // The builder only emits local geometry, never flushes or nests cache calls.
-        std::vector<Vertex> pending;
-        pending.swap(vertices_);
-        float previousScale = scale_;
-        scale_ = 1;
-        build();
-        scale_ = previousScale;
-        Mesh mesh;
-        mesh.count = GLsizei(vertices_.size());
-        glGenVertexArrays(1, &mesh.vao);
-        glBindVertexArray(mesh.vao);
-        glGenBuffers(1, &mesh.vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-        glBufferData(
-            GL_ARRAY_BUFFER, vertices_.size() * sizeof(Vertex), vertices_.data(), GL_STATIC_DRAW);
-        ConfigureVertices();
-        cacheStats_.bytes += vertices_.size() * sizeof(Vertex);
-        ++cacheStats_.uploads;
-        pending.swap(vertices_);
-        it = meshes_.emplace(key, mesh).first;
+        throw std::logic_error("Nested cached mesh builder");
     }
-    else
+    auto& mesh = GetMesh(key, build);
+    Submit(mesh, offset, {scale, 0}, {0, scale}, Color(255, 255, 255, opacity));
+}
+
+void PrototypeRenderer::ReleasePages()
+{
+    for (auto& page : pages_)
     {
-        ++cacheStats_.hits;
+        glDeleteTextures(1, &page.texture);
+        glDeleteBuffers(1, &page.buffer);
     }
-    it->second.lastFrame = frame_;
-    commands_.push_back({&it->second, 0, it->second.count, offset, scale, opacity});
+    pages_.clear();
+}
+
+void PrototypeRenderer::RebuildAtlas()
+{
+    if (!atlasDirty_)
+    {
+        return;
+    }
+    ReleasePages();
+    std::vector<float> data;
+    auto upload = [&]()
+    {
+        if (data.empty())
+        {
+            return;
+        }
+        AtlasPage page;
+        glGenBuffers(1, &page.buffer);
+        glBindBuffer(GL_TEXTURE_BUFFER, page.buffer);
+        glBufferData(GL_TEXTURE_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+        glGenTextures(1, &page.texture);
+        glBindTexture(GL_TEXTURE_BUFFER, page.texture);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, page.buffer);
+        FrameProfiler::Get().Counters().meshBytes += data.size() * sizeof(float);
+        pages_.push_back(page);
+        data.clear();
+    };
+    for (auto& entry : meshes_)
+    {
+        auto& mesh = entry.second;
+        if (data.size() / 12 + mesh.count > atlasVertexLimit_)
+        {
+            upload();
+        }
+        mesh.page = pages_.size();
+        mesh.first = GLint(data.size() / 12);
+        data.insert(data.end(), mesh.data.begin(), mesh.data.end());
+    }
+    upload();
+    atlasDirty_ = false;
+    RenderDiagnostics::Get().Event("atlas_rebuilt",
+                                   "pages=" + std::to_string(pages_.size())
+                                       + "; resident_bytes=" + std::to_string(cacheStats_.bytes));
+}
+
+void PrototypeRenderer::Flush()
+{
+    if (recording_)
+    {
+        throw std::logic_error("Flush during cached mesh generation");
+    }
+    if (commands_.empty())
+    {
+        return;
+    }
+    RebuildAtlas();
+    glUseProgram(program_);
+    glUniform2f(viewport_, float(width_), float(height_));
+    glUniform1i(linearUniform_, linearScene_);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, atlas_);
+    glBindVertexArray(vao_);
+    size_t page = 0;
+    triangles_.clear();
+    descriptors_.clear();
+    auto& counters = FrameProfiler::Get().Counters();
+    auto draw = [&]()
+    {
+        if (triangles_.empty())
+        {
+            return;
+        }
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_BUFFER, pages_[page].texture);
+        glBindBuffer(GL_TEXTURE_BUFFER, descriptorBuffer_);
+        glBufferData(GL_TEXTURE_BUFFER,
+                     descriptors_.size() * sizeof(InstanceData),
+                     descriptors_.data(),
+                     GL_STREAM_DRAW);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_BUFFER, descriptorTexture_);
+        glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, descriptorBuffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        glBufferData(GL_ARRAY_BUFFER,
+                     triangles_.size() * sizeof(TriangleInstance),
+                     triangles_.data(),
+                     GL_STREAM_DRAW);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 3, GLsizei(triangles_.size()));
+        FrameProfiler::Get().RecordDrawCall(linearScene_ ? DrawStage::Scene : DrawStage::UI);
+        counters.triangles += triangles_.size();
+        counters.instanceBytes += descriptors_.size() * sizeof(InstanceData)
+                                  + triangles_.size() * sizeof(TriangleInstance);
+        triangles_.clear();
+        descriptors_.clear();
+    };
+    for (const auto& command : commands_)
+    {
+        const Mesh& mesh = *command.mesh;
+        if (!mesh.count)
+        {
+            continue;
+        }
+        if (!triangles_.empty() && (page != mesh.page || descriptors_.size() >= descriptorLimit_))
+        {
+            ++counters.splits;
+            draw();
+        }
+        page = mesh.page;
+        GLuint descriptor = GLuint(descriptors_.size());
+        descriptors_.push_back(command.instance);
+        for (GLint vertex = 0; vertex < mesh.count; vertex += 3)
+        {
+            if (triangles_.size() == MaxTriangleInstances)
+            {
+                ++counters.splits;
+                draw();
+                descriptor = 0;
+                descriptors_.push_back(command.instance);
+            }
+            triangles_.push_back({GLuint(mesh.first + vertex), descriptor});
+        }
+        if (!batchEnabled_)
+        {
+            draw();
+        }
+    }
+    draw();
+    glActiveTexture(GL_TEXTURE0);
+    commands_.clear();
 }
 
 void PrototypeRenderer::TrimCache()
 {
-    // Evict only at frame boundaries: queued draws may still reference a mesh.
     while (meshes_.size() > MaxCachedMeshes || cacheStats_.bytes > MaxCachedBytes)
     {
-        auto oldest = std::min_element(meshes_.begin(),
-                                       meshes_.end(),
-                                       [](const auto& a, const auto& b)
-                                       {
-                                           return a.second.lastFrame < b.second.lastFrame;
-                                       });
+        auto oldest = meshes_.end();
+        for (auto it = meshes_.begin(); it != meshes_.end(); ++it)
+        {
+            if (it->first.find("primitive:") == 0)
+            {
+                continue;
+            }
+            if (oldest == meshes_.end() || it->second.lastFrame < oldest->second.lastFrame)
+            {
+                oldest = it;
+            }
+        }
         if (oldest == meshes_.end())
         {
             break;
         }
-        auto& mesh = oldest->second;
-        cacheStats_.bytes -= size_t(mesh.count) * sizeof(Vertex);
-        glDeleteBuffers(1, &mesh.vbo);
-        glDeleteVertexArrays(1, &mesh.vao);
+        cacheStats_.bytes -= oldest->second.data.size() * sizeof(float);
+        RenderDiagnostics::Get().Event("mesh_evicted", oldest->first);
         meshes_.erase(oldest);
+        atlasDirty_ = true;
         ++cacheStats_.evictions;
+        ++FrameProfiler::Get().Counters().evictions;
     }
 }
 
 void PrototypeRenderer::ClearCache()
 {
-    for (auto& entry : meshes_)
-    {
-        glDeleteBuffers(1, &entry.second.vbo);
-        glDeleteVertexArrays(1, &entry.second.vao);
-    }
+    ReleasePages();
     meshes_.clear();
     cacheStats_ = {};
+    atlasDirty_ = true;
 }
 
 bool PrototypeRenderer::VerifyMeshCache()
@@ -478,7 +805,54 @@ bool PrototypeRenderer::VerifyMeshCache()
         check(!direct.empty() && direct == cached,
               "cached mesh matches dynamic geometry, transform, opacity and draw order");
     }
-    check(builds == 1, "same mesh built and uploaded only once across frames");
+    check(builds == 1, "same cached geometry generated once across frames");
+    batchEnabled_ = false;
+    auto reference = render(true, {100, 140}, 2, .3f);
+    auto referenceCalls = FrameProfiler::Get().DrawCalls();
+    batchEnabled_ = true;
+    auto batched = render(true, {100, 140}, 2, .3f);
+    check(reference == batched && !batched.empty(),
+          "ordered instancing matches separate GL submissions pixel for pixel");
+    check(FrameProfiler::Get().DrawCalls() == 3 && referenceCalls > 3,
+          "heterogeneous transparent meshes merge into one scene and one UI draw");
+    check(disk_.SelfTest(), "persistent mesh cache validation");
+    Begin(width_, height_);
+    // Force multiple descriptor batches without changing draw order or positions.
+    size_t savedLimit = descriptorLimit_;
+    descriptorLimit_ = 2;
+    auto split = render(true, {100, 140}, 2, .3f);
+    check(split == batched && FrameProfiler::Get().Counters().splits > 0,
+          "descriptor-capacity batch splits preserve pixels");
+    descriptorLimit_ = savedLimit;
+    size_t savedPageLimit = atlasVertexLimit_;
+    atlasVertexLimit_ = 12;
+    atlasDirty_ = true;
+    auto paged = render(true, {100, 140}, 2, .3f);
+    check(paged == batched && FrameProfiler::Get().Counters().splits > 0,
+          "atlas-page batch splits preserve pixels");
+    atlasVertexLimit_ = savedPageLimit;
+    atlasDirty_ = true;
+    // Disk-backed cached builder must not run after memory eviction.
+    std::string roundTrip = "roundtrip-v1:" + std::to_string(GetCurrentProcessId()) + ":"
+                            + std::to_string(GetTickCount64());
+    int diskBuilds = 0;
+    auto diskBuilder = [&]()
+    {
+        ++diskBuilds;
+        Rect(0, 0, 2, 2, Color(255, 255, 255));
+    };
+    CachedMesh(roundTrip, {0, 0}, 1, 1, diskBuilder);
+    Flush();
+    auto found = meshes_.find(roundTrip);
+    cacheStats_.bytes -= found->second.data.size() * sizeof(float);
+    meshes_.erase(found);
+    atlasDirty_ = true;
+    bool savedRead = disk_.readEnabled;
+    disk_.readEnabled = true;
+    CachedMesh(roundTrip, {0, 0}, 1, 1, diskBuilder);
+    Flush();
+    disk_.readEnabled = savedRead;
+    check(diskBuilds == 1, "evicted mesh reloads from disk without running builder");
     check(Begin(width_, height_), "cache eviction test framebuffer");
     auto before = cacheStats_.uploads;
     for (size_t i = 0; i < MaxCachedMeshes + 2; ++i)
@@ -494,7 +868,7 @@ bool PrototypeRenderer::VerifyMeshCache()
     }
     Flush();
     check(cacheStats_.uploads == before + MaxCachedMeshes + 2,
-          "different mesh keys create independent buffers");
+          "different mesh keys create independent atlas entries");
     check(Begin(width_, height_), "cache eviction next frame");
     check(meshes_.size() <= MaxCachedMeshes && cacheStats_.bytes <= MaxCachedBytes
               && cacheStats_.evictions > 0,

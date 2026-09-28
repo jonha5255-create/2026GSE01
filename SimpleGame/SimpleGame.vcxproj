@@ -180,6 +180,8 @@
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="FrameProfiler.h" />
+    <ClInclude Include="MeshDiskCache.h" />
+    <ClInclude Include="RenderDiagnostics.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -202,6 +204,8 @@
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="FrameProfiler.cpp" />
+    <ClCompile Include="MeshDiskCache.cpp" />
+    <ClCompile Include="RenderDiagnostics.cpp" />
     <ClCompile Include="SimpleGame.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

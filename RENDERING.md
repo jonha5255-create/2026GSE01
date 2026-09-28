@@ -1,62 +1,56 @@
-# 메시 캐시와 셰이더
+# 렌더러 배칭, 메시 캐시, 성능 분석
 
-## 콘솔 성능 로깅
+구현 및 측정: [드로 콜 최적화 리포트](docs/performance/2026-09-22-drawcall-report.md).
 
-일반 실행 시 자동으로 1초마다 다음 형식으로 출력합니다.
+## 렌더링 구조
 
-```text
-[PERF] FPS=60.0 | FrameMs(avg)=16.7 | DrawCalls/frame last=82 avg=81.5 min=79 max=84
+Actor/SceneGraph의 그리기 순서를 유지하면서 PrototypeRenderer가 메시 참조와 변환·색상을 모읍니다. 불변 정점은 공용 GPU texture-buffer 아틀라스에 저장하고 삼각형 참조와 오브젝트별 인스턴스 정보만 매 프레임 전송합니다. Flush에서 glDrawArraysInstanced로 제출합니다. 서로 다른 메시도 합칠 수 있으며 투명 도형을 재질별로 재정렬하지 않습니다.
+
+사각형, 선, 원, 글로우, 글자, 동적 삼각형은 단위 메시를 변환해 재사용합니다. Floor/Building의 CachedMesh 콜백은 메모리·디스크 캐시에 모두 없을 때만 실행합니다. 공간 왜곡처럼 변화하는 도형은 단위 삼각형 변환으로 표현합니다. 액터와 캐시 자원 수명은 분리되어 있습니다.
+
+GPU/배치 용량이나 아틀라스 페이지가 달라지면 순서대로 분할합니다. 측정 장면은 scene 1 + post 9 + UI 1 = 11회이며 모든 장면의 고정 상한은 아닙니다. 후처리를 꺼도 최종 합성은 필요하므로 3회입니다.
+
+## 캐시 운용
+
+- 실행 파일 옆 MeshCache/*.gmesh에 저장합니다. 쓰기 불가 시 메모리 렌더링은 계속됩니다.
+- 파일 스키마, 키, 크기, 체크섬, 정점 값 범위를 검증하며 손상/구버전 파일은 재생성합니다.
+- 메모리 캐시는 256개 / CPU 정점 32 MiB 목표로 프레임 시작 시 LRU 정리합니다. GPU 정점 사본과 재구성 임시 메모리는 별도입니다. 기본 도형은 유지합니다.
+- 디스크는 64 MiB / 1024파일 목표로 시작 시와 64회 저장마다 오래된 파일을 정리합니다. 일시 초과할 수 있습니다.
+- 같은 키의 내용은 불변입니다. 생성 알고리즘 변경 시 geometry-v2 네임스페이스나 메시 키 버전을 바꾸세요.
+- --rebuild-mesh-cache는 파일 읽기를 우회하여 사용되는 메시를 재생성합니다.
+- 생성 콜백에서 Begin/Flush/중첩 CachedMesh를 호출하지 마세요.
+- 새 메시 유입/퇴거 시 아틀라스를 재구성합니다. 새 청크에서는 생성과 파일 I/O가 발생할 수 있습니다.
+
+## 콘솔 및 지속 로그
+
+FrameProfiler는 실제 GL draw 호출 지점을 계수합니다. glClear/업로드는 drawcall에 포함하지 않습니다. 새 GL draw 경로에도 RecordDrawCall(stage)를 추가해야 합니다. 빌드 제외 참고 파일 Renderer.cpp는 집계 대상이 아닙니다.
+
+콘솔은 1초마다 FPS, 프레임 간격, drawcall last/avg/min/max, Scene/Post/UI, 삼각형 인스턴스, 생성/로드 횟수, CPU 렌더 시간, 업로드량을 출력합니다. 후반 항목은 직전 프레임 값이므로 초기 생성 비용은 CSV에서 확인하세요.
+
+실행 파일 옆 Logs에 세션별 CSV(매 프레임)와 JSONL(이벤트)을 저장합니다. 파일명은 UTC입니다. 1초마다 및 정상 종료 시 flush합니다. 자동 로그 삭제 정책은 없으므로 장시간 측정 후 보관/정리하세요. 로그 파일 열기 실패 시 콘솔 경고를 출력합니다.
+
+```powershell
+.\x64\Release\SimpleGame.exe --profile-test --seed=2026 --rebuild-mesh-cache
+.\x64\Release\SimpleGame.exe --profile-test --seed=2026
+.\tools\Analyze-RenderLog.ps1 -Csv .\x64\Release\Logs\render-실제파일명.csv
 ```
 
-위 수치는 형식 예시입니다. FPS는 실제 화면 갱신 완료 횟수 / 경과 시간이며, 타이머 대기와 버퍼 교환 대기를 포함합니다. FrameMs는 이 구간의 평균 프레임 간격으로 GPU 실행 시간은 아닙니다.
+--profile-test는 일반 루프 180프레임 후 종료합니다. 분석 스크립트는 기본 첫 프레임을 정상 상태 통계에서 제외하되 전체 합계와 첫 프레임 비용도 출력합니다. --smoke-test는 회귀 검사이며 FPS 벤치마크가 아닙니다.
 
-DrawCalls는 액터나 삼각형 개수가 아니라 실제 glDrawArrays 호출 횟수입니다. 프레임 시작에 초기화하고 캐시 메시·동적 배치·후처리·HUD 호출을 모두 포함합니다. last는 직전 완료 프레임, avg/min/max는 최근 출력 구간의 프레임별 통계입니다. GL 버퍼/텍스처 업로드와 glClear는 포함하지 않습니다.
+FPS/FrameMs는 타이머와 Swap 대기를 포함한 표시 간격입니다. RenderCPU는 Swap 이전 CPU 구간으로 GPU 시간이 아니며 드라이버 대기가 섞일 수 있습니다. 16ms 타이머/드라이버 기본 동기화 환경에서 drawcall 감소가 FPS 증가를 보장하지 않습니다.
 
-FrameProfiler.h/.cpp가 집계와 출력을 담당합니다. 현재 실행 경로의 모든 glDraw 호출을 계측했으며, 향후 glDrawElements 등 새 호출 경로를 추가할 때에도 실제 호출 지점에서 RecordDrawCall()을 호출해야 합니다. 빌드 대상에서 제외된 참고용 Renderer.cpp는 집계 대상이 아닙니다.
-
---profile-test는 일반 게임 루프를 180프레임 실행하고 종료하는 로깅 확인용 옵션입니다. --smoke-test에서는 캡처별 drawcall 수와 후처리 패스 증감 검사를 출력하되 FPS는 성능 측정값으로 출력하지 않습니다. 정확한 게임 성능 비교는 Release 일반 실행에서 수행하세요.
-
-## 메시 재사용
-
-- 청크 바닥과 정적인 건물은 최초 생성 시 로컬 좌표 정점을 만들고 VAO/VBO에 GL_STATIC_DRAW로 한 번 업로드합니다.
-- 같은 메시 키는 기존 GPU 버퍼를 참조합니다. 카메라 이동, 해상도 변경, 건물 가림 투명도는 Scene.vs의 위치·배율·투명도 uniform으로 처리합니다.
-- 바닥 키에는 시드와 디버그 표시 여부, 건물 키에는 시드·폭·깊이·높이가 포함됩니다. 지오메트리/재질 생성 입력이 달라지면 별도 메시가 됩니다.
-- 동적 정점과 캐시 메시를 호출 순서대로 명령 목록에 저장해 투명도 및 기존 2.5D 그리기 순서를 유지합니다. 동적 정점은 Flush마다 하나의 스트리밍 버퍼에 업로드합니다.
-- 캐시는 렌더러가 소유합니다. 프레임 시작 시 최근 사용 프레임을 기준으로 오래된 항목부터 제거해 256개 / 32 MiB 예산을 맞춥니다. 프레임 중 생성된 항목은 다음 프레임 시작에 정리하므로 진행 중인 draw 참조가 무효화되지 않습니다.
-- 종료 시 캐시의 VAO/VBO를 모두 해제합니다. 카메라 이동·재시작·리사이즈만으로 캐시를 버리지 않습니다.
-- 원/글로우의 단위 원 정점도 처음 한 번 계산해 재사용합니다.
-- 실제 정점이 변하는 공간 왜곡 건물, 캐릭터 애니메이션, 발사체, 비, 동적 HUD는 기존 동적 배치를 사용합니다. 성능 개선량은 장면과 드로 콜 수에 따라 달라지므로 수치상 FPS 개선을 보장하지는 않습니다.
-
-사용 지점: PrototypeWorld::LocalMesh / Floor / Building.
-캐시 구현: PrototypeRenderer::CachedMesh / Flush / TrimCache.
-FloorActor / BuildingActor가 SceneGraph 렌더 순회에서 위 사용 지점으로 전달됩니다. 액터가 제거되어도 GPU 메시 캐시는 기존 예산/LRU 정책에 따라 재사용하며, 액터 수명과 메시 자원 수명을 분리합니다.
-새 메시 생성 콜백에서는 기본 도형과 텍스트만 추가해야 하며 Flush, Begin 또는 중첩 CachedMesh를 호출하지 않습니다.
-같은 키의 메시 내용은 불변입니다. 향후 런타임 메시 편집 시 키 버전 갱신 또는 명시적인 무효화 기능이 필요합니다.
-
-## 독립 셰이더 파일
+## 독립 셰이더와 배포
 
 | 파일 | 역할 |
 | --- | --- |
-| SimpleGame/Shaders/Scene.vs | 화면 좌표 변환, 캐시 메시 위치·배율·투명도 |
-| SimpleGame/Shaders/Scene.fs | 글꼴 아틀라스, 선형 색 변환, HDR 발광 |
-| SimpleGame/Shaders/Fullscreen.vs | 후처리용 전체 화면 삼각형 |
-| SimpleGame/Shaders/Blur.fs | 블러 및 HDR 하이라이트 추출 |
-| SimpleGame/Shaders/Composite.fs | 블룸·비네트·가장자리 흐림·톤 매핑 |
+| Shaders/Scene.vs | 메시/인스턴스 texture-buffer 조회, 변환·색상·UV |
+| Shaders/Scene.fs | 글꼴 아틀라스, 선형 색, HDR 발광 |
+| Shaders/Fullscreen.vs | 전체 화면 삼각형 |
+| Shaders/Blur.fs | 블러, HDR 하이라이트 추출 |
+| Shaders/Composite.fs | 블룸·비네트·가장자리 흐림·톤 매핑 |
 
-기존 SolidRect.vs/.fs는 참고용 원본 렌더러 자산으로 유지합니다.
-
-ShaderProgram.cpp의 공통 로더가 UTF-8 파일을 읽어 컴파일·링크합니다. UTF-8 BOM을 허용하며 누락/빈 파일/컴파일/링크 실패 시 파일명과 오류를 출력하고 초기화를 중단합니다. C++ 코드에 GLSL 문자열 폴백은 없습니다.
-
-MSBuild가 모든 .vs/.fs를 실행 파일 옆 Shaders 폴더에 복사합니다. 로더는 현재 작업 디렉터리가 아니라 실행 파일 위치를 기준으로 읽으므로 Visual Studio, 탐색기, 다른 폴더의 터미널에서 실행할 수 있습니다. 배포할 때 exe/DLL과 함께 Shaders 폴더를 포함해야 합니다.
-
-원본 셰이더를 수정한 뒤 빌드하고 재실행하면 반영됩니다. 실행 중 자동 핫 리로드는 포함하지 않습니다.
+ShaderProgram이 실행 파일 기준 Shaders 경로에서 UTF-8 파일을 읽습니다. MSBuild가 셰이더를 복사하며 배포 시 Shaders 폴더가 필요합니다. 누락/컴파일 실패 시 초기화를 중단합니다. C++ 내 셰이더 폴백과 런타임 핫 리로드는 없습니다. SolidRect.vs/.fs는 참고용입니다.
 
 ## 검증
 
-SimpleGame.exe --smoke-test에 다음 검사를 포함합니다.
-
-- 캐시/동적 도형의 실제 픽셀 일치: 이동, 크기, 투명도, 그리기 순서
-- 동일 키의 여러 프레임 사용 시 한 번만 생성·업로드
-- 다른 키의 별도 GPU 버퍼 및 캐시 예산 초과 후 LRU 정리
-- 실제 OpenGL 오류, HDR 및 각 후처리 효과, UI 합성 순서, 리사이즈
-- 기존 레벨 1 전투·성장·맵 연결성 회귀 검사
+--smoke-test는 캐시/직접 도형과 배칭/분리 제출 픽셀 일치, 변환·투명 순서, 파일 round-trip/손상 검출, 퇴거 후 재로드, descriptor/atlas-page 분할, LRU, GL 오류, HDR/효과/리사이즈, 레벨 1 게임플레이를 검사합니다.
