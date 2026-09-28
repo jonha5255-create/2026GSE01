@@ -1,0 +1,80 @@
+{"tick_ms":6555234,"event":"session","detail":"schema=1; renderer=ordered-triangle-instancing-v1; mode=profile-test; build=Release"}
+{"tick_ms":6555234,"event":"cache_policy","detail":"load_valid_files"}
+{"tick_ms":6555921,"event":"renderer_limits","detail":"GL_MAX_TEXTURE_BUFFER_SIZE=268435455; max_triangle_instances=65536"}
+{"tick_ms":6555968,"event":"world_start","detail":"simulation_s=0.000000; 잔명 마을: 주민 11명과 외곽 잔향귀 3체의 생활을 시작합니다."}
+{"tick_ms":6555968,"event":"environment","detail":"seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; timer_interval_ms=16; swap_interval=driver_default"}
+{"tick_ms":6555968,"event":"resize","detail":"1280x800"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3936562276:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2983471676:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1131641326:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3435462376:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3265983033:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3913226564:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:4165824950:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2575099438:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:979519077:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:621570869:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1441117784:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:651311515:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3558811836:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3439369451:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:645936265:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2098829373:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2232973217:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2989494586:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:984030009:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3304447008:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1611486522:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3898502102:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2300954445:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1718543262:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2337736911:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:2"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:1"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:3"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983033:95.000000:104.000000:76.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:0"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983034:90.000000:107.000000:114.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983036:110.000000:107.000000:112.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519077:95.000000:93.000000:118.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099438:94.000000:97.000000:110.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519079:85.000000:85.000000:119.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519078:93.000000:100.000000:93.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099439:112.000000:94.000000:96.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099441:111.000000:86.000000:75.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811836:98.000000:103.000000:96.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811837:97.000000:86.000000:117.000000"}
+{"tick_ms":6555968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811838:104.000000:87.000000:91.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3439369453:95.000000:101.000000:71.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811839:89.000000:94.000000:75.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973217:96.000000:90.000000:94.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494586:95.000000:111.000000:98.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973218:102.000000:88.000000:62.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494587:102.000000:85.000000:101.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494588:85.000000:100.000000:81.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973219:104.000000:98.000000:108.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494589:86.000000:96.000000:100.000000"}
+{"tick_ms":6555984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:1611486522:102.000000:107.000000:119.000000"}
+{"tick_ms":6555984,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1173456"}
+{"tick_ms":6556015,"event":"slow_frame","detail":"frame=1; frame_ms=42.899500; generations=0"}
+{"tick_ms":6556015,"event":"npc_decision","detail":"id=189; name=도윤; action=사냥; raid_weight=0.100000; hp=115.000000; gold=50"}
+{"tick_ms":6556062,"event":"npc_decision","detail":"id=190; name=유리; action=사냥; raid_weight=0.100000; hp=115.000000; gold=64"}
+{"tick_ms":6556125,"event":"npc_decision","detail":"id=191; name=건우; action=사냥; raid_weight=0.100000; hp=115.000000; gold=45"}
+{"tick_ms":6556218,"event":"npc_decision","detail":"id=192; name=갈치; action=약탈; raid_weight=0.990000; hp=125.000000; gold=81"}
+{"tick_ms":6556296,"event":"npc_decision","detail":"id=193; name=붉은 눈; action=약탈; raid_weight=0.960000; hp=125.000000; gold=46"}
+{"tick_ms":6556375,"event":"npc_decision","detail":"id=194; name=미령; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":6556468,"event":"npc_decision","detail":"id=195; name=덕수; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":6556531,"event":"npc_decision","detail":"id=196; name=이안; action=명상; raid_weight=0.100000; hp=100.000000; gold=77"}
+{"tick_ms":6556609,"event":"npc_decision","detail":"id=197; name=무명 순례자; action=명상; raid_weight=0.100000; hp=100.000000; gold=60"}
+{"tick_ms":6556687,"event":"npc_decision","detail":"id=198; name=초소장; action=순찰; raid_weight=0.100000; hp=180.000000; gold=92"}
+{"tick_ms":6556781,"event":"npc_decision","detail":"id=199; name=백연; action=명상; raid_weight=0.100000; hp=100.000000; gold=46"}
+{"tick_ms":6556859,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6556937,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6557015,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6557671,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6557812,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6557953,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6558468,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6558687,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6558906,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6558968,"event":"session_end","detail":"renderer shutdown"}

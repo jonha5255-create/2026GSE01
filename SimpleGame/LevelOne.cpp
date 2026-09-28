@@ -27,6 +27,7 @@ void LevelOne::Shift(float dx, float dy)
 GameplayContext LevelOne::Context(const Walkable& walkable)
 {
     GameplayContext context(*scene_, Player(), navigation_, walkable, state, pickups);
+    context.society = society.enabled ? &society : nullptr;
     context.defeated = [this, walkable](const EnemyActor& enemy)
     {
         Defeat(enemy, walkable);
@@ -146,12 +147,12 @@ void LevelOne::Update(float dt,
     if (state != RunState::Lost && state != RunState::Won)
     {
         navigationTimer_ -= dt;
-        if (navigationTimer_ <= 0)
+        if (navigationTimer_ <= 0 && (!society.enabled || !Enemies().empty()))
         {
             navigation_.Rebuild(walkable);
             navigationTimer_ = .3f;
         }
-        if (state == RunState::Farming)
+        if (state == RunState::Farming && !society.enabled)
         {
             spawnTimer_ -= dt;
             if (spawnTimer_ <= 0 && Enemies().size() < 8)
@@ -177,6 +178,10 @@ void LevelOne::Update(float dt,
     }
     auto context = Context(walkable);
     context.movePlayer = movePlayer;
+    if (society.enabled)
+    {
+        society.Tick(dt, context);
+    }
     scene_->Update(dt, context);
 }
 

@@ -13,6 +13,8 @@ class BuildingActor;
 class LampActor;
 class RainActor;
 class HudActor;
+class NpcActor;
+class TownSiteActor;
 
 // Render visitor keeps actors/simulation independent of OpenGL and the camera.
 class ActorRenderContext
@@ -33,4 +35,12 @@ class ActorRenderContext
     virtual void Draw(const LampActor&) = 0;
     virtual void Draw(const RainActor&) = 0;
     virtual void Draw(const HudActor&) = 0;
+
+    virtual void Draw(const NpcActor&)
+    {
+    }
+
+    virtual void Draw(const TownSiteActor&)
+    {
+    }
 };

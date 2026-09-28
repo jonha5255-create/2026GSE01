@@ -6,6 +6,7 @@ class PlayerActor;
 class EnemyActor;
 class LootActor;
 class EffectActor;
+class LivingWorld;
 
 // Per-tick services and encounter callbacks, not an owning object registry.
 struct GameplayContext : ActorUpdateContext
@@ -22,6 +23,7 @@ struct GameplayContext : ActorUpdateContext
     }
 
     SceneGraph& scene;
+    LivingWorld* society = nullptr;
     PlayerActor& player;
     Navigation& navigation;
     Walkable walkable;

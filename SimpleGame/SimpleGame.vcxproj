@@ -168,6 +168,7 @@
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
     <ClInclude Include="LevelOne.h" />
+    <ClInclude Include="LivingWorld.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="SceneGraph.h" />
     <ClInclude Include="GameTypes.h" />
@@ -189,6 +190,10 @@
     <ClCompile Include="PrototypeRenderer.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
     <ClCompile Include="LevelOne.cpp" />
+    <ClCompile Include="LivingWorld.cpp" />
+    <ClCompile Include="LivingWorldInteraction.cpp" />
+    <ClCompile Include="LivingWorldView.cpp" />
+    <ClCompile Include="LivingWorldTests.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="SceneGraph.cpp" />
     <ClCompile Include="Navigation.cpp" />

@@ -96,11 +96,15 @@ CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
     return chunk;
 }
 
-PrototypeWorld::PrototypeWorld(uint32_t seed) : seed_(seed), level_(seed)
+PrototypeWorld::PrototypeWorld(uint32_t seed, bool living) : seed_(seed), level_(seed)
 {
     level_.Graph().Spawn<RainActor>(NoActor);
     level_.Graph().Spawn<HudActor>(NoActor);
     Stream();
+    if (living)
+    {
+        level_.society.Initialize(level_.Graph(), seed);
+    }
 }
 
 void PrototypeWorld::Stream()
@@ -284,10 +288,46 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     }
     if (key == 'r')
     {
-        *this = PrototypeWorld(seed_);
+        *this = PrototypeWorld(seed_, level_.society.enabled);
         return;
     }
-    if (key == 'e')
+    if (level_.society.enabled)
+    {
+        auto context = level_.Context(
+            [&](float x, float y, float radius)
+            {
+                return Walkable(x, y, radius);
+            });
+        if (key == 'e')
+        {
+            level_.society.Interact(context);
+        }
+        if (key == 't')
+        {
+            level_.society.PlayerTrade(false, context);
+        }
+        if (key == 'y')
+        {
+            level_.society.PlayerTrade(true, context);
+        }
+        if (key == 'p')
+        {
+            level_.society.TogglePK();
+        }
+        if (key == 'f')
+        {
+            level_.society.PlayerStrike(true, context);
+        }
+        if (key == 'j')
+        {
+            level_.society.PlayerStrike(false, context);
+        }
+        if (key == '\t')
+        {
+            level_.society.panel = !level_.society.panel;
+        }
+    }
+    else if (key == 'e')
     {
         level_.Interact(
             [&](float x, float y, float radius)
@@ -569,7 +609,18 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
     auto position = actor.Position();
     Point p = Project(position.x, position.y);
     float z = zoom_;
-    if (owner->weapon)
+    if (level_.society.enabled && level_.society.story.mukContracted && !owner->weapon)
+    {
+        Point hand{p.x + 11 * z, p.y - 25 * z};
+        Point tip{hand.x + 33 * z, hand.y - 39 * z};
+        r.Line(hand, tip, 7 * z, Color(25, 34, 42));
+        r.Line(hand, tip, 2 * z, Emissive(Color(157, 236, 218), 3));
+        r.Line({hand.x - 6 * z, hand.y - 5 * z},
+               {hand.x + 7 * z, hand.y + 5 * z},
+               3 * z,
+               Color(204, 159, 94));
+    }
+    else if (owner->weapon)
     {
         Point hand{p.x + 9 * z, p.y - 29 * z};
         float dx = (actor.aim.x - actor.aim.y) * .85f;
@@ -656,6 +707,11 @@ void PrototypeWorld::Rift(PrototypeRenderer& r, float x, float y)
 
 void PrototypeWorld::Hud(PrototypeRenderer& r)
 {
+    if (level_.society.enabled)
+    {
+        LivingHud(r);
+        return;
+    }
     float uiScale = std::min(1.f, std::min(r.Width() / 1280.f, r.Height() / 800.f));
     r.SetScale(uiScale);
     float w = r.Width() / uiScale, h = r.Height() / uiScale;
@@ -899,6 +955,7 @@ bool PrototypeWorld::SelfTest()
         return pass;
     };
     bool ok = LevelOne::SelfTest();
+    ok = LivingWorld::SelfTest() && ok;
     Location negative;
     negative.x = -1;
     negative.y = -641;
@@ -911,7 +968,7 @@ bool PrototypeWorld::SelfTest()
     auto different = Generate({-41, 9000000000000LL}, 2027);
     ok &= require(a.seed != different.seed && a.plots[0].width != different.plots[0].width,
                   "different seeds change building footprints");
-    PrototypeWorld world;
+    PrototypeWorld world(2026, false);
     uint32_t first = world.chunks_.at({0, 0}).seed;
     ActorId oldChunk = world.chunkActors_.at({0, 0});
     ActorId oldBuilding = world.level_.Graph().Get<ChunkActor>(oldChunk)->buildings[0];
@@ -1034,13 +1091,88 @@ bool PrototypeWorld::SelfTest()
         }
     }
     ok &= require(connected, "128 seeds / 1152 chunks: all walkable cells and exits connected");
+    PrototypeWorld settlement(2026);
+    settlement.level_.state = RunState::Lost;
+    bool pathsClear = true;
+    for (int frame = 0; frame < 3600; ++frame)
+    {
+        settlement.Update(.05f);
+        if (frame % 20 == 0)
+        {
+            for (auto* npc : settlement.level_.Graph().Query<NpcActor>())
+            {
+                auto p = npc->Position();
+                pathsClear &= settlement.Walkable(p.x, p.y, 10);
+            }
+        }
+    }
+    const auto& life = settlement.level_.society;
+    std::cout << "Living world 180s: hunts=" << life.hunts << " trades=" << life.trades
+              << " raids=" << life.raids << '\n';
+    ok &= require(pathsClear, "NPC paths never enter generated building collision");
+    ok &= require(life.hunts > 0 && life.trades > 0 && life.raids > 0,
+                  "real procedural town supports autonomous hunting trade and raids");
+    int insightBefore = 0;
+    for (auto* npc : settlement.level_.Graph().Query<NpcActor>())
+    {
+        insightBefore += npc->insight;
+    }
+    for (int step = 0; step < 100; ++step)
+    {
+        settlement.Move(24, 0);
+    }
+    for (int frame = 0; frame < 320; ++frame)
+    {
+        settlement.Update(.05f);
+    }
+    int insightAfter = 0;
+    for (auto* npc : settlement.level_.Graph().Query<NpcActor>())
+    {
+        insightAfter += npc->insight;
+    }
+    ok &= require(insightAfter > insightBefore
+                      && Length(settlement.level_.society.Center(settlement.level_.Graph())) > 2300
+                      && settlement.chunks_.count({0, 0}) == 0,
+                  "offscreen town continues simulation after streaming out of view");
+    PrototypeWorld journey(2026);
+    auto travel = [&](FarmPoint destination)
+    {
+        for (int step = 0; step < 400; ++step)
+        {
+            auto center = journey.level_.society.Center(journey.level_.Graph());
+            FarmPoint delta{center.x + destination.x, center.y + destination.y};
+            if (Length(delta) < 1)
+            {
+                break;
+            }
+            auto direction = Unit(delta);
+            float movement = std::min(5.f, Length(delta));
+            journey.Move(direction.x * movement, direction.y * movement);
+        }
+    };
+    auto interact = [&]()
+    {
+        journey.Key('e', true);
+        journey.Key('e', false);
+    };
+    travel({150, 0});
+    interact();
+    travel({0, 0});
+    travel({0, 250});
+    interact();
+    travel({0, 70});
+    interact();
+    travel({0, 450});
+    interact();
+    ok &= require(journey.level_.society.story.mukContracted,
+                  "walkable world route and E key complete the MAP01 evidence contract sequence");
     return ok;
 }
 
 void PrototypeWorld::PreviewBoss()
 {
     // Only invoked by the screenshot harness, never by a gameplay key.
-    *this = PrototypeWorld(seed_);
+    *this = PrototypeWorld(seed_, false);
     level_.Player().level = 4;
     level_.Player().weaponRank = 3;
     level_.kills = 12;

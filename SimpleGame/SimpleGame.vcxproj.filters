@@ -37,6 +37,7 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="LivingWorld.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="SceneGraph.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="GameTypes.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="ActorRenderContext.h"><Filter>헤더 파일</Filter></ClInclude>
@@ -72,6 +73,10 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="LivingWorld.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="LivingWorldInteraction.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="LivingWorldView.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="LivingWorldTests.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="SceneGraph.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="Navigation.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="GameplayContext.cpp"><Filter>소스 파일</Filter></ClCompile>

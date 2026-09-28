@@ -265,13 +265,14 @@ namespace
 
 int main(int argc, char** argv)
 {
-    bool smoke = false, selfTest = false, rebuildCache = false;
+    bool smoke = false, selfTest = false, rebuildCache = false, legacy = false;
     for (int i = 1; i < argc; ++i)
     {
         smoke |= std::string(argv[i]) == "--smoke-test";
         selfTest |= std::string(argv[i]) == "--self-test";
         profileTest |= std::string(argv[i]) == "--profile-test";
         rebuildCache |= std::string(argv[i]) == "--rebuild-mesh-cache";
+        legacy |= std::string(argv[i]) == "--level-one";
     }
     if ((selfTest || smoke) && !PrototypeWorld::SelfTest())
     {
@@ -336,7 +337,7 @@ int main(int argc, char** argv)
             }
         }
     }
-    world.reset(new PrototypeWorld(seed));
+    world.reset(new PrototypeWorld(seed, !legacy));
     RenderDiagnostics::Get().Event(
         "environment",
         std::string("seed=") + std::to_string(seed) + "; resolution=" + std::to_string(width) + "x"
@@ -360,6 +361,7 @@ int main(int argc, char** argv)
         bool ok = renderer.VerifyMeshCache();
         ok = VerifyPostEffects() && ok;
         ok = Snapshot(L"prototype-companion.bmp") && ok;
+        ok = Snapshot(L"living-world-town.bmp") && ok;
         ok = renderer.VerifyHDR() && ok;
         KeyDown('h', 0, 0);
         KeyUp('h', 0, 0);

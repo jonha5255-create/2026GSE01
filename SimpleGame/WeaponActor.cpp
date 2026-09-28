@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameplayActors.h"
 #include "GameplayContext.h"
+#include "LivingWorld.h"
 #include <algorithm>
 
 void WeaponActor::Update(float dt, ActorUpdateContext& services)
@@ -22,7 +23,7 @@ bool WeaponActor::Shoot(GameplayContext& context)
     {
         return false;
     }
-    EnemyActor* target = nullptr;
+    Actor* target = nullptr;
     float nearest = owner->Range();
     for (auto* enemy : context.scene.Query<EnemyActor>())
     {
@@ -33,6 +34,19 @@ bool WeaponActor::Shoot(GameplayContext& context)
         {
             target = enemy;
             nearest = distance;
+        }
+    }
+    if (context.society)
+    {
+        for (auto* npc : context.scene.Query<NpcActor>())
+        {
+            float distance = Length(Minus(npc->Position(), Position()));
+            if (npc->job == NpcJob::Wraith && npc->health > 0 && distance < nearest
+                && Navigation::Sight(Position(), npc->Position(), context.walkable))
+            {
+                target = npc;
+                nearest = distance;
+            }
         }
     }
     if (!target)

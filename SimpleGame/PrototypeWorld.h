@@ -9,7 +9,7 @@
 class PrototypeWorld : private ActorRenderContext
 {
   public:
-    explicit PrototypeWorld(uint32_t seed = 2026);
+    explicit PrototypeWorld(uint32_t seed = 2026, bool living = true);
     void Update(float dt);
     void Key(unsigned char key, bool down);
     void Draw(PrototypeRenderer& r);
@@ -48,6 +48,9 @@ class PrototypeWorld : private ActorRenderContext
     void Weapon(PrototypeRenderer& r, const WeaponActor& actor);
     void Rift(PrototypeRenderer& r, float x, float y);
     void Hud(PrototypeRenderer& r);
+    void LivingHud(PrototypeRenderer& r);
+    void Draw(const NpcActor& actor) override;
+    void Draw(const TownSiteActor& actor) override;
     void Enemy(PrototypeRenderer& r, const EnemyActor& enemy);
     void Loot(PrototypeRenderer& r, const LootActor& item);
     void Ring(PrototypeRenderer& r, float x, float y, float radius, Ink color, float width = 1);

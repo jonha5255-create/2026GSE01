@@ -1,6 +1,7 @@
 #pragma once
 #include "GameplayActors.h"
 #include "GameplayContext.h"
+#include "LivingWorld.h"
 #include <memory>
 
 // Encounter orchestration only. SceneGraph owns every placed Actor.
@@ -99,6 +100,7 @@ class LevelOne
     GameplayContext Context(const Walkable& walkable);
     static bool SelfTest();
     RunState state = RunState::Farming;
+    LivingWorld society;
     int kills = 0, pickups = 0;
 
   private:

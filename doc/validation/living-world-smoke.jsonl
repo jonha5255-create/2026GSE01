@@ -1,0 +1,489 @@
+{"tick_ms":6513000,"event":"session","detail":"schema=1; renderer=ordered-triangle-instancing-v1; mode=smoke-test; build=Release"}
+{"tick_ms":6513000,"event":"cache_policy","detail":"load_valid_files"}
+{"tick_ms":6513718,"event":"renderer_limits","detail":"GL_MAX_TEXTURE_BUFFER_SIZE=268435455; max_triangle_instances=65536"}
+{"tick_ms":6513781,"event":"world_start","detail":"simulation_s=0.000000; 잔명 마을: 주민 11명과 외곽 잔향귀 3체의 생활을 시작합니다."}
+{"tick_ms":6513781,"event":"environment","detail":"seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; timer_interval_ms=16; swap_interval=driver_default"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=189; name=도윤; action=사냥; raid_weight=0.100000; hp=115.000000; gold=50"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=190; name=유리; action=사냥; raid_weight=0.100000; hp=115.000000; gold=64"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=191; name=건우; action=사냥; raid_weight=0.100000; hp=115.000000; gold=45"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=192; name=갈치; action=약탈; raid_weight=0.990000; hp=125.000000; gold=81"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=193; name=붉은 눈; action=약탈; raid_weight=0.960000; hp=125.000000; gold=46"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=194; name=미령; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":6513781,"event":"npc_decision","detail":"id=195; name=덕수; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=196; name=이안; action=명상; raid_weight=0.100000; hp=100.000000; gold=77"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=197; name=무명 순례자; action=명상; raid_weight=0.100000; hp=100.000000; gold=60"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=198; name=초소장; action=순찰; raid_weight=0.100000; hp=180.000000; gold=92"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=199; name=백연; action=명상; raid_weight=0.100000; hp=100.000000; gold=46"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6513796,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6513796,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:1"}
+{"tick_ms":6513796,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=288"}
+{"tick_ms":6513875,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:shape"}
+{"tick_ms":6513875,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=864"}
+{"tick_ms":6513953,"event":"atlas_rebuilt","detail":"pages=2; resident_bytes=864"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:roundtrip-v1:22912:6513953"}
+{"tick_ms":6513968,"event":"mesh_saved","detail":"geometry-v2-layout12-font-16594808668345810354:roundtrip-v1:22912:6513953"}
+{"tick_ms":6513968,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1152"}
+{"tick_ms":6513968,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:roundtrip-v1:22912:6513953"}
+{"tick_ms":6513968,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1152"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:0"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:1"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:2"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:3"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:4"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:5"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:6"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:7"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:8"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:9"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:10"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:11"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:12"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:13"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:14"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:15"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:16"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:17"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:18"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:19"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:20"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:21"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:22"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:23"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:24"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:25"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:26"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:27"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:28"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:29"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:30"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:31"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:32"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:33"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:34"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:35"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:36"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:37"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:38"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:39"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:40"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:41"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:42"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:43"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:44"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:45"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:46"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:47"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:48"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:49"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:50"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:51"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:52"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:53"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:54"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:55"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:56"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:57"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:58"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:59"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:60"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:61"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:62"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:63"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:64"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:65"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:66"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:67"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:68"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:69"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:70"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:71"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:72"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:73"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:74"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:75"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:76"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:77"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:78"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:79"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:80"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:81"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:82"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:83"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:84"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:85"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:86"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:87"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:88"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:89"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:90"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:91"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:92"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:93"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:94"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:95"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:96"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:97"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:98"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:99"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:100"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:101"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:102"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:103"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:104"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:105"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:106"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:107"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:108"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:109"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:110"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:111"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:112"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:113"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:114"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:115"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:116"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:117"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:118"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:119"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:120"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:121"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:122"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:123"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:124"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:125"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:126"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:127"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:128"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:129"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:130"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:131"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:132"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:133"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:134"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:135"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:136"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:137"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:138"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:139"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:140"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:141"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:142"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:143"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:144"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:145"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:146"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:147"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:148"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:149"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:150"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:151"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:152"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:153"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:154"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:155"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:156"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:157"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:158"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:159"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:160"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:161"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:162"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:163"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:164"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:165"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:166"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:167"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:168"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:169"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:170"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:171"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:172"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:173"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:174"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:175"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:176"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:177"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:178"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:179"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:180"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:181"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:182"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:183"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:184"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:185"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:186"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:187"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:188"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:189"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:190"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:191"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:192"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:193"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:194"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:195"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:196"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:197"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:198"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:199"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:200"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:201"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:202"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:203"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:204"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:205"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:206"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:207"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:208"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:209"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:210"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:211"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:212"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:213"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:214"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:215"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:216"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:217"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:218"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:219"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:220"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:221"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:222"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:223"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:224"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:225"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:226"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:227"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:228"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:229"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:230"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:231"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:232"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:233"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:234"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:235"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:236"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:237"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:238"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:239"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:240"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:241"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:242"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:243"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:244"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:245"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:246"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:247"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:248"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:249"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:250"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:251"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:252"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:253"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:254"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:255"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:256"}
+{"tick_ms":6513968,"event":"mesh_generated","detail":"geometry-v2-layout12-font-16594808668345810354:test:eviction:257"}
+{"tick_ms":6513968,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=75456"}
+{"tick_ms":6513968,"event":"mesh_evicted","detail":"roundtrip-v1:22912:6513953"}
+{"tick_ms":6513968,"event":"mesh_evicted","detail":"test:shape"}
+{"tick_ms":6513968,"event":"mesh_evicted","detail":"test:eviction:0"}
+{"tick_ms":6513968,"event":"mesh_evicted","detail":"test:eviction:1"}
+{"tick_ms":6513968,"event":"mesh_evicted","detail":"test:eviction:10"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3936562276:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2983471676:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1131641326:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3435462376:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3265983033:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3913226564:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:4165824950:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2575099438:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:979519077:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:621570869:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1441117784:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:651311515:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3558811836:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3439369451:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:645936265:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2098829373:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2232973217:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2989494586:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:984030009:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3304447008:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1611486522:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:3898502102:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2300954445:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:1718543262:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:2337736911:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:2"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:3"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983033:95.000000:104.000000:76.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:0"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983034:90.000000:107.000000:114.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983036:110.000000:107.000000:112.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519077:95.000000:93.000000:118.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099438:94.000000:97.000000:110.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519079:85.000000:85.000000:119.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519078:93.000000:100.000000:93.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099439:112.000000:94.000000:96.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099441:111.000000:86.000000:75.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811836:98.000000:103.000000:96.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811837:97.000000:86.000000:117.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811838:104.000000:87.000000:91.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3439369453:95.000000:101.000000:71.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3558811839:89.000000:94.000000:75.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973217:96.000000:90.000000:94.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494586:95.000000:111.000000:98.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973218:102.000000:88.000000:62.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494587:102.000000:85.000000:101.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494588:85.000000:100.000000:81.000000"}
+{"tick_ms":6513984,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973219:104.000000:98.000000:108.000000"}
+{"tick_ms":6514000,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2989494589:86.000000:96.000000:100.000000"}
+{"tick_ms":6514000,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:1611486522:102.000000:107.000000:119.000000"}
+{"tick_ms":6514000,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1246896"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:100"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:101"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:102"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:103"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:104"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:105"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:106"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:107"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:108"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:109"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:11"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:110"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:111"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:112"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:113"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:114"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:115"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:116"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:117"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:118"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:119"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:12"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:120"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:121"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:122"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:123"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:124"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:125"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:126"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:127"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:128"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:129"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:13"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:130"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:131"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:132"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:133"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:134"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:135"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:136"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:137"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:138"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:139"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:14"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:140"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:141"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:142"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:143"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:144"}
+{"tick_ms":6514000,"event":"mesh_evicted","detail":"test:eviction:145"}
+{"tick_ms":6514000,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1232496"}
+{"tick_ms":6514156,"event":"key_down","detail":"h"}
+{"tick_ms":6514156,"event":"key_up","detail":"h"}
+{"tick_ms":6514171,"event":"key_down","detail":"h"}
+{"tick_ms":6514171,"event":"key_up","detail":"h"}
+{"tick_ms":6514171,"event":"key_down","detail":"q"}
+{"tick_ms":6514171,"event":"key_up","detail":"q"}
+{"tick_ms":6514171,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514187,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514187,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514187,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514203,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514203,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514218,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514234,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514234,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514250,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514250,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514265,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514265,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514265,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514265,"event":"world_snapshot","detail":"time=5.00001; trades=0; raids=0; hunts=0; player_gold=80; npcs=189:도윤:사냥꾼:사냥:hp=115:gold=50:goods=0:max_hp=115:insight=0:local_x=208.921:local_y=164.551:target=200:raid_weight=0.1:wealth_weight=0.62:survival_weight=0.8:insight_weight=0.2|190:유리:사냥꾼:사냥:hp=115:gold=64:goods=0:max_hp=115:insight=0:local_x=201.001:local_y=240.819:target=200:raid_weight=0.1:wealth_weight=0.6:survival_weight=0.8:insight_weight=0.2|191:건우:사냥꾼:사냥:hp=87:gold=45:goods=0:max_hp=115:insight=0:local_x=226.378:local_y=203.529:target=193:raid_weight=0.1:wealth_weight=0.55:survival_weight=0.8:insight_weight=0.2|192:갈치:약탈자:약탈:hp=125:gold=81:goods=0:max_hp=125:insight=0:local_x=240.296:local_y=105.42:target=189:raid_weight=0.99:wealth_weight=0.95:survival_weight=0.8:insight_weight=0.2|193:붉은 눈:약탈자:약탈:hp=97:gold=46:goods=0:max_hp=125:insight=0:local_x=234.203:local_y=201.066:target=191:raid_weight=0.96:wealth_weight=0.95:survival_weight=0.8:insight_weight=0.2|194:미령:상인:거래:hp=100:gold=250:goods=8:max_hp=100:insight=0:local_x=-31.358:local_y=-33.5932:target=0:raid_weight=0.1:wealth_weight=0.53:survival_weight=0.8:insight_weight=0.2|195:덕수:상인:거래:hp=100:gold=250:goods=8:max_hp=100:insight=0:local_x=-9.07306:local_y=17.121:target=0:raid_weight=0.1:wealth_weight=0.75:survival_weight=0.8:insight_weight=0.2|196:이안:구도자:명상:hp=100:gold=77:goods=0:max_hp=100:insight=1:local_x=0:local_y=411.817:target=0:raid_weight=0.1:wealth_weight=0.65:survival_weight=0.8:insight_weight=1|197:무명 순례자:구도자:명상:hp=100:gold=60:goods=0:max_hp=100:insight=1:local_x=0:local_y=411.65:target=0:raid_weight=0.1:wealth_weight=0.68:survival_weight=0.8:insight_weight=1|198:초소장:경비:순찰:hp=180:gold=92:goods=0:max_hp=180:insight=0:local_x=206.863:local_y=30.0836:target=193:raid_weight=0.1:wealth_weight=0.59:survival_weight=0.8:insight_weight=0.2|199:백연:기록자:명상:hp=100:gold=46:goods=0:max_hp=100:insight=1:local_x=0:local_y=61.8166:target=0:raid_weight=0.1:wealth_weight=0.5:survival_weight=0.8:insight_weight=1|200:잔향귀 하나:잔향귀:순찰:hp=48:gold=12:goods=1:max_hp=48:insight=0:local_x=220:local_y=460:target=0:raid_weight=0.1:wealth_weight=0.62:survival_weight=0.8:insight_weight=0.2|201:잔향귀 둘:잔향귀:순찰:hp=48:gold=12:goods=1:max_hp=48:insight=0:local_x=340:local_y=460:target=0:raid_weight=0.1:wealth_weight=0.58:survival_weight=0.8:insight_weight=0.2|202:잔향귀 셋:잔향귀:순찰:hp=48:gold=12:goods=1:max_hp=48:insight=0:local_x=460:local_y=410:target=0:raid_weight=0.1:wealth_weight=0.51:survival_weight=0.8:insight_weight=0.2|"}
+{"tick_ms":6514281,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514296,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514296,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514296,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514296,"event":"npc_decision","detail":"id=191; name=건우; action=휴식; raid_weight=0.100000; hp=45.000000; gold=45"}
+{"tick_ms":6514312,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514312,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514312,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514328,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514328,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514328,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=34.000000; gold=12"}
+{"tick_ms":6514328,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514343,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=34.000000; gold=12"}
+{"tick_ms":6514343,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514343,"event":"npc_decision","detail":"id=192; name=갈치; action=휴식; raid_weight=0.990000; hp=59.000000; gold=81"}
+{"tick_ms":6514343,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=휴식; raid_weight=0.100000; hp=20.000000; gold=12"}
+{"tick_ms":6514359,"event":"npc_decision","detail":"id=200; name=잔향귀 하나; action=휴식; raid_weight=0.100000; hp=6.000000; gold=12"}
+{"tick_ms":6514359,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514359,"event":"hunt","detail":"simulation_s=9.600025; 유리 사냥: 잔향귀 하나 / 12전, 잔향석 1"}
+{"tick_ms":6514359,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514359,"event":"npc_decision","detail":"id=190; name=유리; action=거래; raid_weight=0.100000; hp=109.000000; gold=76"}
+{"tick_ms":6514375,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514375,"event":"world_snapshot","detail":"time=10; trades=0; raids=0; hunts=1; player_gold=80; npcs=189:도윤:사냥꾼:사냥:hp=115:gold=50:goods=0:max_hp=115:insight=0:local_x=225.073:local_y=452.766:target=201:raid_weight=0.1:wealth_weight=0.62:survival_weight=0.8:insight_weight=0.2|190:유리:사냥꾼:거래:hp=109:gold=76:goods=1:max_hp=118:insight=0:local_x=195.715:local_y=454.92:target=0:raid_weight=0.1:wealth_weight=0.6:survival_weight=0.8:insight_weight=0.2|191:건우:사냥꾼:휴식:hp=3:gold=45:goods=0:max_hp=115:insight=0:local_x=118.935:local_y=24.0814:target=0:raid_weight=0.1:wealth_weight=0.55:survival_weight=0.8:insight_weight=0.2|192:갈치:약탈자:휴식:hp=37:gold=81:goods=0:max_hp=125:insight=0:local_x=217.314:local_y=137.747:target=0:raid_weight=0.99:wealth_weight=0.95:survival_weight=0.8:insight_weight=0.2|193:붉은 눈:약탈자:약탈:hp=69:gold=46:goods=0:max_hp=125:insight=0:local_x=158.526:local_y=51.9695:target=191:raid_weight=0.96:wealth_weight=0.95:survival_weight=0.8:insight_weight=0.2|194:미령:상인:거래:hp=100:gold=250:goods=8:max_hp=100:insight=0:local_x=-31.358:local_y=-33.5932:target=0:raid_weight=0.1:wealth_weight=0.53:survival_weight=0.8:insight_weight=0.2|195:덕수:상인:거래:hp=100:gold=250:goods=8:max_hp=100:insight=0:local_x=-9.07306:local_y=17.121:target=0:raid_weight=0.1:wealth_weight=0.75:survival_weight=0.8:insight_weight=0.2|196:이안:구도자:명상:hp=100:gold=77:goods=0:max_hp=100:insight=2:local_x=0:local_y=411.817:target=0:raid_weight=0.1:wealth_weight=0.65:survival_weight=0.8:insight_weight=1|197:무명 순례자:구도자:명상:hp=100:gold=60:goods=0:max_hp=100:insight=3:local_x=0:local_y=411.65:target=0:raid_weight=0.1:wealth_weight=0.68:survival_weight=0.8:insight_weight=1|198:초소장:경비:순찰:hp=138:gold=92:goods=0:max_hp=180:insight=0:local_x=219.244:local_y=147.831:target=192:raid_weight=0.1:wealth_weight=0.59:survival_weight=0.8:insight_weight=0.2|199:백연:기록자:명상:hp=100:gold=46:goods=0:max_hp=100:insight=2:local_x=0:local_y=61.8166:target=0:raid_weight=0.1:wealth_weight=0.5:survival_weight=0.8:insight_weight=1|200:잔향귀 하나:잔향귀:회복 중:hp=0:gold=0:goods=0:max_hp=48:insight=0:local_x=220:local_y=460:target=0:raid_weight=0.1:wealth_weight=0.62:survival_weight=0.8:insight_weight=0.2|201:잔향귀 둘:잔향귀:순찰:hp=48:gold=12:goods=1:max_hp=48:insight=0:local_x=340:local_y=460:target=0:raid_weight=0.1:wealth_weight=0.58:survival_weight=0.8:insight_weight=0.2|202:잔향귀 셋:잔향귀:순찰:hp=48:gold=12:goods=1:max_hp=48:insight=0:local_x=460:local_y=410:target=0:raid_weight=0.1:wealth_weight=0.51:survival_weight=0.8:insight_weight=0.2|"}
+{"tick_ms":6514390,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514390,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514390,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=34.000000; gold=12"}
+{"tick_ms":6514406,"event":"raid","detail":"simulation_s=11.416664; 초소장 약탈: 갈치 / 40전, 잔향석 0"}
+{"tick_ms":6514406,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514421,"event":"key_down","detail":"d"}
+{"tick_ms":6514421,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=34.000000; gold=12"}
+{"tick_ms":6514437,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=휴식; raid_weight=0.100000; hp=20.000000; gold=12"}
+{"tick_ms":6514437,"event":"raid","detail":"simulation_s=12.216652; 붉은 눈 약탈: 건우 / 22전, 잔향석 0"}
+{"tick_ms":6514437,"event":"npc_decision","detail":"id=202; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":6514453,"event":"key_up","detail":"d"}
+{"tick_ms":6514453,"event":"key_down","detail":"e"}
+{"tick_ms":6514453,"event":"key_up","detail":"e"}
+{"tick_ms":6514453,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=휴식; raid_weight=0.100000; hp=20.000000; gold=12"}
+{"tick_ms":6514453,"event":"npc_decision","detail":"id=201; name=잔향귀 둘; action=휴식; raid_weight=0.100000; hp=6.000000; gold=12"}
+{"tick_ms":6514515,"event":"key_down","detail":"v"}
+{"tick_ms":6514515,"event":"key_up","detail":"v"}
+{"tick_ms":6514515,"event":"resize","detail":"1280x800"}
+{"tick_ms":6514515,"event":"resize","detail":"960x600"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3435462377:102.000000:100.000000:108.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3913226566:104.000000:94.000000:76.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3265983035:88.000000:105.000000:95.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2575099440:88.000000:112.000000:108.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:979519080:112.000000:89.000000:92.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:651311516:109.000000:96.000000:105.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:2232973220:97.000000:93.000000:80.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:1611486524:89.000000:100.000000:92.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3898502104:84.000000:109.000000:57.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:1611486523:95.000000:109.000000:87.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:3304447009:105.000000:113.000000:97.000000"}
+{"tick_ms":6514515,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:1611486525:94.000000:98.000000:70.000000"}
+{"tick_ms":6514515,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1394352"}
+{"tick_ms":6514562,"event":"resize","detail":"960x600"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:146"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:147"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:148"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:149"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:15"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:150"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:151"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:152"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:153"}
+{"tick_ms":6514562,"event":"mesh_evicted","detail":"test:eviction:154"}
+{"tick_ms":6514578,"event":"mesh_evicted","detail":"test:eviction:155"}
+{"tick_ms":6514578,"event":"mesh_evicted","detail":"test:eviction:156"}
+{"tick_ms":6514578,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=1390896"}
+{"tick_ms":6514578,"event":"resize","detail":"961x601"}
+{"tick_ms":6514593,"event":"resize","detail":"961x601"}
+{"tick_ms":6514609,"event":"resize","detail":"1280x800"}
+{"tick_ms":6514687,"event":"resize","detail":"1280x800"}
+{"tick_ms":6514687,"event":"session_end","detail":"renderer shutdown"}
