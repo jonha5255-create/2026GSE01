@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>잔명 세계 · 라이브 모니터</title>
+  <link rel="stylesheet" href="monitor.css">
+  <script src="monitor.js" defer></script>
+</head>
+<body>
+  <header>
+    <div><span class="eyebrow">2026 GSE / WORLD TELEMETRY</span><h1>잔명 세계 <span>라이브 모니터</span></h1></div>
+    <div class="connection"><span id="connection" class="badge waiting" role="status">연결 대기</span><span id="updated">아직 수신된 상태가 없습니다.</span></div>
+  </header>
+  <main>
+    <div id="notice" class="notice">게임을 실행하면 NPC와 마을 상태가 자동으로 표시됩니다.</div>
+    <section class="overview" aria-label="전체 현황">
+      <article class="metric"><span>활동 중인 NPC</span><strong id="npc-alive">—</strong><small id="npc-total">등록 — / 회복 — / 비활성 —</small></article>
+      <article class="metric"><span>살아 있는 몬스터</span><strong id="mob-alive">—</strong><small id="mob-total">등록 — / 재출현 대기 — / 비활성 —</small></article>
+      <article class="metric"><span>마을 수</span><strong id="village-count">—</strong><small id="chunks">스트리밍 청크 —</small></article>
+      <article class="metric"><span>주민 전체 자산</span><strong id="wealth">—</strong><small id="inventory">잔향석 — / 깨달음 —</small></article>
+    </section>
+    <section class="world-strip"><div><span>플레이어 위치</span><strong id="player-position">—</strong></div><div><span>현재 목표</span><strong id="quest">—</strong></div><div><span>시뮬레이션 시간</span><strong id="sim-time">—</strong></div><div><span>메시지</span><strong id="message-id">—</strong></div></section>
+    <section>
+      <div class="section-heading"><h2>마을별 현황</h2><span>소속 Actor 기준 · 자산은 인간 주민 합계</span></div>
+      <div id="villages" class="villages"><div class="empty">마을 상태를 기다리고 있습니다.</div></div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><h2>NPC 상태</h2><span id="row-count">—</span></div>
+      <div class="filters">
+        <label>마을<select id="village-filter"><option value="all">전체 마을</option></select></label>
+        <label>직업<select id="job-filter"><option value="all">전체 직업</option></select></label>
+        <label class="search">검색<input id="search" type="search" placeholder="NPC 이름 또는 행동 검색" autocomplete="off"></label>
+        <label class="checkbox"><input id="inactive-filter" type="checkbox" checked>비활성 포함</label>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>NPC / 마을</th><th>직업</th><th>현재 행동</th><th>체력</th><th>자산</th><th>잔향석</th><th>깨달음</th><th>상태</th></tr></thead><tbody id="npcs"><tr><td colspan="8" class="empty">JSON 메시지를 기다리고 있습니다.</td></tr></tbody></table></div>
+      <p class="hint">NPC 이름을 누르면 성향, 목표 Actor, 성장, 위치를 확인할 수 있습니다.</p>
+      <div id="npc-detail" class="detail" hidden></div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><h2>몬스터 상태</h2><span>잔향귀 · 역의 문지기 · 파밍 몬스터</span></div>
+      <div class="table-wrap"><table><thead><tr><th>몬스터</th><th>소속 마을</th><th>체력</th><th>상태 / 재출현</th><th>플레이어 상대 위치</th></tr></thead><tbody id="monsters"><tr><td colspan="5" class="empty">몬스터 상태를 기다리고 있습니다.</td></tr></tbody></table></div>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><h2>사건 모니터링</h2><span id="incident-totals">살인 0 · 소문 0</span></div>
+      <p class="hint">최근 128건 · 살인은 인간의 치명적 제압으로 집계하며 기존 회복 규칙을 유지합니다. 소문은 인근 목격자가 3초 뒤 전하는 미검증 목격담입니다.</p>
+      <div class="filters"><label>사건 종류<select id="incident-filter"><option value="all">전체 사건</option><option value="murder">살인</option><option value="rumor">소문</option></select></label></div>
+      <div class="table-wrap"><table><thead><tr><th>번호 / 발생 시각</th><th>종류</th><th>마을</th><th>관련 인물</th><th>내용 / 원본 사건</th></tr></thead><tbody id="incidents"></tbody></table></div>
+    </section>
+    <section class="bottom-grid">
+      <article class="panel"><div class="section-heading"><h2>최근 게임 이벤트</h2><span>최근 5건</span></div><ul id="events" class="events"><li>이벤트 수신 대기</li></ul></article>
+      <article class="panel"><div class="section-heading"><h2>수신 JSON</h2><button id="download" disabled>현재 상태 저장</button></div><p class="hint">/api/state · HTTP GET · 0.5초 갱신 · schemaVersion 1</p><details id="json-panel"><summary>원본 메시지 보기</summary><pre id="json">수신 대기</pre></details></article>
+    </section>
+  </main>
+  <footer>127.0.0.1 로컬 모니터 · 게임 종료 시 연결이 끊깁니다. · 마지막 수신 데이터는 화면에 유지됩니다.</footer>
+</body>
+</html>

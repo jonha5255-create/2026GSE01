@@ -2,7 +2,20 @@
 #include "Actor.h"
 #include "GameTypes.h"
 #include "ActorRenderContext.h"
+#include <array>
 struct GameplayContext;
+enum class YokaiForm
+{
+    Sword,
+    Ranged,
+    Claw
+};
+
+struct YokaiGrowth
+{
+    int level = 1, experience = 0;
+    float skillCooldown = 0;
+};
 
 class PlayerActor : public Actor
 {
@@ -24,6 +37,34 @@ class PlayerActor : public Actor
     }
 
     float Damage() const;
+    void SelectYokai(YokaiForm form);
+    const char* YokaiName() const;
+    std::array<YokaiGrowth, 3> yokaiGrowth{};
+
+    const YokaiGrowth& Companion() const
+    {
+        return yokaiGrowth[int(yokai)];
+    }
+
+    int Evolution() const
+    {
+        return Companion().level >= 9   ? 3
+               : Companion().level >= 6 ? 2
+               : Companion().level >= 3 ? 1
+                                        : 0;
+    }
+
+    int YokaiExperienceRequired() const
+    {
+        return 30 + Companion().level * 20;
+    }
+
+    const char* SkillName() const;
+    void AddYokaiExperience(int amount, GameplayContext& context);
+    float StrikeRange() const;
+    float StrikeCooldown() const;
+    float StrikeDamage() const;
+    YokaiForm yokai = YokaiForm::Ranged;
     float Cooldown() const;
     float MaximumHealth() const;
     float Range() const;
@@ -90,6 +131,7 @@ class ProjectileActor : public Actor
     }
 
     FarmPoint velocity;
+    ActorId humanTarget = NoActor;
     float traveled = 0, range = 320, damage = 14;
 };
 
@@ -177,6 +219,17 @@ class WeaponActor : public Actor
     }
 
     bool Shoot(GameplayContext& context);
+    bool CastSkill(GameplayContext& context);
+    void UpdateSkill(float dt, GameplayContext& context);
+    float skillTime = -1, skillDamage = 0;
+    int skillPulses = 0;
+    YokaiForm skillForm = YokaiForm::Sword;
+    bool ShootAt(Actor& target, GameplayContext& context);
+    void StartSwing(FarmPoint target);
+    float SwingProgress() const;
+    float SwingLunge() const;
+    float swingTime = 0, swingDuration = .42f;
+    int swingSide = 1;
     FarmPoint aim{1, 0};
     float shotTimer_ = 0, muzzleFlash = 0;
 

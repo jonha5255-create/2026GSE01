@@ -16,6 +16,11 @@ namespace
         return {a.x + b.x, a.y + b.y};
     }
 
+    FarmPoint Times(FarmPoint p, float factor)
+    {
+        return {p.x * factor, p.y * factor};
+    }
+
     bool Alive(const NpcActor& npc)
     {
         return npc.health > 0 && npc.recovery <= 0;
@@ -94,7 +99,21 @@ void NpcActor::Update(float dt, ActorUpdateContext& services)
     auto& context = dynamic_cast<GameplayContext&>(services);
     if (context.society)
     {
+        auto before = local;
         context.society->UpdateNpc(*this, dt, context);
+        auto delta = Minus(local, before);
+        float distance = Length(delta);
+        bool moving = dt > 0 && distance > .001f && distance < 100 * dt && health > 0;
+        float blend = 1 - std::exp(-12 * std::max(0.f, dt));
+        moveBlend += ((moving ? 1.f : 0.f) - moveBlend) * blend;
+        if (moving)
+        {
+            gaitPhase =
+                std::fmod(gaitPhase + distance * (monsterForm == 2 ? .12f : .2f), 6.2831853f);
+            auto direction = Unit(delta);
+            moveFacing = Unit({moveFacing.x + (direction.x - moveFacing.x) * blend,
+                               moveFacing.y + (direction.y - moveFacing.y) * blend});
+        }
     }
 }
 
@@ -112,8 +131,15 @@ const char* LivingWorld::ActionName(NpcAction action)
 
 const char* LivingWorld::SiteName(TownSite site)
 {
-    static const char* names[] = {
-        "잔명 시장", "구호소", "백연의 기록소", "서진의 집", "학교 기록함", "묵의 기억"};
+    static const char* names[] = {"마을 시장",
+                                  "구호소",
+                                  "백연의 기록소",
+                                  "하린의 사진 흔적",
+                                  "학교 기록함",
+                                  "묵의 기억",
+                                  "동부 중계기",
+                                  "사라진 승강장 신호",
+                                  "존재하지 않는 역"};
     return names[int(site)];
 }
 
@@ -141,13 +167,40 @@ void LivingWorld::Note(const std::string& text, const std::string& kind)
     RenderDiagnostics::Get().Event(kind, "simulation_s=" + std::to_string(clock) + "; " + text);
 }
 
+void LivingWorld::RecordIncident(WorldIncident incident)
+{
+    incident.id = nextIncident_++;
+    incident.time = clock;
+    if (incident.type == "murder")
+    {
+        ++murders;
+    }
+    else if (incident.type == "rumor")
+    {
+        ++rumors;
+    }
+    Note(incident.text, incident.type);
+    RenderDiagnostics::Get().Event(
+        "incident_record",
+        "id=" + std::to_string(incident.id) + "; source=" + std::to_string(incident.sourceId)
+            + "; actor=" + std::to_string(incident.actor) + "; victim="
+            + std::to_string(incident.victim) + "; witness=" + std::to_string(incident.witness)
+            + "; village=" + std::to_string(incident.village));
+    incidents.push_front(std::move(incident));
+    if (incidents.size() > 128)
+    {
+        incidents.pop_back();
+    }
+}
+
 void LivingWorld::Initialize(SceneGraph& graph, uint32_t seed)
 {
     enabled = true;
     random_ = seed ? seed : 1;
     town = graph.Spawn<TownActor>(NoActor).Id();
-    const FarmPoint sites[] = {{-40, 0}, {0, -70}, {0, 70}, {150, 0}, {0, 250}, {0, 450}};
-    for (int i = 0; i < 6; ++i)
+    const FarmPoint sites[] = {
+        {-40, 0}, {0, -70}, {0, 70}, {150, 0}, {0, 250}, {0, 450}, {1190, 0}, {1830, 0}, {2470, 0}};
+    for (int i = 0; i < 9; ++i)
     {
         graph.Spawn<TownSiteActor>(town, TownSite(i)).local = sites[i];
     }
@@ -225,6 +278,7 @@ void LivingWorld::Initialize(SceneGraph& graph, uint32_t seed)
         }
         if (npc.job == NpcJob::Wraith)
         {
+            npc.monsterForm = (i - 11) % 3;
             npc.maximumHealth = npc.health = 48;
             npc.gold = 12;
             npc.goods = 1;
@@ -317,6 +371,10 @@ void LivingWorld::Decide(NpcActor& npc, GameplayContext& context)
             {
                 score -= float(other->gold) * .5f;
             }
+            if (Length(Minus(other->Position(), npc.Position())) > 600)
+            {
+                continue;
+            }
             if (score < best)
             {
                 best = score;
@@ -336,7 +394,8 @@ void LivingWorld::Decide(NpcActor& npc, GameplayContext& context)
 
 void LivingWorld::MoveTo(NpcActor& npc, FarmPoint goal, float dt, GameplayContext& context)
 {
-    FarmPoint origin = Center(context.scene);
+    auto* parent = context.scene.Get(npc.Parent());
+    FarmPoint origin = parent ? parent->Position() : FarmPoint{};
     FarmPoint position = npc.local;
     if (Length(Minus(position, goal)) < 9)
     {
@@ -370,6 +429,14 @@ void LivingWorld::MoveTo(NpcActor& npc, FarmPoint goal, float dt, GameplayContex
     float step = std::min(Length(delta), speed * dt);
     auto direction = Unit(delta);
     auto candidate = Add(npc.Position(), {direction.x * step, direction.y * step});
+    if (npc.wilderness)
+    {
+        auto local = Minus(candidate, origin);
+        if (local.x < 18 || local.y < 18 || local.x > 622 || local.y > 622)
+        {
+            return;
+        }
+    }
     if (Navigation::Sight(npc.Position(), candidate, context.walkable, 11))
     {
         npc.SetPosition(candidate);
@@ -426,11 +493,49 @@ void LivingWorld::Trade(NpcActor& npc, GameplayContext& context)
 void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& context)
 {
     bool prey = victim.job == NpcJob::Wraith;
+    if (!prey)
+    {
+        WorldIncident incident;
+        incident.type = "murder";
+        incident.actor = attacker ? attacker->Id() : context.player.Id();
+        incident.actorName = attacker ? attacker->Name() : "윤서진";
+        incident.victim = victim.Id();
+        incident.victimName = victim.Name();
+        for (auto* ancestor = context.scene.Get(victim.Parent()); ancestor;
+             ancestor = context.scene.Get(ancestor->Parent()))
+        {
+            if (dynamic_cast<TownActor*>(ancestor))
+            {
+                incident.village = ancestor->Id();
+                break;
+            }
+        }
+        float nearest = 180.f * 180.f;
+        for (auto* witness : context.scene.Query<NpcActor>())
+        {
+            if (witness == &victim || witness == attacker || witness->job == NpcJob::Wraith
+                || !Alive(*witness))
+            {
+                continue;
+            }
+            auto a = witness->Position(), b = victim.Position();
+            float distance = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+            if (distance < nearest)
+            {
+                nearest = distance;
+                incident.witness = witness->Id();
+                incident.witnessName = witness->Name();
+            }
+        }
+        incident.text = incident.actorName + " → " + victim.Name()
+                        + ": 살인 사건(현행 규칙에서는 치명적 제압 후 회복)";
+        RecordIncident(std::move(incident));
+    }
     int money = prey ? victim.gold : victim.gold / 2;
     int cargo = victim.goods;
     victim.gold -= money;
     victim.goods = 0;
-    victim.recovery = prey ? 22.f : 28.f;
+    victim.recovery = victim.fieldBoss ? 90.f : prey ? 22.f : 28.f;
     victim.action = NpcAction::Recover;
     victim.path.clear();
     victim.target = victim.aggressor = NoActor;
@@ -454,8 +559,16 @@ void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& 
         goods += cargo;
         if (prey)
         {
+            if (victim.storyGuardian && story.gateOpened && !story.guardianDefeated)
+            {
+                story.guardianDefeated = true;
+                victim.enabled = false;
+                Note("묵: 문지기가 쓰러졌어. 역의 기록 장치를 E로 조사하자.", "story");
+                dialogue = "문지기 제압! 역의 기록 장치에서 하린의 기억을 회수하세요.";
+            }
             ++story.hunted;
-            context.player.AddExperience(14, context);
+            context.player.AddExperience(victim.fieldBoss ? 80 : 14, context);
+            context.player.AddYokaiExperience(victim.fieldBoss ? 80 : 14, context);
             if (story.mukContracted)
             {
                 story.mukSync = std::min(100, story.mukSync + 3);
@@ -500,10 +613,97 @@ void LivingWorld::Damage(NpcActor& victim,
     }
 }
 
+void LivingWorld::BeginMonsterAttack(
+    NpcActor& npc, ActorId target, bool player, float damage, FarmPoint position)
+{
+    npc.attackTime = 0;
+    npc.attackHit = false;
+    npc.attackPlayer = player;
+    npc.attackVictim = target;
+    npc.attackDamage = damage;
+    npc.attackDirection = Unit(Minus(position, npc.Position()));
+}
+
 void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
 {
+    if (npc.health <= 0)
+    {
+        npc.attackTime = -1;
+    }
+    if (npc.attackTime >= 0 && npc.health > 0)
+    {
+        npc.attackTime += dt;
+        float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
+        if (!npc.attackHit && npc.attackTime >= windup)
+        {
+            npc.attackHit = true;
+            auto* victim = context.scene.Get<NpcActor>(npc.attackVictim);
+            FarmPoint target = npc.attackPlayer ? context.player.Position()
+                               : victim         ? victim->Position()
+                                                : npc.Position();
+            bool valid = npc.attackPlayer
+                             ? context.state != RunState::Lost
+                             : victim && Alive(*victim) && context.scene.Active(victim->Id());
+            if (valid && Length(Minus(target, npc.Position())) < (npc.fieldBoss ? 62.f : 50.f)
+                && Navigation::Sight(npc.Position(), target, context.walkable))
+            {
+                if (npc.attackPlayer)
+                {
+                    context.player.DamagePlayer(npc.attackDamage, context);
+                }
+                else
+                {
+                    Damage(*victim, npc.attackDamage, &npc, context);
+                }
+            }
+        }
+        if (npc.attackTime >= windup + .4f)
+        {
+            npc.attackTime = -1;
+            npc.cooldown = npc.monsterForm == 1 ? .45f : .8f;
+        }
+        return;
+    }
     npc.cooldown = std::max(0.f, npc.cooldown - dt);
     npc.repath = std::max(0.f, npc.repath - dt);
+    if (npc.storyGuardian)
+    {
+        if (npc.health <= 0)
+        {
+            return;
+        }
+        npc.action = NpcAction::Hunt;
+        FarmPoint delta = Minus(context.player.Position(), npc.Position());
+        if (context.state != RunState::Lost && Length(delta) < 245
+            && Length(Minus(npc.local, npc.home)) < 240)
+        {
+            auto direction = Unit(delta);
+            auto destination =
+                Add(npc.Position(), Times(direction, std::min(Length(delta), dt * 38)));
+            if (context.walkable(destination.x, destination.y, 12))
+            {
+                npc.SetPosition(destination);
+            }
+            if (npc.cooldown <= 0 && Length(delta) < 42
+                && Navigation::Sight(npc.Position(), context.player.Position(), context.walkable))
+            {
+                BeginMonsterAttack(npc, NoActor, true, 12, context.player.Position());
+                npc.cooldown = 1.2f;
+            }
+        }
+        else
+        {
+            auto direction = Unit(Minus(npc.home, npc.local));
+            auto destination =
+                Add(npc.Position(),
+                    Times(direction, std::min(Length(Minus(npc.home, npc.local)), dt * 30)));
+            if (context.walkable(destination.x, destination.y, 12))
+            {
+                npc.SetPosition(destination);
+            }
+        }
+        return;
+    }
     if (npc.recovery > 0)
     {
         npc.recovery = std::max(0.f, npc.recovery - dt);
@@ -514,8 +714,8 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
             npc.decision = 0;
             if (npc.job == NpcJob::Wraith)
             {
-                npc.gold = 12;
-                npc.goods = 1;
+                npc.gold = npc.fieldBoss ? 65 : 12;
+                npc.goods = npc.fieldBoss ? 5 : 1;
             }
             Note(npc.Name()
                      + (npc.job == NpcJob::Wraith ? ": 균열에서 재출현" : ": 구호소 치료 후 복귀"),
@@ -529,14 +729,16 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
         Decide(npc, context);
         npc.decision = .8f + float(npc.Id() % 5) * .07f;
     }
-    auto origin = Center(context.scene);
+    auto* parent = context.scene.Get(npc.Parent());
+    auto origin = parent ? parent->Position() : FarmPoint{};
     bool playerAlive = context.state != RunState::Lost && context.player.enabled;
     bool attacksPlayer = npc.playerHostile || (npc.job == NpcJob::Guard && notoriety > 0)
                          || (npc.action == NpcAction::Raid && gold > 0
                              && Length(Minus(context.player.Position(), origin)) > 130
                              && Length(Minus(npc.Position(), context.player.Position())) < 170)
                          || (npc.job == NpcJob::Wraith
-                             && Length(Minus(npc.Position(), context.player.Position())) < 115);
+                             && Length(Minus(npc.Position(), context.player.Position()))
+                                    < (npc.fieldBoss ? 190.f : 115.f));
     if (playerAlive && attacksPlayer && npc.health > npc.maximumHealth * .3f)
     {
         auto target = context.player.Position();
@@ -546,8 +748,24 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
             if (npc.cooldown <= 0 && Length(Minus(npc.Position(), target)) < 37
                 && Navigation::Sight(npc.Position(), target, context.walkable))
             {
-                context.player.DamagePlayer(npc.job == NpcJob::Guard ? 12.f : 7.f, context);
-                npc.cooldown = 1;
+                if (npc.job == NpcJob::Wraith)
+                {
+                    BeginMonsterAttack(npc,
+                                       NoActor,
+                                       true,
+                                       npc.fieldBoss          ? 18.f
+                                       : npc.monsterForm == 2 ? 11.f
+                                                              : 7.f,
+                                       target);
+                }
+                else
+                {
+                    context.player.DamagePlayer(npc.fieldBoss              ? 18.f
+                                                : npc.job == NpcJob::Guard ? 12.f
+                                                                           : 7.f,
+                                                context);
+                }
+                npc.cooldown = npc.fieldBoss ? 1.4f : 1.f;
                 if (context.state == RunState::Lost)
                 {
                     int stolen = gold / 2;
@@ -566,12 +784,32 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     if (npc.job == NpcJob::Wraith)
     {
         npc.action = NpcAction::Patrol;
+        if (npc.wilderness)
+        {
+            npc.wanderTimer -= dt;
+            if (npc.wanderTimer <= 0 || Length(Minus(npc.local, npc.wanderGoal)) < 12)
+            {
+                npc.wanderTimer = 5 + float(Random() % 6);
+                npc.wanderGoal = npc.local;
+                for (int attempt = 0; attempt < 12; ++attempt)
+                {
+                    FarmPoint goal{36.f + float(Random() % 560), 36.f + float(Random() % 560)};
+                    if (context.walkable(origin.x + goal.x, origin.y + goal.y, 16))
+                    {
+                        npc.wanderGoal = goal;
+                        break;
+                    }
+                }
+            }
+            MoveTo(npc, npc.wanderGoal, dt, context);
+        }
         if (auto* enemy = context.scene.Get<NpcActor>(npc.aggressor))
         {
             if (Alive(*enemy) && Length(Minus(enemy->Position(), npc.Position())) < 48
                 && npc.cooldown <= 0)
             {
-                Damage(*enemy, 7, &npc, context);
+                BeginMonsterAttack(
+                    npc, enemy->Id(), false, npc.fieldBoss ? 18.f : 7.f, enemy->Position());
                 npc.cooldown = 1;
             }
         }
@@ -581,7 +819,7 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     {
         if (Alive(*target))
         {
-            MoveTo(npc, target->local, dt, context);
+            MoveTo(npc, Minus(target->Position(), origin), dt, context);
             if (npc.cooldown <= 0 && Length(Minus(npc.Position(), target->Position())) < 40
                 && Navigation::Sight(npc.Position(), target->Position(), context.walkable))
             {
@@ -608,6 +846,10 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     {
         const FarmPoint patrol[] = {{0, 0}, {0, 460}, {460, 460}, {460, 0}};
         destination = patrol[(int(clock / 12) + int(npc.Id())) % 4];
+    }
+    if (npc.settlementResident)
+    {
+        destination = npc.home;
     }
     MoveTo(npc, destination, dt, context);
     if (Length(Minus(npc.local, destination)) < 40)
@@ -642,6 +884,30 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
 void LivingWorld::Tick(float dt, GameplayContext& context)
 {
     clock += dt;
+    std::vector<WorldIncident> reports;
+    for (auto& incident : incidents)
+    {
+        if (incident.type != "murder" || incident.rumorIssued || clock - incident.time < 3)
+        {
+            continue;
+        }
+        incident.rumorIssued = true;
+        auto* witness = context.scene.Get<NpcActor>(incident.witness);
+        if (!witness || !context.scene.Active(witness->Id()) || !Alive(*witness))
+        {
+            continue;
+        }
+        WorldIncident rumor = incident;
+        rumor.type = "rumor";
+        rumor.sourceId = incident.id;
+        rumor.text = witness->Name() + "의 소문: “" + incident.actorName + "이(가) "
+                     + incident.victimName + "을(를) 쓰러뜨렸대.” (목격담·미검증)";
+        reports.push_back(std::move(rumor));
+    }
+    for (auto& report : reports)
+    {
+        RecordIncident(std::move(report));
+    }
     strikeCooldown_ = std::max(0.f, strikeCooldown_ - dt);
     summaryTimer_ += dt;
     if (summaryTimer_ >= 5)
@@ -649,7 +915,8 @@ void LivingWorld::Tick(float dt, GameplayContext& context)
         summaryTimer_ = 0;
         std::ostringstream summary;
         summary << "time=" << clock << "; trades=" << trades << "; raids=" << raids
-                << "; hunts=" << hunts << "; player_gold=" << gold << "; npcs=";
+                << "; hunts=" << hunts << "; player_gold=" << gold << "; quest_step=" << QuestStep()
+                << "; supplies=" << story.suppliesDelivered << "; npcs=";
         for (auto* npc : context.scene.Query<NpcActor>())
         {
             summary << npc->Id() << ':' << npc->Name() << ':' << JobName(npc->job) << ':'

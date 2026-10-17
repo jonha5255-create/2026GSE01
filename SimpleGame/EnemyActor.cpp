@@ -14,6 +14,7 @@ void EnemyActor::TakeDamage(float amount, GameplayContext& context)
     context.Effect(Position(), std::to_string(int(amount)), .6f);
     if (health <= 0)
     {
+        context.player.AddYokaiExperience(boss ? 80 : 14, context);
         if (context.defeated)
         {
             context.defeated(*this);

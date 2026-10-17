@@ -35,12 +35,13 @@ class SceneGraph
         return dynamic_cast<T*>(Get(id));
     }
 
-    template <class T> std::vector<T*> Query() const
+    // Monitoring can include disabled actors; pending destruction is always excluded.
+    template <class T> std::vector<T*> Query(bool includeInactive = false) const
     {
         std::vector<T*> result;
         for (const auto& entry : actors_)
         {
-            if (Active(entry.first))
+            if (includeInactive ? !Pending(entry.first) : Active(entry.first))
             {
                 if (auto actor = dynamic_cast<T*>(entry.second.get()))
                 {

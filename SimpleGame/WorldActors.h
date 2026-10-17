@@ -11,7 +11,8 @@ class ChunkActor : public Actor
     }
 
     CityChunk data;
-    ActorId buildings[4] = {};
+    std::vector<ActorId> buildings;
+    bool populated = false;
 };
 
 class FloorActor : public Actor
@@ -46,6 +47,7 @@ class BuildingActor : public Actor
 
     float width, depth, height;
     uint32_t seed;
+    int style = 0;
 };
 
 class LampActor : public Actor

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "PrototypeWorld.h"
+#include "RenderDiagnostics.h"
+#include "WorldMonitor.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -12,6 +14,12 @@
 namespace
 {
     constexpr float Side = 640, Pi = 3.14159265f;
+
+    uint64_t NextWorldId()
+    {
+        static uint64_t id = 0;
+        return ++id;
+    }
 
     uint64_t Mix(uint64_t x)
     {
@@ -79,24 +87,11 @@ void Location::Normalize()
 
 CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
 {
-    CityChunk chunk = {};
-    chunk.seed = static_cast<uint32_t>(
-        Mix(static_cast<uint64_t>(c.first) ^ Mix(static_cast<uint64_t>(c.second)) ^ seed));
-    for (int i = 0; i < 4; ++i)
-    {
-        uint64_t n = Mix(chunk.seed + i);
-        chunk.heights[i] = 55.f + float(n % 75);
-        // Buildings stay inside disjoint plots. Wide connected roads remain
-        // open around every plot and across all four chunk boundaries.
-        chunk.plots[i] = {175.f + (i % 2) * 205 + float((n >> 8) % 18),
-                          170.f + (i / 2) * 205 + float((n >> 16) % 18),
-                          84.f + float((n >> 24) % 30),
-                          84.f + float((n >> 32) % 30)};
-    }
-    return chunk;
+    return GenerateCityChunk(c.first, c.second, seed);
 }
 
-PrototypeWorld::PrototypeWorld(uint32_t seed, bool living) : seed_(seed), level_(seed)
+PrototypeWorld::PrototypeWorld(uint32_t seed, bool living)
+    : monitorWorldId_(NextWorldId()), seed_(seed), level_(seed)
 {
     level_.Graph().Spawn<RainActor>(NoActor);
     level_.Graph().Spawn<HudActor>(NoActor);
@@ -104,6 +99,8 @@ PrototypeWorld::PrototypeWorld(uint32_t seed, bool living) : seed_(seed), level_
     if (living)
     {
         level_.society.Initialize(level_.Graph(), seed);
+        level_.Player().SelectYokai(YokaiForm::Sword);
+        Stream();
     }
 }
 
@@ -150,10 +147,17 @@ void PrototypeWorld::Stream()
         else
         {
             auto& chunk = graph.Spawn<ChunkActor>(NoActor, entry.second);
+            RenderDiagnostics::Get().Event(
+                "city_chunk",
+                "x=" + std::to_string(entry.first.first)
+                    + "; y=" + std::to_string(entry.first.second)
+                    + "; buildings=" + std::to_string(entry.second.plots.size())
+                    + "; roads=" + std::to_string(entry.second.roads.size())
+                    + "; district=" + std::to_string(entry.second.district));
             id = chunk.Id();
             chunkActors_[entry.first] = id;
             graph.Spawn<FloorActor>(id, entry.second);
-            for (int i = 0; i < 4; ++i)
+            for (size_t i = 0; i < entry.second.plots.size(); ++i)
             {
                 const auto& plot = entry.second.plots[i];
                 auto& building = graph.Spawn<BuildingActor>(id,
@@ -162,14 +166,113 @@ void PrototypeWorld::Stream()
                                                             entry.second.heights[i],
                                                             entry.second.seed + uint32_t(i));
                 building.local = {plot.x, plot.y};
-                chunk.buildings[i] = building.Id();
+                building.style = entry.second.styles[i];
+                chunk.buildings.push_back(building.Id());
             }
-            graph.Spawn<LampActor>(id).local = {123, 20};
+            if (entry.second.village)
+            {
+                graph.Spawn<LampActor>(id).local = {entry.second.roadX + 42,
+                                                    entry.second.roadY + 42};
+            }
         }
         graph.Get(id)->SetPosition(
             {float(entry.first.first - player_.cx) * Side - float(player_.x),
              float(entry.first.second - player_.cy) * Side - float(player_.y)});
     }
+    if (level_.society.enabled)
+    {
+        for (const auto& entry : chunkActors_)
+        {
+            auto* chunk = graph.Get<ChunkActor>(entry.second);
+            if (chunk && !chunk->populated)
+            {
+                PopulateChunk(entry.first, *chunk);
+                chunk->populated = true;
+            }
+        }
+    }
+}
+
+void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
+{
+    auto& graph = level_.Graph();
+    bool village = IsVillageChunk(coord.first, coord.second);
+    if (village && coord == Coord{0, 0})
+    {
+        return;
+    }
+    uint64_t random = Mix(chunk.data.seed ^ 0x73829ULL);
+    auto next = [&]()
+    {
+        random = Mix(random);
+        return uint32_t(random);
+    };
+    ActorId parent = chunk.Id();
+    if (village)
+    {
+        const char* names[] = {"안개", "황혼", "잿빛", "달그늘", "청명"};
+        std::string name = std::string(names[next() % 5]) + " 마을 (" + std::to_string(coord.first)
+                           + "," + std::to_string(coord.second) + ")";
+        auto& town = graph.Spawn<TownActor>(parent, name);
+        town.local = {chunk.data.roadX, chunk.data.roadY};
+        parent = town.Id();
+        graph.Spawn<TownSiteActor>(parent, TownSite::Market).local = {-25, 0};
+        graph.Spawn<TownSiteActor>(parent, TownSite::Clinic).local = {0, -25};
+        const NpcJob jobs[] = {NpcJob::Merchant, NpcJob::Hunter, NpcJob::Guard, NpcJob::Seeker};
+        const FarmPoint points[] = {{-10, 0}, {0, 22}, {22, 0}, {0, -20}};
+        for (int i = 0; i < 4; ++i)
+        {
+            auto& npc =
+                graph.Spawn<NpcActor>(parent, name + " " + LivingWorld::JobName(jobs[i]), jobs[i]);
+            npc.local = npc.home = points[i];
+            npc.settlementResident = true;
+            npc.gold = 50 + int(next() % 70);
+            npc.goods = jobs[i] == NpcJob::Merchant ? 8 : 0;
+            npc.insightWeight = jobs[i] == NpcJob::Seeker ? .95f : .2f;
+        }
+        RenderDiagnostics::Get().Event("village_spawn", name + "; residents=4");
+        return;
+    }
+    int count = 3 + int(next() % 3);
+    int spawned = 0;
+    for (int attempt = 0; attempt < 80 && spawned < count; ++attempt)
+    {
+        FarmPoint point = {40.f + float(next() % 560), 40.f + float(next() % 560)};
+        auto origin = chunk.Position();
+        auto position = FarmPoint{origin.x + point.x, origin.y + point.y};
+        if (!Walkable(position.x, position.y, 16))
+        {
+            continue;
+        }
+        bool boss = spawned == 0 && chunk.data.seed % 3 == 0;
+        const char* monsterNames[] = {"뿔 잔향귀", "시체 사냥개", "폐허 석괴"};
+        int form = int((chunk.data.seed + uint32_t(spawned)) % 3);
+        auto& monster = graph.Spawn<NpcActor>(parent,
+                                              boss ? std::string("폐허의 포식자")
+                                                   : std::string(monsterNames[form]) + " "
+                                                         + std::to_string(spawned + 1),
+                                              NpcJob::Wraith);
+        monster.local = monster.home = point;
+        monster.wilderness = true;
+        monster.monsterForm = form;
+        monster.health = monster.maximumHealth = 65 + float(next() % 46);
+        monster.gold = 12;
+        monster.goods = 1;
+        if (boss)
+        {
+            monster.fieldBoss = true;
+            monster.health = monster.maximumHealth = 360;
+            monster.gold = 65;
+            monster.goods = 5;
+            RenderDiagnostics::Get().Event("field_boss_spawn",
+                                           "actor=" + std::to_string(monster.Id()));
+        }
+        ++spawned;
+    }
+    RenderDiagnostics::Get().Event("wild_spawn",
+                                   "chunk=" + std::to_string(coord.first) + ","
+                                       + std::to_string(coord.second)
+                                       + "; count=" + std::to_string(spawned));
 }
 
 bool PrototypeWorld::Blocked(const Location& p, float radius) const
@@ -206,7 +309,7 @@ bool PrototypeWorld::Blocked(const Location& p, float radius) const
     // Unloaded procedural chunks still support navigation/collision queries.
     auto it = chunks_.find({p.cx, p.cy});
     CityChunk chunk = it == chunks_.end() ? Generate({p.cx, p.cy}, seed_) : it->second;
-    for (int i = 0; i < 4; ++i)
+    for (size_t i = 0; i < chunk.plots.size(); ++i)
     {
         const auto& b = chunk.plots[i];
         double dx = std::max(double(b.x) - p.x, std::max(0., p.x - (b.x + b.width)));
@@ -269,10 +372,21 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     {
         return;
     }
+    if (key >= '1' && key <= '3' && level_.state != RunState::Lost)
+    {
+        level_.Player().SelectYokai(static_cast<YokaiForm>(key - '1'));
+        level_.Weapon().skillTime = -1;
+        level_.Weapon().muzzleFlash = 0;
+        level_.Weapon().swingTime = 0;
+        level_.society.dialogue = std::string(level_.Player().YokaiName())
+                                  + " 동행 상태로 전환했습니다. Q로 무기화하세요.";
+    }
     if (key == 'q')
     {
         level_.Player().weapon = !level_.Player().weapon;
+        level_.Weapon().skillTime = -1;
         level_.Player().transformPhase = 1;
+        level_.Weapon().swingTime = 0;
     }
     if (key == 'c')
     {
@@ -337,6 +451,121 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     }
 }
 
+void PrototypeWorld::MouseSkill()
+{
+    if (!level_.Player().enabled)
+    {
+        return;
+    }
+    auto context = level_.Context(
+        [&](float x, float y, float radius)
+        {
+            return Walkable(x, y, radius);
+        });
+    level_.Weapon().CastSkill(context);
+}
+
+void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
+{
+    if (width <= 0 || height <= 0 || x < 0 || y < 0 || x >= width || y >= height
+        || level_.state == RunState::Lost || level_.state == RunState::Won
+        || !level_.Player().enabled)
+    {
+        return;
+    }
+    // Match scene projection and logical HUD dimensions, including resized windows.
+    zoom_ = std::min(width / 1280.f, height / 800.f);
+    center_ = {width * .48f, height * .54f};
+    float uiScale = std::min(1.f, zoom_);
+    float ux = x / uiScale, uy = y / uiScale;
+    float w = width / uiScale, h = height / uiScale;
+    if (level_.society.enabled
+        && (uy <= 91 || uy >= h - 148 || (ux >= 20 && ux <= 360 && uy >= 109 && uy <= 391)
+            || (ux >= w - 328 && ux <= w - 20 && uy >= 109 && uy <= 331)
+            || (level_.society.panel && ux >= w - 328 && ux <= w - 20 && uy >= 341 && uy <= 625)))
+    {
+        return;
+    }
+    auto context = level_.Context(
+        [&](float px, float py, float radius)
+        {
+            return Walkable(px, py, radius);
+        });
+    Actor* selected = nullptr;
+    float closest = 100000;
+    auto pick = [&](Actor& actor)
+    {
+        Point p = Project(actor.Position().x, actor.Position().y);
+        float dx = (x - p.x) / zoom_, dy = (y - p.y) / zoom_;
+        auto* pickedNpc = dynamic_cast<NpcActor*>(&actor);
+        if (pickedNpc && (pickedNpc->storyGuardian || pickedNpc->fieldBoss))
+        {
+            dx /= 1.6f;
+            dy /= 1.6f;
+        }
+        if (std::abs(dx) > 22 || dy < -60 || dy > 8)
+        {
+            return;
+        }
+        float distance = dx * dx + (dy + 27) * (dy + 27);
+        if (distance < closest)
+        {
+            selected = &actor;
+            closest = distance;
+        }
+    };
+    if (level_.society.enabled)
+    {
+        for (auto* npc : level_.Graph().Query<NpcActor>())
+        {
+            if (npc->health > 0 && level_.Graph().Visible(npc->Id()))
+            {
+                pick(*npc);
+            }
+        }
+        if (auto* npc = dynamic_cast<NpcActor*>(selected))
+        {
+            level_.society.PlayerStrike(npc->job != NpcJob::Wraith, context, npc->Id(), true);
+        }
+    }
+    else
+    {
+        for (auto* enemy : level_.Enemies())
+        {
+            if (enemy->health > 0 && level_.Graph().Visible(enemy->Id()))
+            {
+                pick(*enemy);
+            }
+        }
+        if (auto* enemy = dynamic_cast<EnemyActor*>(selected))
+        {
+            auto& weapon = level_.Weapon();
+            if (level_.Player().weapon && level_.Player().yokai == YokaiForm::Ranged)
+            {
+                weapon.ShootAt(*enemy, context);
+            }
+            else if (weapon.shotTimer_ <= 0
+                     && Length(enemy->Position()) < level_.Player().StrikeRange()
+                     && Navigation::Sight({}, enemy->Position(), context.walkable))
+            {
+                enemy->TakeDamage(level_.Player().weapon ? level_.Player().StrikeDamage()
+                                                         : level_.Damage(),
+                                  context);
+                weapon.StartSwing(enemy->Position());
+                weapon.shotTimer_ = level_.Player().StrikeCooldown();
+            }
+        }
+    }
+    if (!selected && level_.Player().weapon && level_.Player().yokai != YokaiForm::Ranged
+        && level_.Weapon().shotTimer_ <= 0)
+    {
+        float sx = ((x - center_.x) / zoom_ - cameraLag_.x) / .85f;
+        float sy = ((y - center_.y) / zoom_ - cameraLag_.y) / .425f;
+        level_.Weapon().StartSwing({(sx + sy) * .5f, (sy - sx) * .5f});
+        level_.Weapon().shotTimer_ = level_.Player().StrikeCooldown();
+    }
+}
+
 void PrototypeWorld::Update(float dt)
 {
     dt = std::max(0.f, std::min(dt, .05f));
@@ -355,6 +584,7 @@ void PrototypeWorld::Update(float dt)
         });
     float follow = 1 - std::exp(-10 * dt);
     cameraLag_ = Lerp(cameraLag_, {0, 0}, follow);
+    WorldMonitor::Get().Publish(level_, player_, chunks_.size(), seed_, monitorWorldId_);
 }
 
 Point PrototypeWorld::Project(float x, float y, float z) const
@@ -393,7 +623,8 @@ void PrototypeWorld::LocalMesh(PrototypeRenderer& r,
 void PrototypeWorld::Floor(PrototypeRenderer& r, float x, float y, const CityChunk& chunk)
 {
     LocalMesh(r,
-              "floor:" + std::to_string(chunk.seed) + ":" + std::to_string(debug_),
+              "floor:city-v6:" + std::to_string(chunk.seed) + ":" + std::to_string(chunk.roadX)
+                  + ":" + std::to_string(chunk.roadY) + ":" + std::to_string(debug_),
               x,
               y,
               1,
@@ -409,39 +640,164 @@ void PrototypeWorld::FloorGeometry(PrototypeRenderer& r, float x, float y, const
     {
         return Project(x + a, y + b);
     };
-    r.Quad(p(0, 0), p(Side, 0), p(Side, Side), p(0, Side), Color(16, 26, 33));
-    r.Quad(p(137, 135), p(560, 135), p(560, 558), p(137, 558), Color(30, 42, 48));
-    for (int i = 0; i <= 8; ++i)
+    auto rect = [&](float a, float b, float w, float d, Ink color)
     {
-        float s = i * 80.f;
-        r.Line(p(s, 0), p(s, Side), 1, Color(52, 66, 69, .28f));
-        r.Line(p(0, s), p(Side, s), 1, Color(52, 66, 69, .28f));
-    }
-    r.Line(p(132, 132), p(563, 132), 2, Color(77, 99, 97));
-    r.Line(p(132, 132), p(132, 563), 2, Color(77, 99, 97));
-    r.Line(p(563, 132), p(563, 563), 2, Color(53, 67, 73));
-    r.Line(p(132, 563), p(563, 563), 2, Color(53, 67, 73));
-    for (int i = 0; i < 10; ++i)
-    {
-        float a = i * 64.f;
-        r.Line(p(a, 54), p(a + 29, 54), 2, Color(154, 142, 95, .55f));
-        r.Line(p(54, a), p(54, a + 29), 2, Color(154, 142, 95, .55f));
-    }
-    for (int i = 0; i < 7; ++i)
-    {
-        float a = 143.f + i * 10;
-        r.Quad(p(a, 10), p(a + 5, 10), p(a + 5, 115), p(a, 115), Color(109, 128, 128, .45f));
-        r.Quad(p(10, a), p(115, a), p(115, a + 5), p(10, a + 5), Color(109, 128, 128, .45f));
-    }
-    for (int i = 0; i < 12; ++i)
-    {
-        uint64_t n = Mix(chunk.seed + i * 17);
-        float a = float(n % 600), b = 20.f + float((n >> 12) % 75);
-        Point q = p(a, b);
-        r.Line(q, {q.x + 25 * zoom_, q.y - 2 * zoom_}, 2, Color(84, 132, 137, .22f));
-        if (i < 3)
+        float x0 = std::max(0.f, a), y0 = std::max(0.f, b);
+        float x1 = std::min(Side, a + w), y1 = std::min(Side, b + d);
+        if (x1 > x0 && y1 > y0)
         {
-            r.Ellipse(p(a + 25, b + 10), 12 * zoom_, 4 * zoom_, Color(90, 28, 41, .55f));
+            r.Quad(p(x0, y0), p(x1, y0), p(x1, y1), p(x0, y1), color);
+        }
+    };
+    rect(0, 0, Side, Side, chunk.village ? Color(44, 57, 48) : Color(49, 43, 37));
+    if (!chunk.village)
+    {
+        for (int i = 0; i < 35; ++i)
+        {
+            auto detail = Mix(chunk.seed + i * 7919);
+            float a = float(detail % 620), b = float((detail >> 16) % 620);
+            rect(a, b, 8 + float(detail % 24), 4 + float((detail >> 8) % 14), Color(40, 38, 33));
+        }
+    }
+    for (size_t index = 0; index < chunk.plots.size(); ++index)
+    {
+        const auto& lot = chunk.plots[index];
+        if (chunk.styles[index] == 2)
+        {
+            continue;
+        }
+        rect(lot.x - 5,
+             lot.y - 5,
+             lot.width + 10,
+             lot.depth + 10,
+             chunk.village ? Color(54, 61, 55) : Color(48, 43, 38));
+        // Each lot has its own forecourt rather than a repeated full-chunk grid.
+        r.Line(p(lot.x, lot.y - 8), p(lot.x + lot.width, lot.y - 8), 1, Color(106, 110, 98));
+    }
+    for (const auto& road : chunk.roads)
+    {
+        rect(road.x - 13,
+             road.y - 13,
+             road.width + 26,
+             road.depth + 26,
+             chunk.village ? Color(48, 55, 50) : Color(53, 47, 39));
+        rect(road.x - 6,
+             road.y - 6,
+             road.width + 12,
+             road.depth + 12,
+             chunk.village ? Color(58, 62, 56) : Color(57, 51, 43));
+    }
+    for (const auto& road : chunk.roads)
+    {
+        rect(road.x,
+             road.y,
+             road.width,
+             road.depth,
+             chunk.village   ? Color(36, 43, 44)
+             : road.arterial ? Color(39, 40, 37)
+                             : Color(59, 51, 41));
+        if (!chunk.village)
+        {
+            bool horizontal = road.width > road.depth;
+            for (int i = 0; i < 12; ++i)
+            {
+                auto detail = Mix(chunk.seed + i * 1337 + (horizontal ? 9 : 1));
+                float t = i * 56.f, length = 18 + float(detail % 25);
+                float offset = float((detail >> 12) % 7) - 3;
+                rect(horizontal ? t : road.x + offset,
+                     horizontal ? road.y + offset : t,
+                     horizontal ? length : 5,
+                     horizontal ? 5 : length,
+                     Color(58, 51, 42));
+                rect(horizontal ? t : road.x + road.width - 4 + offset,
+                     horizontal ? road.y + road.depth - 4 + offset : t,
+                     horizontal ? length : 5,
+                     horizontal ? 5 : length,
+                     Color(56, 49, 41));
+            }
+        }
+    }
+    for (const auto& road : chunk.roads)
+    {
+        if (!road.arterial)
+        {
+            continue;
+        }
+        bool horizontal = road.width > road.depth;
+        float center = horizontal ? road.y + road.depth / 2 : road.x + road.width / 2;
+        for (int i = 0; i < 12; ++i)
+        {
+            float t = i * 56.f;
+            float junction = horizontal ? chunk.roadX : chunk.roadY;
+            if (std::abs(t - junction) < 50)
+            {
+                continue;
+            }
+            if (horizontal)
+            {
+                rect(t, center - 1, chunk.village ? 22.f : 12.f, 1.5f, Color(111, 103, 73));
+            }
+            else
+            {
+                rect(center - 1, t, 1.5f, chunk.village ? 22.f : 12.f, Color(111, 103, 73));
+            }
+        }
+    }
+    if (!chunk.village)
+    {
+        return;
+    }
+    // Worn paving joins each gate to the road, without changing its collision clearance.
+    for (float edge : {24.f, 612.f})
+    {
+        for (int row = 0; row < 3; ++row)
+        {
+            for (int col = -1; col <= 1; ++col)
+            {
+                float offset = row % 2 ? 4.f : 0.f;
+                rect(chunk.roadX + col * 13 - 6 + offset,
+                     edge + row * 8 - 12,
+                     11,
+                     6,
+                     Color(65, 68, 60));
+                rect(edge + row * 8 - 12,
+                     chunk.roadY + col * 13 - 6 + offset,
+                     6,
+                     11,
+                     Color(65, 68, 60));
+            }
+        }
+    }
+    float vw = chunk.roads[0].width, hw = chunk.roads[1].depth;
+    for (int i = 0; i < 6; ++i)
+    {
+        float offset = i * 6.f;
+        rect(chunk.roadX + vw / 2 + 9 + offset,
+             chunk.roadY - hw / 2 + 3,
+             3,
+             hw - 6,
+             Color(160, 170, 159));
+        rect(chunk.roadX - vw / 2 + 3,
+             chunk.roadY + hw / 2 + 9 + offset,
+             vw - 6,
+             3,
+             Color(160, 170, 159));
+    }
+    // Drain covers and occasional curb-side parking bays follow the main street.
+    for (int i = 0; i < 5; ++i)
+    {
+        float t = 190.f + i * 83;
+        rect(t, chunk.roadY - hw / 2 - 9, 11, 4, Color(20, 30, 31));
+        if ((chunk.seed + i) % 3 == 0)
+        {
+            r.Line(p(t, chunk.roadY + hw / 2 + 3),
+                   p(t, chunk.roadY + hw / 2 + 12),
+                   1,
+                   Color(115, 123, 112));
+            r.Line(p(t, chunk.roadY + hw / 2 + 12),
+                   p(t + 35, chunk.roadY + hw / 2 + 12),
+                   1,
+                   Color(115, 123, 112));
         }
     }
     if (debug_)
@@ -478,7 +834,7 @@ void PrototypeWorld::Building(
     }
     if (!haunted)
     {
-        std::string key = "building:" + std::to_string(seed) + ":" + std::to_string(w) + ":"
+        std::string key = "building:city-v2:" + std::to_string(seed) + ":" + std::to_string(w) + ":"
                           + std::to_string(d) + ":" + std::to_string(h);
         LocalMesh(r,
                   key,
@@ -519,8 +875,10 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
         return Color(red, green, blue, alpha);
     };
     r.Quad(p(0, d), p(w, d), p(w + 55, d + 40), p(20, d + 40), Color(0, 0, 0, .22f));
-    r.Quad(e, c, p(w, d), p(0, d), ink(30, 46, 53));
-    r.Quad(b, c, p(w, d), p(w, 0), ink(20, 32, 42));
+    const int tones[][3] = {{58, 65, 67}, {75, 58, 54}, {53, 65, 73}, {65, 69, 57}};
+    const auto& facade = tones[seed % 4];
+    r.Quad(e, c, p(w, d), p(0, d), ink(facade[0], facade[1], facade[2]));
+    r.Quad(b, c, p(w, d), p(w, 0), ink(facade[0] - 15, facade[1] - 15, facade[2] - 12));
     r.Quad(a, b, c, e, haunted ? ink(51, 47, 65) : ink(48, 66, 72));
     r.Line(a, b, 2, ink(111, 131, 133));
     r.Line(a, e, 2, ink(100, 124, 123));
@@ -547,14 +905,34 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
         }
     }
     // Rooftop air conditioner and antenna.
-    r.Quad(p(28, 30, h + 1), p(72, 30, h + 1), p(72, 66, h + 1), p(28, 66, h + 1), ink(21, 35, 43));
+    r.Quad(p(w * .25f, d * .25f, h + 1),
+           p(w * .65f, d * .25f, h + 1),
+           p(w * .65f, d * .55f, h + 1),
+           p(w * .25f, d * .55f, h + 1),
+           ink(21, 35, 43));
     for (int i = 0; i < 5; ++i)
     {
-        r.Line(p(33, 34 + i * 6.f, h + 2), p(67, 34 + i * 6.f, h + 2), 1, ink(80, 101, 108));
+        r.Line(p(w * .28f, d * (.28f + i * .05f), h + 2),
+               p(w * .62f, d * (.28f + i * .05f), h + 2),
+               1,
+               ink(80, 101, 108));
     }
     r.Line(p(w - 25, 25, h), p(w - 25, 25, h + 38), 2, ink(102, 120, 122));
     r.Line(p(w - 25, 25, h + 29), p(w - 5, 25, h + 29), 1, ink(102, 120, 122));
-    Point sign = p(w * .5f, d + 1, 40);
+    r.Quad(p(w * .4f, d + .5f, 0),
+           p(w * .6f, d + .5f, 0),
+           p(w * .6f, d + .5f, 25),
+           p(w * .4f, d + .5f, 25),
+           ink(16, 25, 30));
+    if (h < 85)
+    {
+        r.Quad(p(4, d, 29),
+               p(w - 4, d, 29),
+               p(w - 4, d + 12, 25),
+               p(4, d + 12, 25),
+               seed % 2 ? ink(103, 57, 54) : ink(50, 91, 87));
+    }
+    Point sign = p(w * .5f, d + 1, std::min(40.f, h - 14));
     r.Rect(sign.x - 37 * zoom_, sign.y - 12 * zoom_, 74 * zoom_, 20 * zoom_, ink(9, 23, 29));
     Ink neon = Emissive(haunted ? ink(239, 81, 122) : ink(104, 223, 204), 2.5f);
     r.Line({sign.x - 36 * zoom_, sign.y + 8 * zoom_},
@@ -576,8 +954,13 @@ void PrototypeWorld::Player(PrototypeRenderer& r, const PlayerActor& actor)
     auto position = actor.Position();
     Point p = Project(position.x, position.y);
     float z = zoom_, step = std::sin(level_.Player().walkPhase) * 3;
+    const auto& weapon = level_.Weapon();
+    auto facing =
+        Unit({(weapon.aim.x - weapon.aim.y) * .85f, (weapon.aim.x + weapon.aim.y) * .425f});
+    p.x += facing.x * weapon.SwingLunge() * z;
+    p.y += facing.y * weapon.SwingLunge() * z;
     r.Ellipse({p.x, p.y + 2 * z}, 20 * z, 7 * z, Color(0, 0, 0, .65f));
-    r.Glow({p.x, p.y - 20 * z}, 44 * z, Color(64, 217, 194, .3f));
+    r.Glow({p.x, p.y - 20 * z}, 34 * z, Color(64, 217, 194, .14f));
     r.Line({p.x - 5 * z, p.y - 18 * z}, {p.x - 7 * z, p.y - step * z}, 6 * z, Color(12, 18, 28));
     r.Line({p.x + 5 * z, p.y - 18 * z}, {p.x + 7 * z, p.y + step * z}, 6 * z, Color(12, 18, 28));
     r.Quad({p.x - 9 * z, p.y - 41 * z},
@@ -586,7 +969,20 @@ void PrototypeWorld::Player(PrototypeRenderer& r, const PlayerActor& actor)
            {p.x - 14 * z, p.y - 15 * z},
            Color(45, 63, 80));
     r.Line({p.x - 7 * z, p.y - 38 * z}, {p.x - 10 * z, p.y - 16 * z}, 3 * z, Color(85, 124, 137));
-    r.Rect(p.x - 7 * z, p.y - 54 * z, 14 * z, 14 * z, Color(197, 181, 170));
+    r.Ellipse({p.x, p.y - 48 * z}, 7 * z, 9 * z, Color(205, 183, 165));
+    r.Line({p.x + 5 * z, p.y - 49 * z}, {p.x + 3 * z, p.y - 42 * z}, 2 * z, Color(163, 134, 122));
+    r.Ellipse({p.x - 7 * z, p.y - step * z}, 5 * z, 3 * z, Color(29, 36, 46));
+    r.Ellipse({p.x + 7 * z, p.y + step * z}, 5 * z, 3 * z, Color(29, 36, 46));
+    r.Quad({p.x + 3 * z, p.y - 39 * z},
+           {p.x + 8 * z, p.y - 41 * z},
+           {p.x + 15 * z, p.y - 13 * z},
+           {p.x + 5 * z, p.y - 16 * z},
+           Color(29, 43, 61));
+    r.Line({p.x - 9 * z, p.y - 36 * z}, {p.x - 15 * z, p.y - 25 * z}, 7 * z, Color(39, 56, 72));
+    r.Line({p.x - 15 * z, p.y - 25 * z}, {p.x - 11 * z, p.y - 18 * z}, 5 * z, Color(57, 77, 93));
+    r.Ellipse({p.x - 11 * z, p.y - 17 * z}, 3 * z, 3 * z, Color(186, 166, 150));
+    r.Line({p.x - 3 * z, p.y - 45 * z}, {p.x - 1 * z, p.y - 45 * z}, 1.4f * z, Color(34, 36, 42));
+    r.Line({p.x + 2 * z, p.y - 45 * z}, {p.x + 4 * z, p.y - 45 * z}, 1.4f * z, Color(34, 36, 42));
     r.Quad({p.x - 9 * z, p.y - 56 * z},
            {p.x + 8 * z, p.y - 58 * z},
            {p.x + 10 * z, p.y - 47 * z},
@@ -608,17 +1004,202 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
     }
     auto position = actor.Position();
     Point p = Project(position.x, position.y);
-    float z = zoom_;
-    if (level_.society.enabled && level_.society.story.mukContracted && !owner->weapon)
+    int evolution = owner->Evolution();
+    float z = zoom_ * (1 + evolution * .07f);
+    Ink evolutionInk = owner->yokai == YokaiForm::Sword    ? Color(124, 208, 255)
+                       : owner->yokai == YokaiForm::Ranged ? Color(255, 186, 82)
+                                                           : Color(208, 126, 255);
+    auto facing = Unit({(actor.aim.x - actor.aim.y) * .85f, (actor.aim.x + actor.aim.y) * .425f});
+    p.x += facing.x * actor.SwingLunge() * z;
+    p.y += facing.y * actor.SwingLunge() * z;
+    if (actor.skillTime >= 0)
     {
-        Point hand{p.x + 11 * z, p.y - 25 * z};
-        Point tip{hand.x + 33 * z, hand.y - 39 * z};
+        float t = actor.skillTime;
+        float charge = std::min(1.f, t / .25f);
+        float fade = std::max(0.f, 1 - t);
+        Ink energy = Emissive(evolutionInk, 2);
+        energy.a = fade;
+        if (t < .25f)
+        {
+            Ring(r, position.x, position.y, 20 + charge * 35, energy, 2);
+        }
+        else if (actor.skillForm == YokaiForm::Sword)
+        {
+            float radius = 50 + std::min(1.f, (t - .25f) / .3f) * 95;
+            Ring(r, position.x, position.y, radius, energy, 4);
+            for (int i = 0; i < 24; ++i)
+            {
+                float a = i * Pi / 12 + t * 7;
+                auto from = Project(
+                    position.x + std::cos(a) * radius, position.y + std::sin(a) * radius, 14);
+                auto to = Project(position.x + std::cos(a + .2f) * radius,
+                                  position.y + std::sin(a + .2f) * radius,
+                                  22);
+                r.Line(from, to, 3 * z, energy);
+            }
+        }
+        else if (actor.skillForm == YokaiForm::Claw)
+        {
+            for (int hit = 0; hit < 3; ++hit)
+            {
+                float elapsed = t - .25f - hit * .14f;
+                if (elapsed < 0 || elapsed > .25f)
+                {
+                    continue;
+                }
+                float reach = 35 + elapsed * 200;
+                Point center{p.x + facing.x * reach * z, p.y + facing.y * reach * z - 20 * z};
+                for (int claw = -1; claw <= 1; ++claw)
+                {
+                    r.Line({center.x - 25 * z, center.y - (18 + claw * 8) * z},
+                           {center.x + 25 * z, center.y + (18 - claw * 8) * z},
+                           3 * z,
+                           energy);
+                }
+            }
+        }
+        else
+        {
+            r.Glow(
+                {p.x + facing.x * 30 * z, p.y - 25 * z + facing.y * 30 * z}, 45 * fade * z, energy);
+            Ring(r, position.x, position.y, 40 + t * 50, energy, 2);
+        }
+    }
+    // Both forms inherit the same carapace, ivory horns and soul-core palette.
+    Ink shell = owner->yokai == YokaiForm::Sword    ? Color(42, 69, 91)
+                : owner->yokai == YokaiForm::Ranged ? Color(92, 65, 36)
+                                                    : Color(65, 41, 82);
+    Ink ivory = Color(215, 219, 216);
+    Ink core = Emissive(evolutionInk, 1.5f);
+    float phase = actor.SwingProgress();
+    float attack = actor.swingTime > 0 ? std::sin(phase * Pi) : 0;
+    float heading = std::atan2(facing.y, facing.x);
+    auto polar = [&](Point origin, float angle, float radius)
+    {
+        return Point{origin.x + std::cos(angle) * radius * z,
+                     origin.y + std::sin(angle) * radius * z};
+    };
+    if (owner->weapon && owner->yokai == YokaiForm::Sword)
+    {
+        float sweep = phase < .2f    ? -1.45f - phase
+                      : phase < .65f ? -1.65f + (phase - .2f) / .45f * 3.1f
+                                     : 1.45f + (phase - .65f) * .25f;
+        float angle = actor.swingTime > 0 ? heading + sweep * actor.swingSide : -.87f;
+        Point shoulder{p.x + 4 * z, p.y - 32 * z};
+        Point hand = polar(shoulder, angle, 13);
+        Point tip = polar(hand, angle, 47);
+        r.Line(shoulder, hand, 6 * z, Color(76, 91, 105));
+        if (actor.swingTime > 0 && phase > .2f)
+        {
+            for (int i = 1; i <= 12; ++i)
+            {
+                float a0 = angle - actor.swingSide * i * .08f;
+                r.Line(polar(shoulder, a0, 59),
+                       polar(shoulder, a0 + actor.swingSide * .08f, 59),
+                       (4 - i * .2f) * z,
+                       Emissive(Color(159, 239, 219, attack * (1 - i / 14.f)), 2));
+            }
+        }
         r.Line(hand, tip, 7 * z, Color(25, 34, 42));
         r.Line(hand, tip, 2 * z, Emissive(Color(157, 236, 218), 3));
-        r.Line({hand.x - 6 * z, hand.y - 5 * z},
-               {hand.x + 7 * z, hand.y + 5 * z},
+        r.Line(polar(hand, angle + Pi / 2, 7),
+               polar(hand, angle - Pi / 2, 7),
                3 * z,
                Color(204, 159, 94));
+        if (evolution > 0)
+        {
+            auto blade = [&](float x, float y)
+            {
+                return polar(polar(hand, angle, x), angle + Pi / 2, y);
+            };
+            float width = 3 + evolution * 2.f;
+            float reach = 47 + evolution * 5.f;
+            r.Quad(blade(4, -width),
+                   blade(reach - 12, -width * .65f),
+                   blade(reach, 0),
+                   blade(4, width),
+                   shell);
+            r.Triangle(blade(4, width), blade(reach, 0), blade(reach - 12, 2), ivory);
+            r.Line(blade(6, 0), blade(reach - 5, 0), 2 * z, core);
+            for (int side : {-1, 1})
+            {
+                r.Triangle(blade(-3, side * 3.f),
+                           blade(12, side * (7 + evolution * 3.f)),
+                           blade(3, side * 7.f),
+                           ivory);
+                if (evolution >= 2)
+                {
+                    r.Triangle(blade(20, side * width),
+                               blade(30, side * (width + 5)),
+                               blade(36, side * width),
+                               shell);
+                }
+            }
+            r.Ellipse(blade(2, 0), 4 * z, 4 * z, core);
+            if (evolution == 3)
+            {
+                r.Quad(blade(12, -3), blade(20, 0), blade(12, 3), blade(8, 0), core);
+            }
+        }
+    }
+    else if (owner->weapon && owner->yokai == YokaiForm::Claw)
+    {
+        for (int hand = -1; hand <= 1; hand += 2)
+        {
+            float extension = actor.swingSide == hand ? attack * 23 : attack * 6;
+            float angle =
+                actor.swingTime > 0 ? heading + hand * (phase * 2.8f - 1.4f) : -Pi / 2 + hand * .5f;
+            Point shoulder{p.x + hand * 7 * z, p.y - 29 * z};
+            Point wrist = actor.swingTime > 0 ? polar(shoulder, angle, 13 + extension)
+                                              : Point{p.x + hand * 16 * z, p.y - 26 * z};
+            r.Line(shoulder, wrist, 6 * z, Color(71, 83, 99));
+            r.Line(polar(wrist, angle, -5), polar(wrist, angle, 6), 12 * z, Color(39, 31, 53));
+            r.Line(polar(wrist, angle + Pi / 2, -6),
+                   polar(wrist, angle + Pi / 2, 6),
+                   3 * z,
+                   Color(158, 105, 189));
+            if (evolution > 0)
+            {
+                r.Ellipse(wrist, (8 + evolution) * z, (7 + evolution) * z, shell);
+                r.Ellipse(wrist, 3 * z, 3 * z, core);
+                for (int plate = 0; plate < evolution; ++plate)
+                {
+                    Point back = polar(wrist, angle, -plate * 5.f);
+                    r.Triangle(polar(back, angle + Pi / 2, hand * 6.f),
+                               polar(back, angle + Pi / 2, hand * (12.f + plate * 2)),
+                               polar(back, angle, -7),
+                               ivory);
+                }
+            }
+            for (int blade = 0; blade < 3; ++blade)
+            {
+                Point root = polar(wrist, angle + Pi / 2, (blade - 1) * 5.f);
+                Point knuckle = polar(root, angle, 6);
+                Point bend =
+                    polar(knuckle, angle - hand * (.12f + evolution * .08f), 15 + evolution * 3.f);
+                Point tip = polar(bend,
+                                  angle + hand * (.32f + evolution * .16f),
+                                  (blade == 1 ? 14.f : 11.f) + evolution * 2.f);
+                r.Quad(polar(knuckle, angle + Pi / 2, -2),
+                       polar(knuckle, angle + Pi / 2, 2),
+                       polar(bend, angle + Pi / 2, 1.5f),
+                       tip,
+                       Color(183, 166, 203));
+                r.Line(knuckle, bend, 1.3f * z, Emissive(Color(209, 140, 255), 1.5f));
+                r.Line(bend, tip, 1 * z, Emissive(Color(232, 198, 255), 1.5f));
+                if (actor.swingTime > 0 && actor.swingSide == hand)
+                {
+                    for (int i = 1; i <= 8; ++i)
+                    {
+                        float a0 = angle - hand * i * .09f;
+                        r.Line(polar(shoulder, a0, 40.f + blade * 6.f),
+                               polar(shoulder, a0 + hand * .09f, 40.f + blade * 6.f),
+                               2 * z,
+                               Emissive(Color(220, 167, 255, attack * (1 - i / 10.f)), 2));
+                    }
+                }
+            }
+        }
     }
     else if (owner->weapon)
     {
@@ -636,6 +1217,43 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
                2 * z,
                Color(220, 181, 120));
         r.Ellipse(hand, 6 * z, 6 * z, Color(167, 137, 105));
+        if (evolution > 0)
+        {
+            auto gun = [&](float x, float y)
+            {
+                return Point{hand.x + (dx * x - dy * y) * z, hand.y + (dy * x + dx * y) * z};
+            };
+            // The companion's segmented shell becomes the cannon housing.
+            for (int plate = 0; plate <= evolution; ++plate)
+            {
+                float x = plate * 9.f;
+                float width = 10 + evolution * 2.f - plate;
+                r.Quad(gun(x - 8, -width),
+                       gun(x + 5, -width + 3),
+                       gun(x + 5, width - 3),
+                       gun(x - 8, width),
+                       shell);
+                r.Line(gun(x - 6, -width), gun(x + 4, -width + 3), 2 * z, ivory);
+            }
+            r.Ellipse(gun(0, 0), (5 + evolution) * z, (5 + evolution) * z, core);
+            for (int side : {-1, 1})
+            {
+                r.Line(gun(15, side * 6.f), gun(43, side * (6.f + evolution)), 4 * z, ivory);
+                if (evolution >= 2)
+                {
+                    r.Triangle(gun(-7, side * 8.f),
+                               gun(-20, side * (12.f + evolution * 2)),
+                               gun(4, side * 11.f),
+                               shell);
+                }
+            }
+            if (evolution == 3)
+            {
+                r.Line(gun(8, 0), gun(43, 0), 3 * z, core);
+                r.Ellipse(tip, 7 * z, 7 * z, shell);
+                r.Ellipse(tip, 3 * z, 3 * z, core);
+            }
+        }
         if (actor.muzzleFlash > 0)
         {
             r.Glow(tip, 38 * z, Emissive(Color(124, 255, 232), 5));
@@ -645,23 +1263,116 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
     else
     {
         Point ghost{p.x + 43 * z, p.y - 44 * z + std::sin(time_ * 3) * 6 * z};
+        auto body = [&](float x, float y)
+        {
+            return Point{ghost.x + x * z, ghost.y + y * z};
+        };
         r.Ellipse({ghost.x, p.y + 5 * z}, 12 * z, 4 * z, Color(0, 0, 0, .3f));
-        r.Glow(ghost, 46 * z, Color(45, 239, 202));
-        r.Quad({ghost.x, ghost.y - 15 * z},
-               {ghost.x + 13 * z, ghost.y},
-               {ghost.x, ghost.y + 21 * z},
-               {ghost.x - 13 * z, ghost.y},
-               Emissive(Color(84, 214, 187), 2.5f));
-        r.Triangle({ghost.x - 9 * z, ghost.y - 5 * z},
-                   {ghost.x - 13 * z, ghost.y - 23 * z},
-                   {ghost.x - 2 * z, ghost.y - 12 * z},
-                   Emissive(Color(179, 255, 225), 3));
-        r.Triangle({ghost.x + 9 * z, ghost.y - 5 * z},
-                   {ghost.x + 13 * z, ghost.y - 23 * z},
-                   {ghost.x + 2 * z, ghost.y - 12 * z},
-                   Emissive(Color(179, 255, 225), 3));
-        r.Rect(ghost.x - 7 * z, ghost.y - 3 * z, 4 * z, 3 * z, Color(8, 35, 49));
-        r.Rect(ghost.x + 3 * z, ghost.y - 3 * z, 4 * z, 3 * z, Color(8, 35, 49));
+        r.Glow(ghost, 27 * z, evolutionInk);
+        if (owner->yokai == YokaiForm::Sword)
+        {
+            // A horned mask grows into an armored blade spirit, not a winged orb.
+            float width = 10 + evolution * 3.f;
+            r.Quad(body(0, -18),
+                   body(width, -1),
+                   body(0, 24 + evolution * 3.f),
+                   body(-width, -1),
+                   shell);
+            r.Triangle(body(-width, -1), body(0, 24 + evolution * 3.f), body(-3, 0), ivory);
+            for (int side : {-1, 1})
+            {
+                r.Triangle(body(side * 6.f, -10),
+                           body(side * (12.f + evolution * 3), -24 - evolution * 3.f),
+                           body(side * 11.f, -2),
+                           ivory);
+                if (evolution >= 1)
+                {
+                    r.Quad(body(side * 10.f, 0),
+                           body(side * (18.f + evolution * 2), -7),
+                           body(side * 20.f, 8),
+                           body(side * 8.f, 12),
+                           shell);
+                }
+                if (evolution >= 2)
+                {
+                    r.Triangle(
+                        body(side * 13.f, 7), body(side * 22.f, 21), body(side * 7.f, 17), ivory);
+                }
+                r.Line(body(side * 3.f, -7), body(side * 8.f, -9), 2 * z, core);
+            }
+            r.Line(body(0, 0), body(0, 21 + evolution * 3.f), 2 * z, core);
+            if (evolution == 3)
+            {
+                r.Quad(body(0, -29), body(5, -19), body(0, -13), body(-5, -19), core);
+            }
+        }
+        else if (owner->yokai == YokaiForm::Ranged)
+        {
+            // An armored lantern beast: shell ribs become barrel plates; eye becomes chamber.
+            float width = 14 + evolution * 3.f;
+            r.Ellipse(ghost, width * z, (14 + evolution * 2.f) * z, shell);
+            for (int plate = 0; plate <= evolution; ++plate)
+            {
+                float y = -12 + plate * 7.f;
+                r.Quad(body(-width, y), body(0, y - 5), body(width, y), body(0, y + 4), shell);
+                r.Line(body(-width, y), body(0, y - 5), 2 * z, ivory);
+                r.Line(body(0, y - 5), body(width, y), 1 * z, ivory);
+            }
+            for (int side : {-1, 1})
+            {
+                r.Triangle(body(side * 8.f, 10),
+                           body(side * (13.f + evolution * 3), 24),
+                           body(side * 3.f, 15),
+                           ivory);
+                if (evolution >= 2)
+                {
+                    r.Triangle(body(side * width, -2),
+                               body(side * (width + 9), -20),
+                               body(side * 8.f, -12),
+                               shell);
+                }
+            }
+            r.Ellipse(body(0, 5), (7 + evolution) * z, (7 + evolution) * z, Color(25, 24, 32));
+            r.Ellipse(body(0, 5), (4 + evolution) * z, (4 + evolution) * z, core);
+            if (evolution == 3)
+            {
+                r.Line(body(-12, 5), body(-12, 17), 3 * z, core);
+                r.Line(body(12, 5), body(12, 17), 3 * z, core);
+            }
+        }
+        else
+        {
+            // A crouching predator develops armored forepaws and hooked talons.
+            r.Ellipse(body(0, 4), (12 + evolution * 2.f) * z, 13 * z, shell);
+            r.Line(body(8, 10), body(21 + evolution * 3.f, 20), 5 * z, shell);
+            r.Line(body(21 + evolution * 3.f, 20), body(28 + evolution * 3.f, 7), 3 * z, ivory);
+            r.Quad(body(-12, -13), body(12, -13), body(9, 1), body(0, 7), shell);
+            for (int side : {-1, 1})
+            {
+                r.Triangle(
+                    body(side * 4.f, -12), body(side * 14.f, -25), body(side * 12.f, -5), ivory);
+                float paw = 12 + evolution * 4.f;
+                r.Line(body(side * 7.f, 4), body(side * paw, 14), (7 + evolution * 2.f) * z, shell);
+                for (int claw = 0; claw < 3; ++claw)
+                {
+                    float x = side * (paw - 5 + claw * 4);
+                    r.Line(body(x, 14), body(x + side * 3, 23 + evolution * 2.f), 2 * z, ivory);
+                }
+                for (int plate = 0; plate < evolution; ++plate)
+                {
+                    r.Triangle(body(side * paw, 8 - plate * 4.f),
+                               body(side * (paw + 7), 2 - plate * 5.f),
+                               body(side * (paw - 4), 4 - plate * 4.f),
+                               ivory);
+                }
+                r.Line(body(side * 3.f, -6), body(side * 8.f, -8), 2 * z, core);
+                if (evolution == 3)
+                {
+                    r.Ellipse(body(side * paw, 13), 3 * z, 3 * z, core);
+                }
+            }
+        }
+        r.Text(ghost.x - 28 * z, ghost.y + 38 * z, owner->YokaiName(), evolutionInk, .55f * z);
     }
     if (owner->transformPhase > 0)
     {
@@ -911,6 +1622,31 @@ void PrototypeWorld::Enemy(PrototypeRenderer& r, const EnemyActor& enemy)
            Emissive(Color(255, 91, 105), 3));
     r.Line({p.x - 11 * z, p.y - 39 * z}, {p.x - 22 * z, p.y - 16 * z}, 5 * z, flesh);
     r.Line({p.x + 11 * z, p.y - 39 * z}, {p.x + 22 * z, p.y - 16 * z}, 5 * z, flesh);
+    for (int side = -1; side <= 1; side += 2)
+    {
+        for (int digit = 0; digit < 3; ++digit)
+        {
+            r.Line({p.x + side * (20.f + digit * 2) * z, p.y - 17 * z},
+                   {p.x + side * (23.f + digit * 3) * z, p.y - (8 - digit * 2) * z},
+                   1.5f * z,
+                   Color(222, 180, 154));
+        }
+        for (int rib = 0; rib < 3; ++rib)
+        {
+            r.Line({p.x + side * 2 * z, p.y - (36 - rib * 5) * z},
+                   {p.x + side * 8 * z, p.y - (33 - rib * 5) * z},
+                   1.5f * z,
+                   Color(175, 112, 119));
+        }
+    }
+    r.Rect(p.x - 5 * z, p.y - 44 * z, 10 * z, 4 * z, Color(34, 17, 28));
+    for (int tooth = 0; tooth < 3; ++tooth)
+    {
+        r.Triangle({p.x + (-4 + tooth * 3) * z, p.y - 44 * z},
+                   {p.x + (-2 + tooth * 3) * z, p.y - 44 * z},
+                   {p.x + (-3 + tooth * 3) * z, p.y - 41 * z},
+                   Color(222, 180, 154));
+    }
     r.Rect(p.x - 17 * z, p.y - 80 * z, 34 * z, 3 * z, Color(40, 19, 32));
     r.Rect(p.x - 17 * z,
            p.y - 80 * z,
@@ -956,6 +1692,80 @@ bool PrototypeWorld::SelfTest()
     };
     bool ok = LevelOne::SelfTest();
     ok = LivingWorld::SelfTest() && ok;
+    {
+        PrototypeWorld world(2026), same(2026);
+        bool safe = true, deterministic = true;
+        int wilderness = 0;
+        for (auto* npc : world.level_.Graph().Query<NpcActor>())
+        {
+            if (!npc->wilderness)
+            {
+                continue;
+            }
+            ++wilderness;
+            auto* chunk = world.level_.Graph().Get<ChunkActor>(npc->Parent());
+            auto point = npc->Position();
+            safe &= chunk && world.Walkable(point.x, point.y, 16);
+            for (const auto& entry : world.chunkActors_)
+            {
+                if (entry.second == npc->Parent())
+                {
+                    safe &= !IsVillageChunk(entry.first.first, entry.first.second);
+                }
+            }
+            auto* other = same.level_.Graph().Get<NpcActor>(npc->Id());
+            deterministic &=
+                other && other->local.x == npc->local.x && other->local.y == npc->local.y;
+        }
+        ok &= require(world.level_.Graph().Query<TownActor>().size() == 9,
+                      "initial streaming window includes nine distinct villages");
+        ok &= require(wilderness >= 48 && safe,
+                      "random wilderness monsters spawn outside village chunks and buildings");
+        ok &= require(deterministic, "same seed reproduces wilderness spawn layout");
+        auto actorCount = world.level_.Graph().Size();
+        world.Stream();
+        ok &= require(world.level_.Graph().Size() == actorCount,
+                      "repeated streaming does not duplicate towns or monsters");
+        bool districtStyles = true;
+        for (const auto& entry : world.chunks_)
+        {
+            const auto& chunk = entry.second;
+            int walls = int(std::count(chunk.styles.begin(), chunk.styles.end(), 2));
+            districtStyles &=
+                chunk.village
+                    ? walls >= 4 && walls <= 8
+                    : walls == 0 && std::count(chunk.styles.begin(), chunk.styles.end(), 0) == 0;
+        }
+        ok &= require(districtStyles,
+                      "villages have defensive walls and wilderness has only ruins or plains");
+        std::map<ActorId, FarmPoint> starts;
+        for (auto* npc : world.level_.Graph().Query<NpcActor>())
+        {
+            if (npc->wilderness)
+            {
+                starts[npc->Id()] = npc->local;
+            }
+        }
+        world.level_.state = RunState::Lost;
+        for (int frame = 0; frame < 120; ++frame)
+        {
+            world.Update(.05f);
+        }
+        int moved = 0;
+        bool bounded = true;
+        for (auto* npc : world.level_.Graph().Query<NpcActor>())
+        {
+            if (!npc->wilderness)
+            {
+                continue;
+            }
+            moved += Length(Minus(npc->local, starts[npc->Id()])) > 5 ? 1 : 0;
+            bounded &= npc->local.x >= 18 && npc->local.y >= 18 && npc->local.x <= 622
+                       && npc->local.y <= 622;
+        }
+        ok &= require(moved > 10 && bounded,
+                      "wild monsters wander while remaining inside their wilderness chunk");
+    }
     Location negative;
     negative.x = -1;
     negative.y = -641;
@@ -963,12 +1773,43 @@ bool PrototypeWorld::SelfTest()
     ok &= require(negative.cx == -1 && negative.cy == -2 && negative.x == 639 && negative.y == 639,
                   "negative chunk normalization");
     auto a = Generate({-41, 9000000000000LL}), b = Generate({-41, 9000000000000LL});
-    ok &= require(a.seed == b.seed && a.heights[2] == b.heights[2],
-                  "deterministic distant generation");
+    ok &= require(a.seed == b.seed && a.heights == b.heights, "deterministic distant generation");
     auto different = Generate({-41, 9000000000000LL}, 2027);
-    ok &= require(a.seed != different.seed && a.plots[0].width != different.plots[0].width,
+    ok &= require(a.seed != different.seed && a.heights != different.heights,
                   "different seeds change building footprints");
+    bool seams = true, roadClear = true, differentCounts = false;
+    size_t firstCount = Generate({2, 3}, 1).plots.size();
+    for (uint32_t sampleSeed = 1; sampleSeed <= 128; ++sampleSeed)
+    {
+        auto sample = Generate({2, 3}, sampleSeed);
+        auto east = Generate({3, 3}, sampleSeed);
+        auto south = Generate({2, 4}, sampleSeed);
+        seams &= sample.roads[1].y == east.roads[1].y
+                 && sample.roads[1].depth == east.roads[1].depth
+                 && sample.roads[0].x == south.roads[0].x
+                 && sample.roads[0].width == south.roads[0].width;
+        differentCounts |= sample.plots.size() != firstCount;
+        for (const auto& plot : sample.plots)
+        {
+            for (const auto& road : sample.roads)
+            {
+                roadClear &= !(plot.x < road.x + road.width && plot.x + plot.width > road.x
+                               && plot.y < road.y + road.depth && plot.y + plot.depth > road.y);
+            }
+        }
+    }
+    ok &= require(seams, "neighboring chunks share arterial positions and widths");
+    ok &= require(roadClear && differentCounts, "variable parcel counts preserve road clearance");
     PrototypeWorld world(2026, false);
+    auto expectedBuildings = [&]()
+    {
+        size_t count = 0;
+        for (const auto& entry : world.chunks_)
+        {
+            count += entry.second.plots.size();
+        }
+        return count;
+    };
     uint32_t first = world.chunks_.at({0, 0}).seed;
     ActorId oldChunk = world.chunkActors_.at({0, 0});
     ActorId oldBuilding = world.level_.Graph().Get<ChunkActor>(oldChunk)->buildings[0];
@@ -978,8 +1819,14 @@ bool PrototypeWorld::SelfTest()
                   "bounded resident chunks after travel");
     ok &= require(!world.level_.Graph().Get(oldChunk) && !world.level_.Graph().Get(oldBuilding)
                       && world.level_.Graph().Query<ChunkActor>().size() == 25
-                      && world.level_.Graph().Query<BuildingActor>().size() == 100
-                      && world.level_.Graph().Query<LampActor>().size() == 25,
+                      && world.level_.Graph().Query<BuildingActor>().size() == expectedBuildings()
+                      && world.level_.Graph().Query<LampActor>().size()
+                             == size_t(std::count_if(world.chunks_.begin(),
+                                                     world.chunks_.end(),
+                                                     [](const auto& entry)
+                                                     {
+                                                         return entry.second.village;
+                                                     })),
                   "streaming removes old actor subtrees and keeps a bounded scene");
     world.player_ = Location{};
     world.Stream();
@@ -1026,7 +1873,7 @@ bool PrototypeWorld::SelfTest()
     world.Update(.04f);
     world.Key('d', false);
     ok &= require(world.player_.cx == 1 && world.level_.Graph().Query<ChunkActor>().size() == 25
-                      && world.level_.Graph().Query<BuildingActor>().size() == 100,
+                      && world.level_.Graph().Query<BuildingActor>().size() == expectedBuildings(),
                   "player movement streams actor subtrees safely during scene traversal");
     ok &= require(world.level_.Graph().Query<HudActor>().size() == 1
                       && world.level_.Graph().Query<RainActor>().size() == 1
@@ -1057,8 +1904,15 @@ bool PrototypeWorld::SelfTest()
                     }
                 }
                 std::queue<int> queue;
-                queue.push(0);
-                seen[0] = true;
+                for (int first = 0; first < 1024; ++first)
+                {
+                    if (free[first])
+                    {
+                        queue.push(first);
+                        seen[first] = true;
+                        break;
+                    }
+                }
                 int count = 0;
                 while (!queue.empty())
                 {
@@ -1082,10 +1936,16 @@ bool PrototypeWorld::SelfTest()
                     }
                 }
                 connected = count == total;
-                for (int i = 0; i < 32; ++i)
+                auto layout = Generate({cx, cy}, seed);
+                int gateX = int(layout.roadX / 20), gateY = int(layout.roadY / 20);
+                connected = connected && free[gateX] && free[31 * 32 + gateX] && free[gateY * 32]
+                            && free[gateY * 32 + 31];
+                if (!connected)
                 {
-                    connected = connected && free[i] && free[31 * 32 + i] && free[i * 32]
-                                && free[i * 32 + 31];
+                    std::cout << "Navigation sample seed=" << seed << " chunk=" << cx << ',' << cy
+                              << " reachable=" << count << " free=" << total
+                              << " gates=" << free[gateX] << free[31 * 32 + gateX]
+                              << free[gateY * 32] << free[gateY * 32 + 31] << '\n';
                 }
             }
         }
@@ -1115,7 +1975,10 @@ bool PrototypeWorld::SelfTest()
     int insightBefore = 0;
     for (auto* npc : settlement.level_.Graph().Query<NpcActor>())
     {
-        insightBefore += npc->insight;
+        if (npc->Parent() == settlement.level_.society.town)
+        {
+            insightBefore += npc->insight;
+        }
     }
     for (int step = 0; step < 100; ++step)
     {
@@ -1128,7 +1991,10 @@ bool PrototypeWorld::SelfTest()
     int insightAfter = 0;
     for (auto* npc : settlement.level_.Graph().Query<NpcActor>())
     {
-        insightAfter += npc->insight;
+        if (npc->Parent() == settlement.level_.society.town)
+        {
+            insightAfter += npc->insight;
+        }
     }
     ok &= require(insightAfter > insightBefore
                       && Length(settlement.level_.society.Center(settlement.level_.Graph())) > 2300
@@ -1137,7 +2003,7 @@ bool PrototypeWorld::SelfTest()
     PrototypeWorld journey(2026);
     auto travel = [&](FarmPoint destination)
     {
-        for (int step = 0; step < 400; ++step)
+        for (int step = 0; step < 1400; ++step)
         {
             auto center = journey.level_.society.Center(journey.level_.Graph());
             FarmPoint delta{center.x + destination.x, center.y + destination.y};
@@ -1166,7 +2032,173 @@ bool PrototypeWorld::SelfTest()
     interact();
     ok &= require(journey.level_.society.story.mukContracted,
                   "walkable world route and E key complete the MAP01 evidence contract sequence");
+    auto& expedition = journey.level_.society;
+    expedition.story.hunted = 3;
+    expedition.goods = 3;
+    travel({0, 70});
+    interact();
+    travel({0, 0});
+    journey.Key('t', true);
+    journey.Key('t', false);
+    journey.Key('t', true);
+    journey.Key('t', false);
+    for (float x : {1190.f, 1830.f, 2470.f})
+    {
+        travel({x, 0});
+        interact();
+    }
+    ok &= require(expedition.QuestStep() == 11 && journey.chunks_.count({0, 0}) == 0,
+                  "expedition road route and interactions work beyond the unloaded starting town");
+    auto services = journey.level_.Context(
+        [&](float x, float y, float radius)
+        {
+            return journey.Walkable(x, y, radius);
+        });
+    if (auto* guard = journey.level_.Graph().Get<NpcActor>(expedition.guardian))
+    {
+        journey.level_.Player().weapon = true;
+        journey.level_.Player().SelectYokai(YokaiForm::Sword);
+        journey.level_.Player().weapon = true;
+        for (int strike = 0; strike < 20 && guard->health > 0; ++strike)
+        {
+            journey.level_.Weapon().shotTimer_ = 0;
+            expedition.Tick(1, services);
+            expedition.PlayerStrike(false, services, guard->Id(), true);
+        }
+    }
+    interact();
+    travel({0, 0});
+    travel({0, 450});
+    interact();
+    travel({0, 70});
+    interact();
+    ok &= require(expedition.story.caseClosed && journey.level_.Player().weaponRank == 1,
+                  "real world combat return route and E interactions finish the extended quest");
+    PrototypeWorld skillInput(2026);
+    skillInput.level_.Player().weapon = true;
+    skillInput.level_.Player().yokaiGrowth[0].level = 3;
+    skillInput.Key('k', true);
+    skillInput.Key('k', false);
+    ok &= require(skillInput.level_.Weapon().skillTime < 0, "K no longer casts a skill");
+    skillInput.MouseSkill();
+    ok &= require(skillInput.level_.Weapon().skillTime == 0
+                      && skillInput.level_.Player().Companion().skillCooldown > 0,
+                  "right mouse skill entry starts casting and cooldown");
+
+    PrototypeWorld mouse(2026);
+    mouse.Key('3', true);
+    mouse.Key('3', false);
+    mouse.Key('q', true);
+    mouse.Key('q', false);
+    ok &= require(mouse.level_.Player().weapon && mouse.level_.Player().yokai == YokaiForm::Claw,
+                  "number three then Q equips claw");
+    mouse.Key('2', true);
+    mouse.Key('2', false);
+    ok &= require(!mouse.level_.Player().weapon && mouse.level_.Player().yokai == YokaiForm::Ranged,
+                  "number two unequips claw and selects ranged companion");
+    mouse.Key('1', true);
+    mouse.Key('1', false);
+    ok &= require(!mouse.level_.Player().weapon && mouse.level_.Player().yokai == YokaiForm::Sword,
+                  "number one selects sword companion");
+    auto residents = mouse.level_.Graph().Query<NpcActor>();
+    for (auto* npc : residents)
+    {
+        npc->local = {1000, 1000};
+    }
+    auto* human = residents.front();
+    auto* monster = residents[11];
+    human->local = {55, 0};
+    monster->local = {0, 55};
+    auto click = [&](NpcActor& target, int width, int height)
+    {
+        mouse.MouseAttack(0, 0, width, height);
+        auto point = mouse.Project(target.Position().x, target.Position().y);
+        mouse.MouseAttack(int(point.x), int(point.y - 27 * mouse.zoom_), width, height);
+    };
+    float humanHealth = human->health, monsterHealth = monster->health;
+    click(*human, 1280, 800);
+    ok &= require(human->health == humanHealth, "mouse human attack respects PK opt-in");
+    click(*monster, 1280, 800);
+    ok &= require(monster->health == monsterHealth - 14 && human->health == humanHealth,
+                  "mouse attacks selected monster before contract without hitting closer humans");
+    click(*monster, 1280, 800);
+    ok &= require(monster->health == monsterHealth - 14,
+                  "rapid clicks cannot bypass attack cooldown");
+    auto mouseContext = mouse.level_.Context(
+        [](float, float, float)
+        {
+            return true;
+        });
+    mouse.level_.society.Tick(.6f, mouseContext);
+    mouse.level_.Weapon().Update(.6f, mouseContext);
+    mouse.level_.society.TogglePK();
+    click(*human, 961, 601);
+    ok &= require(human->health == humanHealth - 24 && mouse.level_.society.notoriety > 0,
+                  "mouse picking scales with odd window sizes and preserves PK consequences");
+    mouse.level_.society.Tick(.6f, mouseContext);
+    mouse.level_.Weapon().Update(.6f, mouseContext);
+    mouse.MouseAttack(500, 150, 961, 601);
+    ok &= require(human->health == humanHealth - 24 && monster->health == monsterHealth - 14,
+                  "empty-space click never falls back to nearest target");
+    auto blockedContext = mouse.level_.Context(
+        [](float, float, float)
+        {
+            return false;
+        });
+    mouse.level_.society.PlayerStrike(false, blockedContext, monster->Id(), true);
+    ok &= require(monster->health == monsterHealth - 14,
+                  "selected mouse target cannot be hit through walls");
+    mouse.cameraLag_ = {-300, -170};
+    click(*monster, 1280, 800);
+    ok &=
+        require(monster->health == monsterHealth - 14, "HUD consumes clicks over a nearby target");
+    mouse.cameraLag_ = {};
+    monster->local = {0, 110};
+    click(*monster, 1280, 800);
+    ok &= require(monster->health == monsterHealth - 14, "mouse attack respects melee range");
+    mouse.level_.state = RunState::Lost;
+    click(*human, 1280, 800);
+    ok &= require(human->health == humanHealth - 24, "dead player cannot mouse attack");
     return ok;
+}
+
+void PrototypeWorld::PreviewExpedition()
+{
+    auto& story = level_.society.story;
+    story.homeInvestigated = story.hasHarinStudentCard = story.metRecorder = story.mukContracted =
+        true;
+    story.hunted = 3;
+    story.reported = true;
+    story.suppliesDelivered = 2;
+    for (int i = 0; i < 110; ++i)
+    {
+        Move(10, 0);
+    }
+    cameraLag_ = {0, 0};
+}
+
+void PrototypeWorld::PreviewAttack(YokaiForm form, float phase)
+{
+    level_.Player().SelectYokai(form);
+    level_.Player().weapon = true;
+    level_.Player().transformPhase = 0;
+    auto& weapon = level_.Weapon();
+    weapon.StartSwing({80, 30});
+    weapon.swingSide = 1;
+    weapon.swingTime = weapon.swingDuration * (1 - std::max(0.f, std::min(.99f, phase)));
+}
+
+void PrototypeWorld::PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill)
+{
+    auto& player = level_.Player();
+    player.SelectYokai(form);
+    player.yokaiGrowth[int(form)].level = level;
+    player.transformPhase = 0;
+    player.weapon = weaponForm;
+    auto& weapon = level_.Weapon();
+    weapon.skillForm = form;
+    weapon.skillTime = weaponForm && skill ? .43f : -1.f;
+    weapon.aim = {1, 0};
 }
 
 void PrototypeWorld::PreviewBoss()
@@ -1204,7 +2236,7 @@ void PrototypeWorld::Draw(const RangeActor& actor)
     if (player && player->weapon && player->showRange)
     {
         auto p = actor.Position();
-        Ring(*activeRenderer_, p.x, p.y, player->Range(), Color(90, 220, 199, .4f));
+        Ring(*activeRenderer_, p.x, p.y, player->StrikeRange(), Color(90, 220, 199, .4f));
     }
 }
 
@@ -1264,7 +2296,113 @@ void PrototypeWorld::Draw(const BuildingActor& actor)
     {
         return;
     }
-    Building(*activeRenderer_, p.x, p.y, actor.width, actor.depth, actor.height, actor.seed);
+    if (actor.style == 0)
+    {
+        Building(*activeRenderer_, p.x, p.y, actor.width, actor.depth, actor.height, actor.seed);
+        return;
+    }
+    auto& r = *activeRenderer_;
+    LocalMesh(r,
+              "fort-ruin-v3:" + std::to_string(actor.style) + ":" + std::to_string(actor.seed) + ":"
+                  + std::to_string(actor.width) + ":" + std::to_string(actor.depth),
+              p.x,
+              p.y,
+              1,
+              [&]()
+              {
+                  auto at = [&](float x, float y, float z = 0.f)
+                  {
+                      return Project(x, y, z);
+                  };
+                  auto box = [&](float x, float y, float w, float d, float h, float bottom = 0.f)
+                  {
+                      Ink front = actor.style == 2 ? Color(76, 82, 77) : Color(70, 62, 58);
+                      Ink side = actor.style == 2 ? Color(49, 60, 57) : Color(45, 42, 40);
+                      r.Quad(at(x, y + d, bottom),
+                             at(x + w, y + d, bottom),
+                             at(x + w, y + d, bottom + h),
+                             at(x, y + d, bottom + h),
+                             front);
+                      r.Quad(at(x + w, y, bottom),
+                             at(x + w, y + d, bottom),
+                             at(x + w, y + d, bottom + h),
+                             at(x + w, y, bottom + h),
+                             side);
+                      r.Quad(at(x, y, bottom + h),
+                             at(x + w, y, bottom + h),
+                             at(x + w, y + d, bottom + h),
+                             at(x, y + d, bottom + h),
+                             Color(95, 100, 87));
+                  };
+                  if (actor.style == 2)
+                  {
+                      box(0, 0, actor.width, actor.depth, 30);
+                      bool horizontal = actor.width > actor.depth;
+                      float length = horizontal ? actor.width : actor.depth;
+                      // A continuous masonry face, shallow battlements and heavy terminal piers.
+                      for (int row = 0; row < 3; ++row)
+                      {
+                          float z = 8.f + row * 8;
+                          r.Line(at(0, actor.depth + .1f, z),
+                                 at(actor.width, actor.depth + .1f, z),
+                                 .7f,
+                                 Color(45, 55, 51));
+                          r.Line(at(actor.width + .1f, 0, z),
+                                 at(actor.width + .1f, actor.depth, z),
+                                 .7f,
+                                 Color(37, 47, 44));
+                          for (float t = row % 2 ? 12.f : 24.f; t < length; t += 24)
+                          {
+                              float x = horizontal ? t : actor.width + .1f;
+                              float y = horizontal ? actor.depth + .1f : t;
+                              r.Line(at(x, y, z), at(x, y, z + 8), .7f, Color(47, 55, 50));
+                          }
+                      }
+                      for (float t = 0; t < length; t += 38)
+                      {
+                          box(horizontal ? t : 0,
+                              horizontal ? 0 : t,
+                              horizontal ? std::min(24.f, length - t) : actor.width,
+                              horizontal ? actor.depth : std::min(24.f, length - t),
+                              7,
+                              30);
+                      }
+                      for (float t : {0.f, std::max(0.f, length - 17)})
+                      {
+                          box(horizontal ? t : 0,
+                              horizontal ? 0 : t,
+                              horizontal ? std::min(17.f, length) : actor.width,
+                              horizontal ? actor.depth : std::min(17.f, length),
+                              41);
+                      }
+                  }
+                  else
+                  {
+                      box(0, 0, actor.width, actor.depth, 4);
+                      for (int i = 0; i < 5; ++i)
+                      {
+                          float x = actor.width * i / 5.f;
+                          float h = actor.height * (.4f + float(Mix(actor.seed + i) % 60) / 100.f);
+                          box(x, 0, actor.width / 5.f - 2, 8, h);
+                          box(x, actor.depth - 9, actor.width / 5.f - 3, 9, h * .55f);
+                      }
+                      box(actor.width - 8, 10, 8, actor.depth * .5f, 18);
+                      for (int piece = 0; piece < 9; ++piece)
+                      {
+                          auto detail = Mix(actor.seed + piece * 891);
+                          float x =
+                              10 + float(detail % 1000) / 1000.f * std::max(1.f, actor.width - 28);
+                          float y = 12
+                                    + float((detail >> 16) % 1000) / 1000.f
+                                          * std::max(1.f, actor.depth - 32);
+                          box(x,
+                              y,
+                              7 + float(detail % 9),
+                              5 + float((detail >> 8) % 8),
+                              4 + float((detail >> 24) % 10));
+                      }
+                  }
+              });
 }
 
 void PrototypeWorld::Draw(const LampActor& actor)

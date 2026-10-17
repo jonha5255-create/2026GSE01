@@ -12,15 +12,21 @@ class PrototypeWorld : private ActorRenderContext
     explicit PrototypeWorld(uint32_t seed = 2026, bool living = true);
     void Update(float dt);
     void Key(unsigned char key, bool down);
+    void MouseAttack(int x, int y, int width, int height);
+    void MouseSkill();
     void Draw(PrototypeRenderer& r);
     void DrawUI(PrototypeRenderer& r);
     static bool SelfTest();
     void PreviewBoss();
+    void PreviewAttack(YokaiForm form, float phase);
+    void PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill = true);
+    void PreviewExpedition();
 
   private:
     using Coord = std::pair<int64_t, int64_t>;
     static CityChunk Generate(Coord coord, uint32_t seed = 2026);
     void Stream();
+    void PopulateChunk(Coord coord, ChunkActor& chunk);
     bool Blocked(const Location& p, float radius = 12) const;
     bool Walkable(float x, float y, float radius) const;
     void Move(float dx, float dy);
@@ -71,6 +77,7 @@ class PrototypeWorld : private ActorRenderContext
     PrototypeRenderer* activeRenderer_ = nullptr;
     std::map<Coord, ActorId> chunkActors_;
     std::map<Coord, CityChunk> chunks_;
+    uint64_t monitorWorldId_ = 0;
     Location player_;
     uint32_t seed_ = 2026;
     LevelOne level_;

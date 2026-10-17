@@ -36,7 +36,7 @@ void ProjectileActor::Update(float dt, ActorUpdateContext& services)
         }
         for (auto* npc : citizens)
         {
-            if (npc->job == NpcJob::Wraith && npc->health > 0
+            if ((npc->job == NpcJob::Wraith || npc->Id() == humanTarget) && npc->health > 0
                 && Length(Minus(position, npc->Position())) < 17)
             {
                 context.society->Damage(*npc, damage, nullptr, context);

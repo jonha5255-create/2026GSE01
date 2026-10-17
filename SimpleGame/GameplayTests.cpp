@@ -19,6 +19,52 @@ bool LevelOne::SelfTest()
         return x < 60 - radius || x > 90 + radius;
     };
     LevelOne a;
+    {
+        LevelOne growth;
+        auto services = growth.Context(open);
+        auto& hero = growth.Player();
+        hero.SelectYokai(YokaiForm::Sword);
+        hero.weapon = true;
+        check(!growth.Weapon().CastSkill(services), "yokai skills are locked before level three");
+        hero.AddYokaiExperience(120, services);
+        check(hero.level == 1 && hero.Companion().level == 3 && hero.Evolution() == 1,
+              "yokai experience evolves independently from the character");
+        hero.SelectYokai(YokaiForm::Claw);
+        check(hero.Companion().level == 1, "each yokai retains independent progression");
+        hero.SelectYokai(YokaiForm::Sword);
+        hero.weapon = true;
+        auto& target = growth.SpawnEnemy({50, 0});
+        target.health = target.maximumHealth = 200;
+        auto& citizen = growth.Graph().Spawn<NpcActor>(NoActor, "시민", NpcJob::Merchant);
+        citizen.local = {40, 0};
+        check(growth.Weapon().CastSkill(services), "unlocked sword skill starts its cast");
+        growth.Weapon().Update(.1f, services);
+        check(target.health == 200, "skill charge animation precedes damage");
+        growth.Weapon().Update(.16f, services);
+        check(target.health < 200 && citizen.health == 100,
+              "sword skill damages monsters without harming civilians");
+        check(!growth.Weapon().CastSkill(services), "skill cooldown prevents repeated casts");
+        hero.SelectYokai(YokaiForm::Claw);
+        growth.Weapon().Update(.1f, services);
+        check(growth.Weapon().skillTime < 0 && hero.yokaiGrowth[0].skillCooldown > 0,
+              "switching cancels a skill without resetting its cooldown");
+    }
+    for (auto form : {YokaiForm::Ranged, YokaiForm::Claw})
+    {
+        LevelOne combat;
+        auto services = combat.Context(open);
+        combat.Player().SelectYokai(form);
+        combat.Player().AddYokaiExperience(120, services);
+        combat.Player().weapon = true;
+        auto& target = combat.SpawnEnemy({40, 0});
+        target.health = target.maximumHealth = 200;
+        combat.Weapon().CastSkill(services);
+        combat.Weapon().Update(.6f, services);
+        check(form == YokaiForm::Ranged ? combat.Graph().Query<ProjectileActor>().size() == 5
+                                        : target.health == 134,
+              form == YokaiForm::Ranged ? "ranged skill launches five real projectiles"
+                                        : "claw skill resolves three separate strikes");
+    }
     a.spawnTimer_ = 999;
     auto& enemy = a.SpawnEnemy({150, 0});
     enemy.speed = 0;

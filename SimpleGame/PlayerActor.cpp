@@ -3,9 +3,41 @@
 #include "GameplayContext.h"
 #include <algorithm>
 
+void PlayerActor::SelectYokai(YokaiForm form)
+{
+    yokai = form;
+    weapon = false;
+    transformPhase = 1;
+}
+
+const char* PlayerActor::YokaiName() const
+{
+    return yokai == YokaiForm::Sword    ? "검 요괴"
+           : yokai == YokaiForm::Ranged ? "원거리 요괴"
+                                        : "클로 요괴";
+}
+
+float PlayerActor::StrikeRange() const
+{
+    return weapon && yokai == YokaiForm::Ranged ? Range()
+           : weapon && yokai == YokaiForm::Claw ? 65.f
+                                                : 85.f;
+}
+
+float PlayerActor::StrikeCooldown() const
+{
+    return weapon && yokai == YokaiForm::Claw ? .2f : .5f;
+}
+
+float PlayerActor::StrikeDamage() const
+{
+    return (yokai == YokaiForm::Claw ? 11.f : 24.f) + (level - 1) * 2.f + weaponRank * 3.f
+           + (Companion().level - 1) * 2.f;
+}
+
 float PlayerActor::Damage() const
 {
-    return 14.f + (level - 1) * 2.5f + weaponRank * 3.5f;
+    return 14.f + (level - 1) * 2.5f + weaponRank * 3.5f + (Companion().level - 1) * 2.f;
 }
 
 float PlayerActor::Cooldown() const
@@ -111,6 +143,10 @@ void PlayerActor::Collect(LootKind kind, int amount, GameplayContext& context)
 
 void PlayerActor::Update(float dt, ActorUpdateContext& services)
 {
+    for (auto& growth : yokaiGrowth)
+    {
+        growth.skillCooldown = std::max(0.f, growth.skillCooldown - dt);
+    }
     auto& context = dynamic_cast<GameplayContext&>(services);
     invulnerable = std::max(0.f, invulnerable - dt);
     magnetTime = std::max(0.f, magnetTime - dt);
@@ -134,5 +170,38 @@ void PlayerActor::Update(float dt, ActorUpdateContext& services)
     if (quietTime_ > 6)
     {
         health = std::min(MaximumHealth(), health + dt * 1.5f);
+    }
+}
+
+const char* PlayerActor::SkillName() const
+{
+    return yokai == YokaiForm::Sword    ? "월영 참격"
+           : yokai == YokaiForm::Ranged ? "혼령 산탄"
+                                        : "삼연 발톱";
+}
+
+void PlayerActor::AddYokaiExperience(int amount, GameplayContext& context)
+{
+    auto& growth = yokaiGrowth[int(yokai)];
+    if (amount <= 0 || growth.level >= 10)
+    {
+        return;
+    }
+    growth.experience += amount;
+    while (growth.level < 10 && growth.experience >= YokaiExperienceRequired())
+    {
+        growth.experience -= YokaiExperienceRequired();
+        ++growth.level;
+        transformPhase = 1;
+        context.Effect(Position(),
+                       std::string(YokaiName()) + " LV." + std::to_string(growth.level)
+                           + (growth.level == 3                        ? " / 스킬 해금! 우클릭"
+                              : growth.level == 6 || growth.level == 9 ? " / 진화!"
+                                                                       : ""),
+                       2.2f);
+    }
+    if (growth.level == 10)
+    {
+        growth.experience = 0;
     }
 }

@@ -58,6 +58,7 @@
     <ClInclude Include="FrameProfiler.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="MeshDiskCache.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="RenderDiagnostics.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="WorldMonitor.h"><Filter>헤더 파일</Filter></ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -73,6 +74,7 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="CityGenerator.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorld.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorldInteraction.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorldView.cpp"><Filter>소스 파일</Filter></ClCompile>
@@ -100,6 +102,7 @@
     <ClCompile Include="FrameProfiler.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="MeshDiskCache.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="RenderDiagnostics.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="WorldMonitor.cpp"><Filter>소스 파일</Filter></ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\SolidRect.fs">

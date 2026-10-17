@@ -11,6 +11,7 @@ Prototype scene extensions, 2026.
 #include "PrototypeWorld.h"
 #include "FrameProfiler.h"
 #include "RenderDiagnostics.h"
+#include "WorldMonitor.h"
 #include "Dependencies/freeglut.h"
 #include <windows.h>
 #include <algorithm>
@@ -32,6 +33,7 @@ namespace
 
     void Close()
     {
+        WorldMonitor::Get().Stop();
         if (initialized)
         {
             RenderDiagnostics::Get().Event("session_end", "renderer shutdown");
@@ -130,6 +132,23 @@ namespace
         }
         effectKeys[key] = false;
         world->Key(key, false);
+    }
+
+    void MouseButton(int button, int state, int x, int y)
+    {
+        if (initialized && world && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+        {
+            RenderDiagnostics::Get().Event("mouse_attack",
+                                           std::to_string(x) + "," + std::to_string(y));
+            world->MouseAttack(x, y, width, height);
+            glutPostRedisplay();
+        }
+        else if (initialized && world && button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+        {
+            RenderDiagnostics::Get().Event("mouse_skill", "right_button_down");
+            world->MouseSkill();
+            glutPostRedisplay();
+        }
     }
 
     void Timer(int)
@@ -266,6 +285,9 @@ namespace
 int main(int argc, char** argv)
 {
     bool smoke = false, selfTest = false, rebuildCache = false, legacy = false;
+    bool monitorTest = false;
+    bool monitorEnabled = true;
+    unsigned short monitorPort = 8765;
     for (int i = 1; i < argc; ++i)
     {
         smoke |= std::string(argv[i]) == "--smoke-test";
@@ -273,13 +295,74 @@ int main(int argc, char** argv)
         profileTest |= std::string(argv[i]) == "--profile-test";
         rebuildCache |= std::string(argv[i]) == "--rebuild-mesh-cache";
         legacy |= std::string(argv[i]) == "--level-one";
+        monitorEnabled &= std::string(argv[i]) != "--no-monitor";
+        monitorTest |= std::string(argv[i]) == "--monitor-test";
+        std::string argument = argv[i];
+        if (argument.find("--monitor-port=") == 0)
+        {
+            try
+            {
+                size_t consumed = 0;
+                auto port = std::stoul(argument.substr(15), &consumed);
+                if (!port || port > 65535 || consumed != argument.size() - 15)
+                {
+                    throw std::invalid_argument("port");
+                }
+                monitorPort = static_cast<unsigned short>(port);
+            }
+            catch (...)
+            {
+                std::cerr << "Monitor port must be an integer from 1 to 65535\n";
+                return 8;
+            }
+        }
     }
-    if ((selfTest || smoke) && !PrototypeWorld::SelfTest())
+    if ((selfTest || smoke) && (!PrototypeWorld::SelfTest() || !WorldMonitor::SelfTest()))
     {
         return 2;
     }
     if (selfTest && !smoke)
     {
+        return 0;
+    }
+    if (monitorTest)
+    {
+        uint32_t monitorSeed = 2026;
+        for (int i = 1; i < argc; ++i)
+        {
+            std::string argument = argv[i];
+            if (argument.find("--seed=") == 0)
+            {
+                try
+                {
+                    monitorSeed = static_cast<uint32_t>(std::stoul(argument.substr(7)));
+                }
+                catch (...)
+                {
+                    std::cerr << "Invalid seed\n";
+                    return 7;
+                }
+            }
+        }
+        RenderDiagnostics::Get().Open("monitor-test");
+        world.reset(new PrototypeWorld(monitorSeed, !legacy));
+        if (!monitorEnabled || !WorldMonitor::Get().Start(monitorPort))
+        {
+            return 9;
+        }
+        auto until = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+        auto previous = std::chrono::steady_clock::now();
+        while (std::chrono::steady_clock::now() < until)
+        {
+            auto now = std::chrono::steady_clock::now();
+            world->Update(std::chrono::duration<float>(now - previous).count());
+            previous = now;
+            std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        }
+        WorldMonitor::Get().Stop();
+        RenderDiagnostics::Get().Event("session_end", "headless monitor test shutdown");
+        RenderDiagnostics::Get().Flush();
+        std::cout << "[MONITOR] Headless integration test finished\n";
         return 0;
     }
     glutInit(&argc, argv);
@@ -338,6 +421,10 @@ int main(int argc, char** argv)
         }
     }
     world.reset(new PrototypeWorld(seed, !legacy));
+    if (monitorEnabled && !smoke && !profileTest)
+    {
+        WorldMonitor::Get().Start(monitorPort);
+    }
     RenderDiagnostics::Get().Event(
         "environment",
         std::string("seed=") + std::to_string(seed) + "; resolution=" + std::to_string(width) + "x"
@@ -350,6 +437,7 @@ int main(int argc, char** argv)
     glutReshapeFunc(Resize);
     glutKeyboardFunc(KeyDown);
     glutKeyboardUpFunc(KeyUp);
+    glutMouseFunc(MouseButton);
     glutCloseFunc(Close);
     glutIgnoreKeyRepeat(1);
     if (smoke)
@@ -362,6 +450,74 @@ int main(int argc, char** argv)
         ok = VerifyPostEffects() && ok;
         ok = Snapshot(L"prototype-companion.bmp") && ok;
         ok = Snapshot(L"living-world-town.bmp") && ok;
+        {
+            auto savedWorld = std::move(world);
+            world = std::make_unique<PrototypeWorld>(2026);
+            world->PreviewYokai(YokaiForm::Sword, 9, false);
+            ok = Snapshot(L"yokai-evolved-companion.bmp") && ok;
+            const wchar_t* skills[] = {
+                L"yokai-sword-skill.bmp", L"yokai-ranged-skill.bmp", L"yokai-claw-skill.bmp"};
+            for (int form = 0; form < 3; ++form)
+            {
+                world->PreviewYokai(YokaiForm(form), 9, true);
+                ok = Snapshot(skills[form]) && ok;
+                for (int growth : {1, 3, 6, 9})
+                {
+                    for (bool equipped : {false, true})
+                    {
+                        world->PreviewYokai(YokaiForm(form), growth, equipped, false);
+                        std::wstring file = L"yokai-evolution-" + std::to_wstring(form) + L"-lv"
+                                            + std::to_wstring(growth)
+                                            + (equipped ? L"-weapon.bmp" : L"-companion.bmp");
+                        ok = Snapshot(file.c_str()) && ok;
+                    }
+                }
+            }
+            world = std::move(savedWorld);
+        }
+        {
+            auto savedWorld = std::move(world);
+            world = std::make_unique<PrototypeWorld>(2026);
+            world->PreviewExpedition();
+            ok = Snapshot(L"living-world-expedition.bmp") && ok;
+            world = std::move(savedWorld);
+        }
+        for (int form = 0; form < 3; ++form)
+        {
+            unsigned char key = static_cast<unsigned char>('1' + form);
+            KeyDown(key, 0, 0);
+            KeyUp(key, 0, 0);
+            KeyDown('q', 0, 0);
+            KeyUp('q', 0, 0);
+            const wchar_t* images[] = {L"yokai-sword.bmp", L"yokai-ranged.bmp", L"yokai-claw.bmp"};
+            ok = Snapshot(images[form]) && ok;
+        }
+        KeyDown('1', 0, 0);
+        KeyUp('1', 0, 0);
+        auto pixels = [&]()
+        {
+            std::vector<unsigned char> result(size_t(width) * height * 3);
+            glReadBuffer(GL_BACK);
+            glPixelStorei(GL_PACK_ALIGNMENT, 1);
+            glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, result.data());
+            glPixelStorei(GL_PACK_ALIGNMENT, 4);
+            return result;
+        };
+        for (auto form : {YokaiForm::Sword, YokaiForm::Claw})
+        {
+            world->PreviewAttack(form, .2f);
+            ok =
+                Snapshot(form == YokaiForm::Sword ? L"sword-windup.bmp" : L"claw-windup.bmp") && ok;
+            auto before = pixels();
+            world->PreviewAttack(form, .55f);
+            ok = Snapshot(form == YokaiForm::Sword ? L"sword-swing.bmp" : L"claw-swing.bmp") && ok;
+            bool changed = before != pixels();
+            std::cout << (changed ? "PASS " : "FAIL ")
+                      << "melee animation changes rendered pixels\n";
+            ok = changed && ok;
+        }
+        KeyDown('1', 0, 0);
+        KeyUp('1', 0, 0);
         ok = renderer.VerifyHDR() && ok;
         KeyDown('h', 0, 0);
         KeyUp('h', 0, 0);
