@@ -559,6 +559,26 @@ void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& 
         goods += cargo;
         if (prey)
         {
+            if (victim.bossRegion >= 0 && victim.bossRegion < 3)
+            {
+                unsigned bit = 1u << victim.bossRegion;
+                if (!(bossRelics & bit))
+                {
+                    bossRelics |= bit;
+                    const char* relics[] = {"핏빛 인장", "독안개 심장", "석정 핵"};
+                    dialogue = std::string("유물 획득: ") + relics[victim.bossRegion];
+                    Note(dialogue, "quest");
+                    context.Effect(victim.Position(), dialogue, 2.5f);
+                    if (bossRelics == 7 && !bossRelicReward)
+                    {
+                        bossRelicReward = true;
+                        gold += 150;
+                        context.player.AddExperience(120, context);
+                        dialogue = "삼역의 유물 완료! 보상: 150전 / 경험치 120";
+                        Note(dialogue, "quest");
+                    }
+                }
+            }
             if (victim.storyGuardian && story.gateOpened && !story.guardianDefeated)
             {
                 story.guardianDefeated = true;

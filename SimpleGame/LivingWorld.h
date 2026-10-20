@@ -103,6 +103,7 @@ class NpcActor : public Actor
     bool storyGuardian = false;
     bool wilderness = false;
     bool fieldBoss = false;
+    int bossRegion = -1;
     int monsterForm = 0; // 0: horned wraith, 1: carrion hound, 2: stone brute.
     float gaitPhase = 0, moveBlend = 0;
     FarmPoint moveFacing{1, 0};
@@ -159,6 +160,8 @@ class LivingWorld
 
     ActorId town = NoActor;
     ActorId guardian = NoActor;
+    unsigned bossRelics = 0;
+    bool bossRelicReward = false;
     StoryProgress story;
     bool enabled = false, pk = false, panel = false;
     int gold = 80, goods = 0, notoriety = 0, trades = 0, raids = 0, hunts = 0;

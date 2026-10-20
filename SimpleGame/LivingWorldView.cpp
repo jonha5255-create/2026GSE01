@@ -519,17 +519,56 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     }
 
     float mx = w - 175, my = 224;
+    r.Rect(20, 401, 340, 94, panel);
+    int collected = int((sim.bossRelics & 1) != 0) + int((sim.bossRelics & 2) != 0)
+                    + int((sim.bossRelics & 4) != 0);
+    r.Text(34, 410, "삼역의 유물 / " + std::to_string(collected) + "/3", gold, .7f);
+    if (sim.bossRelicReward)
+    {
+        r.Text(34, 439, "완료: 150전 / 경험치 120 지급", cyan, .58f);
+    }
+    else
+    {
+        int next = !(sim.bossRelics & 1) ? 0 : !(sim.bossRelics & 2) ? 1 : 2;
+        const char* names[] = {
+            "핏빛 제단 / 핏빛 인장", "독안개 분지 / 독안개 심장", "붕괴 석정 / 석정 핵"};
+        int cx = next == 0 ? 1 : next == 2 ? -1 : 0, cy = next == 1 ? 1 : 0;
+        double dx = (double(cx) - double(player_.cx)) * 640 + 320 - player_.x;
+        double dy = (double(cy) - double(player_.cy)) * 640 + 320 - player_.y;
+        r.Text(34, 435, names[next], white, .58f);
+        r.Text(34,
+               459,
+               "청크 " + std::to_string(cx) + "," + std::to_string(cy) + " 중앙 / "
+                   + std::to_string(int(std::min(999999.0, std::hypot(dx, dy)))) + "m / 보스 처치",
+               cyan,
+               .53f);
+    }
     float mapLeft = w - 314, mapRight = w - 34, mapTop = 153, mapBottom = 294;
-    r.Rect(w - 328, 109, 308, 222, panel);
-    r.Text(w - 314, 120, "주변 지도 / 플레이어 중심", cyan, .7f);
-    r.Text(w - 314,
-           140,
+    if (mapExpanded_)
+    {
+        mapLeft = w * .2f;
+        mapRight = w * .85f;
+        mapTop = 155;
+        mapBottom = h - 185;
+        mx = (mapLeft + mapRight) * .5f;
+        my = (mapTop + mapBottom) * .5f;
+    }
+    r.Rect(mapLeft - 14, mapTop - 44, mapRight - mapLeft + 28, mapBottom - mapTop + 81, panel);
+    r.Text(mapLeft,
+           mapTop - 33,
+           mapExpanded_ ? "확대 지도 / M 축소" : "주변 지도 / M 확대",
+           cyan,
+           .7f);
+    r.Text(mapLeft,
+           mapTop - 13,
            "청크 " + std::to_string(player_.cx) + "," + std::to_string(player_.cy),
            muted,
            .46f);
     auto mini = [&](FarmPoint relative)
     {
-        return Point{mx + (relative.x - relative.y) * .12f, my + (relative.x + relative.y) * .06f};
+        float factor = mapExpanded_ ? 1.6f : 1.f;
+        return Point{mx + (relative.x - relative.y) * .12f * factor,
+                     my + (relative.x + relative.y) * .06f * factor};
     };
     auto inside = [&](Point p)
     {
@@ -558,13 +597,30 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
                     mapBottom,
                     ink);
         };
-        mapRect(0, 0, 640, 640, Color(24, 37, 39));
-        for (const auto& plot : layout->second.plots)
+        const auto& data = layout->second;
+        mapRect(0, 0, 640, 640, data.village ? Color(31, 48, 39) : Color(49, 43, 37));
+        if (data.bossRegion >= 0)
         {
-            mapRect(plot.x, plot.y, plot.width, plot.depth, Color(53, 69, 78));
+            const Ink colors[] = {Color(110, 43, 43), Color(48, 86, 49), Color(65, 65, 103)};
+            mapRect(140, 140, 360, 360, colors[data.bossRegion]);
+        }
+        for (size_t i = 0; i < data.plots.size(); ++i)
+        {
+            const auto& plot = data.plots[i];
+            mapRect(plot.x,
+                    plot.y,
+                    plot.width,
+                    plot.depth,
+                    data.styles[i] == 2 ? Color(140, 148, 133)
+                    : data.village      ? Color(53, 69, 78)
+                                        : Color(86, 74, 63));
         }
         for (const auto& road : layout->second.roads)
         {
+            if (!data.village && !road.arterial)
+            {
+                continue;
+            }
             mapRect(road.x, road.y, road.width, road.depth, Color(106, 111, 101));
         }
     }
@@ -581,7 +637,10 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
         Point p = mini(npc->Position());
         if (npc->health > 0 && inside(p))
         {
-            r.Ellipse(p, npc->storyGuardian ? 4.f : 3.f, 3, RoleColor(npc->job));
+            r.Ellipse(p,
+                      npc->storyGuardian || npc->fieldBoss ? 5.f : 3.f,
+                      3,
+                      npc->fieldBoss ? gold : RoleColor(npc->job));
         }
     }
     if (goal)
@@ -593,8 +652,8 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     }
     r.Ellipse({mx, my}, 5, 5, white);
     r.Line({mx, my - 8}, {mx, my - 4}, 2, cyan);
-    r.Text(w - 314, 305, "중앙: 서진 / 금색: 목표 / 분홍: 괴물", muted, .55f);
-    if (goal && level_.state != RunState::Lost)
+    r.Text(mapLeft, mapBottom + 11, "흰색: 나 / 금색: 목표·보스 / 분홍: 괴물", muted, .52f);
+    if (goal && !mapExpanded_ && level_.state != RunState::Lost)
     {
         Point world = Project(goal->Position().x, goal->Position().y);
         Point marker{world.x / scale, world.y / scale - 65 * zoom_ / scale};

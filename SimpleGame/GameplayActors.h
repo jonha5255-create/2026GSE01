@@ -78,6 +78,9 @@ class PlayerActor : public Actor
     float health = 100, invulnerable = 0, magnetTime = 0;
     bool weapon = false, showRange = true;
     FarmPoint moveInput;
+    void ApplyShotRecoil(FarmPoint direction, bool powerful = false);
+    float firingHold = 0;
+    FarmPoint recoilVelocity;
     float quietTime_ = 0, walkPhase = 0, transformPhase = 0;
 };
 

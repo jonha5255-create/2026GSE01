@@ -82,6 +82,7 @@ void WeaponActor::UpdateSkill(float dt, GameplayContext& context)
                 bullet.SetPosition(Position());
             }
             muzzleFlash = .3f;
+            owner->ApplyShotRecoil(aim, true);
         }
         else
         {
@@ -231,5 +232,6 @@ bool WeaponActor::ShootAt(Actor& target, GameplayContext& context)
     }
     shotTimer_ = owner->Cooldown();
     muzzleFlash = .12f;
+    owner->ApplyShotRecoil(aim);
     return true;
 }

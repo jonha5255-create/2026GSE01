@@ -87,7 +87,23 @@ void Location::Normalize()
 
 CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
 {
-    return GenerateCityChunk(c.first, c.second, seed);
+    auto chunk = GenerateCityChunk(c.first, c.second, seed);
+    chunk.bossRegion = c == Coord{1, 0} ? 0 : c == Coord{0, 1} ? 1 : c == Coord{-1, 0} ? 2 : -1;
+    if (chunk.bossRegion >= 0)
+    {
+        // Preserve roads, but reserve a broad, accessible clearing for the encounter.
+        for (size_t i = chunk.plots.size(); i-- > 0;)
+        {
+            const auto& lot = chunk.plots[i];
+            if (lot.x < 510 && lot.x + lot.width > 130 && lot.y < 510 && lot.y + lot.depth > 130)
+            {
+                chunk.plots.erase(chunk.plots.begin() + i);
+                chunk.heights.erase(chunk.heights.begin() + i);
+                chunk.styles.erase(chunk.styles.begin() + i);
+            }
+        }
+    }
+    return chunk;
 }
 
 PrototypeWorld::PrototypeWorld(uint32_t seed, bool living)
@@ -234,6 +250,21 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
         return;
     }
     int count = 3 + int(next() % 3);
+    if (chunk.data.bossRegion >= 0)
+    {
+        int region = chunk.data.bossRegion;
+        const char* names[] = {"핏빛 제단의 뿔왕", "독안개 포식견", "붕괴 석정의 거신"};
+        auto& boss = graph.Spawn<NpcActor>(parent, names[region], NpcJob::Wraith);
+        boss.local = boss.home = {320, 320};
+        boss.wilderness = boss.fieldBoss = true;
+        boss.bossRegion = boss.monsterForm = region;
+        boss.health = boss.maximumHealth = 420 + region * 90.f;
+        boss.gold = 85;
+        boss.goods = 6;
+        RenderDiagnostics::Get().Event("quest_boss_spawn",
+                                       "region=" + std::to_string(region)
+                                           + "; actor=" + std::to_string(boss.Id()));
+    }
     int spawned = 0;
     for (int attempt = 0; attempt < 80 && spawned < count; ++attempt)
     {
@@ -244,7 +275,7 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
         {
             continue;
         }
-        bool boss = spawned == 0 && chunk.data.seed % 3 == 0;
+        bool boss = chunk.data.bossRegion < 0 && spawned == 0 && chunk.data.seed % 3 == 0;
         const char* monsterNames[] = {"뿔 잔향귀", "시체 사냥개", "폐허 석괴"};
         int form = int((chunk.data.seed + uint32_t(spawned)) % 3);
         auto& monster = graph.Spawn<NpcActor>(parent,
@@ -396,6 +427,10 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     {
         distortion_ = !distortion_;
     }
+    if (key == 'm')
+    {
+        mapExpanded_ = !mapExpanded_;
+    }
     if (key == 'g')
     {
         debug_ = !debug_;
@@ -453,7 +488,7 @@ void PrototypeWorld::Key(unsigned char key, bool down)
 
 void PrototypeWorld::MouseSkill()
 {
-    if (!level_.Player().enabled)
+    if (!level_.Player().enabled || mapExpanded_)
     {
         return;
     }
@@ -467,7 +502,7 @@ void PrototypeWorld::MouseSkill()
 
 void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
 {
-    if (width <= 0 || height <= 0 || x < 0 || y < 0 || x >= width || y >= height
+    if (mapExpanded_ || width <= 0 || height <= 0 || x < 0 || y < 0 || x >= width || y >= height
         || level_.state == RunState::Lost || level_.state == RunState::Won
         || !level_.Player().enabled)
     {
@@ -480,7 +515,7 @@ void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
     float ux = x / uiScale, uy = y / uiScale;
     float w = width / uiScale, h = height / uiScale;
     if (level_.society.enabled
-        && (uy <= 91 || uy >= h - 148 || (ux >= 20 && ux <= 360 && uy >= 109 && uy <= 391)
+        && (uy <= 91 || uy >= h - 148 || (ux >= 20 && ux <= 360 && uy >= 109 && uy <= 495)
             || (ux >= w - 328 && ux <= w - 20 && uy >= 109 && uy <= 331)
             || (level_.society.panel && ux >= w - 328 && ux <= w - 20 && uy >= 341 && uy <= 625)))
     {
@@ -623,8 +658,9 @@ void PrototypeWorld::LocalMesh(PrototypeRenderer& r,
 void PrototypeWorld::Floor(PrototypeRenderer& r, float x, float y, const CityChunk& chunk)
 {
     LocalMesh(r,
-              "floor:city-v6:" + std::to_string(chunk.seed) + ":" + std::to_string(chunk.roadX)
-                  + ":" + std::to_string(chunk.roadY) + ":" + std::to_string(debug_),
+              "floor:city-v9:" + std::to_string(chunk.bossRegion) + ":" + std::to_string(chunk.seed)
+                  + ":" + std::to_string(chunk.roadX) + ":" + std::to_string(chunk.roadY) + ":"
+                  + std::to_string(debug_),
               x,
               y,
               1,
@@ -650,14 +686,71 @@ void PrototypeWorld::FloorGeometry(PrototypeRenderer& r, float x, float y, const
         }
     };
     rect(0, 0, Side, Side, chunk.village ? Color(44, 57, 48) : Color(49, 43, 37));
+    if (chunk.bossRegion >= 0)
+    {
+        const Ink earth[] = {Color(75, 30, 32), Color(34, 62, 44), Color(49, 49, 72)};
+        const Ink marks[] = {Color(173, 63, 60), Color(112, 160, 76), Color(115, 132, 192)};
+        int region = chunk.bossRegion;
+        for (int i = 0; i < 48; ++i)
+        {
+            float a = i * Pi / 24, b = (i + 1) * Pi / 24;
+            float radius = 182 + std::sin(i * 2.3f) * 16;
+            r.Triangle(p(320, 320),
+                       p(320 + std::cos(a) * radius, 320 + std::sin(a) * radius),
+                       p(320 + std::cos(b) * radius, 320 + std::sin(b) * radius),
+                       earth[region]);
+            r.Line(p(320 + std::cos(a) * 125, 320 + std::sin(a) * 125),
+                   p(320 + std::cos(b) * 125, 320 + std::sin(b) * 125),
+                   2,
+                   marks[region]);
+        }
+        for (int i = 0; i < 14; ++i)
+        {
+            float a = i * 2.4f;
+            float px = 320 + std::cos(a) * (50 + i * 8.f);
+            float py = 320 + std::sin(a) * (50 + i * 8.f);
+            rect(px, py, region == 2 ? 23.f : 9.f, region == 1 ? 20.f : 7.f, marks[region]);
+        }
+    }
     if (!chunk.village)
     {
-        for (int i = 0; i < 35; ++i)
+        for (int i = 0; i < 65; ++i)
         {
             auto detail = Mix(chunk.seed + i * 7919);
-            float a = float(detail % 620), b = float((detail >> 16) % 620);
-            rect(a, b, 8 + float(detail % 24), 4 + float((detail >> 8) % 14), Color(40, 38, 33));
+            float a = 32 + float(detail % 576), b = 32 + float((detail >> 16) % 576);
+            if (chunk.bossRegion >= 0 && Distance(a - 320, b - 320) < 175)
+            {
+                continue;
+            }
+            float radius = 9 + float((detail >> 8) % 21);
+            Ink soil = i % 3 == 0 ? Color(43, 47, 36) : Color(43, 38, 33);
+            for (int edge = 0; edge < 7; ++edge)
+            {
+                float angle = edge * Pi * 2 / 7;
+                float next = (edge + 1) * Pi * 2 / 7;
+                r.Triangle(p(a, b),
+                           p(a + std::cos(angle) * radius, b + std::sin(angle) * radius * .6f),
+                           p(a + std::cos(next) * radius, b + std::sin(next) * radius * .6f),
+                           soil);
+            }
+            if (i % 3 == 0)
+            {
+                r.Line(p(a - 7, b - 4), p(a, b + 2), 1, Color(28, 27, 26));
+                r.Line(p(a, b + 2), p(a + 12, b - 1), 1, Color(28, 27, 26));
+                r.Triangle(p(a + 3, b + 5), p(a + 8, b + 3), p(a + 10, b + 8), Color(76, 71, 61));
+            }
         }
+        // Preserve inter-village arterials; omit local streets and paved forecourts.
+        for (const auto& road : chunk.roads)
+        {
+            if (!road.arterial)
+            {
+                continue;
+            }
+            rect(road.x - 3, road.y - 3, road.width + 6, road.depth + 6, Color(65, 58, 46));
+            rect(road.x, road.y, road.width, road.depth, Color(39, 40, 37));
+        }
+        return;
     }
     for (size_t index = 0; index < chunk.plots.size(); ++index)
     {
@@ -1209,25 +1302,36 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
         float length = std::max(.01f, Distance(dx, dy));
         dx /= length;
         dy /= length;
+        float kick = std::min(1.f, owner->firingHold / .16f);
+        hand.x -= dx * kick * 6 * z;
+        hand.y -= (dy * kick * 6 + kick * 2) * z;
+        auto gun = [&](float x, float y)
+        {
+            return Point{hand.x + (dx * x - dy * y) * z, hand.y + (dy * x + dx * y) * z};
+        };
         Point tip{hand.x + dx * 43 * z, hand.y + dy * 43 * z};
-        r.Line({hand.x - dx * 12 * z, hand.y - dy * 12 * z}, tip, 12 * z, Color(33, 64, 80));
-        r.Line(hand, tip, 5 * z, Emissive(Color(101, 233, 215), 2));
-        r.Line({hand.x - dy * 8 * z, hand.y + dx * 8 * z},
-               {tip.x - dy * 8 * z, tip.y + dx * 8 * z},
-               2 * z,
-               Color(220, 181, 120));
-        r.Ellipse(hand, 6 * z, 6 * z, Color(167, 137, 105));
+        // Distinct stock, receiver, pistol grip, magazine and exposed barrel.
+        r.Quad(gun(-24, -5), gun(-8, -3), gun(-8, 4), gun(-24, 9), shell);
+        r.Line(gun(-24, -5), gun(-24, 9), 3 * z, Color(23, 26, 31));
+        r.Quad(gun(-6, 3), gun(1, 3), gun(-2, 16), gun(-9, 15), Color(31, 33, 40));
+        r.Quad(gun(7, 4), gun(16, 4), gun(13, 19), gun(6, 17), shell);
+        r.Line(gun(12, 0), tip, 5 * z, Color(109, 118, 126));
+        r.Quad(gun(-10, -7), gun(23, -7), gun(23, 5), gun(-10, 5), shell);
+        r.Line(gun(-8, -6), gun(25, -6), 2 * z, ivory);
+        r.Line(gun(4, -9), gun(12, -9), 3 * z, Color(25, 29, 35));
+        r.Line(gun(37, -6), gun(37, 0), 2 * z, ivory);
+        r.Line(gun(41, -4), gun(41, 4), 4 * z, Color(28, 31, 38));
+        r.Ellipse(gun(1, -1), 3 * z, 3 * z, core);
+        r.Line({p.x - 5 * z, p.y - 30 * z}, gun(17, 6), 5 * z, Color(72, 86, 100));
+        r.Ellipse(gun(17, 6), 3 * z, 3 * z, Color(190, 160, 141));
+        r.Ellipse(gun(-5, 8), 3 * z, 3 * z, Color(190, 160, 141));
         if (evolution > 0)
         {
-            auto gun = [&](float x, float y)
-            {
-                return Point{hand.x + (dx * x - dy * y) * z, hand.y + (dy * x + dx * y) * z};
-            };
             // The companion's segmented shell becomes the cannon housing.
             for (int plate = 0; plate <= evolution; ++plate)
             {
-                float x = plate * 9.f;
-                float width = 10 + evolution * 2.f - plate;
+                float x = plate * 7.f;
+                float width = 6 + evolution - plate * .5f;
                 r.Quad(gun(x - 8, -width),
                        gun(x + 5, -width + 3),
                        gun(x + 5, width - 3),
@@ -2086,6 +2190,13 @@ bool PrototypeWorld::SelfTest()
                   "right mouse skill entry starts casting and cooldown");
 
     PrototypeWorld mouse(2026);
+    mouse.Key('m', true);
+    mouse.Key('m', true);
+    ok &= require(mouse.mapExpanded_, "M expands map once while held");
+    mouse.Key('m', false);
+    mouse.Key('m', true);
+    mouse.Key('m', false);
+    ok &= require(!mouse.mapExpanded_, "second M press restores minimap");
     mouse.Key('3', true);
     mouse.Key('3', false);
     mouse.Key('q', true);

@@ -82,6 +82,7 @@ class PrototypeWorld : private ActorRenderContext
     uint32_t seed_ = 2026;
     LevelOne level_;
     bool keys_[256] = {};
+    bool mapExpanded_ = false;
     bool distortion_ = true, memory_ = false, debug_ = false;
     float time_ = 0, zoom_ = 1;
     Point center_{640, 400}, cameraLag_{0, 0};

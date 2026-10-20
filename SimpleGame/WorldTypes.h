@@ -17,6 +17,7 @@ struct CityChunk
     float roadX = 90, roadY = 90;
     int district = 0;
     bool village = false;
+    int bossRegion = -1;     // Three authored wilderness arenas around the home village.
     std::vector<int> styles; // 0: intact building, 1: ruin, 2: defensive wall.
 
     struct Plot

@@ -141,6 +141,14 @@ void PlayerActor::Collect(LootKind kind, int amount, GameplayContext& context)
     }
 }
 
+void PlayerActor::ApplyShotRecoil(FarmPoint direction, bool powerful)
+{
+    firingHold = powerful ? .24f : .16f;
+    auto forward = Unit(direction);
+    float speed = powerful ? 160.f : 100.f;
+    recoilVelocity = {-forward.x * speed, -forward.y * speed};
+}
+
 void PlayerActor::Update(float dt, ActorUpdateContext& services)
 {
     for (auto& growth : yokaiGrowth)
@@ -151,16 +159,30 @@ void PlayerActor::Update(float dt, ActorUpdateContext& services)
     invulnerable = std::max(0.f, invulnerable - dt);
     magnetTime = std::max(0.f, magnetTime - dt);
     transformPhase = std::max(0.f, transformPhase - dt * 1.5f);
-    if (context.state == RunState::Lost)
+    if (context.state == RunState::Lost || context.state == RunState::Won)
     {
+        firingHold = 0;
+        recoilVelocity = {};
         return;
     }
-    if (Length(moveInput) > 0 && context.movePlayer)
+    float movementTime = std::max(0.f, dt - firingHold);
+    firingHold = std::max(0.f, firingHold - dt);
+    float decay = std::exp(-14.f * dt);
+    if (context.movePlayer && Length(recoilVelocity) > .01f)
+    {
+        // Route recoil through the world's collision-aware movement, never teleport.
+        context.movePlayer(recoilVelocity.x * (1 - decay) / 14.f,
+                           recoilVelocity.y * (1 - decay) / 14.f);
+    }
+    recoilVelocity.x *= decay;
+    recoilVelocity.y *= decay;
+    if (Length(moveInput) > 0 && context.movePlayer && movementTime > 0)
     {
         auto input = Unit(moveInput);
         auto direction = Unit({input.x + input.y * 2, -input.x + input.y * 2});
-        context.movePlayer(direction.x * MoveSpeed() * dt, direction.y * MoveSpeed() * dt);
-        walkPhase += dt * 11;
+        context.movePlayer(direction.x * MoveSpeed() * movementTime,
+                           direction.y * MoveSpeed() * movementTime);
+        walkPhase += movementTime * 11;
     }
     if (context.state == RunState::Won)
     {

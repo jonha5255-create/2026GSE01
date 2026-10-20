@@ -20,6 +20,51 @@ bool LevelOne::SelfTest()
     };
     LevelOne a;
     {
+        LevelOne relics;
+        auto services = relics.Context(open);
+        for (int region = 0; region < 3; ++region)
+        {
+            auto& boss = relics.Graph().Spawn<NpcActor>(NoActor, "test relic boss", NpcJob::Wraith);
+            boss.bossRegion = region;
+            boss.fieldBoss = true;
+            relics.society.Damage(boss, 10000, nullptr, services);
+        }
+        check(relics.society.bossRelics == 7 && relics.society.bossRelicReward,
+              "three distinct bosses award relics and complete the side quest");
+        int gold = relics.society.gold;
+        auto& duplicate = relics.Graph().Spawn<NpcActor>(NoActor, "duplicate boss", NpcJob::Wraith);
+        duplicate.bossRegion = 0;
+        duplicate.gold = duplicate.goods = 0;
+        relics.society.Damage(duplicate, 10000, nullptr, services);
+        check(relics.society.gold == gold, "recreated boss cannot repeat relic completion reward");
+    }
+    {
+        LevelOne recoil;
+        auto services = recoil.Context(open);
+        auto& hero = recoil.Player();
+        FarmPoint displacement{};
+        services.movePlayer = [&](float x, float y)
+        {
+            displacement.x += x;
+            displacement.y += y;
+        };
+        hero.moveInput = {1, 0};
+        hero.ApplyShotRecoil({1, 0});
+        hero.Update(.08f, services);
+        check(displacement.x < 0 && std::abs(displacement.y) < .001f && hero.walkPhase == 0,
+              "shot recoil pushes backward and suppresses walking during firing hold");
+        hero.Update(.3f, services);
+        check(hero.firingHold == 0 && hero.walkPhase > 0,
+              "movement resumes after the short firing hold");
+        hero.ApplyShotRecoil({1, 0}, true);
+        check(hero.firingHold > .16f && hero.recoilVelocity.x < -100,
+              "shotgun skill has stronger recoil");
+        recoil.state = RunState::Lost;
+        hero.Update(.02f, services);
+        check(hero.firingHold == 0 && Length(hero.recoilVelocity) == 0,
+              "death clears recoil and firing hold");
+    }
+    {
         LevelOne growth;
         auto services = growth.Context(open);
         auto& hero = growth.Player();

@@ -450,6 +450,11 @@ int main(int argc, char** argv)
         ok = VerifyPostEffects() && ok;
         ok = Snapshot(L"prototype-companion.bmp") && ok;
         ok = Snapshot(L"living-world-town.bmp") && ok;
+        world->Key('m', true);
+        world->Key('m', false);
+        ok = Snapshot(L"living-world-expanded-map.bmp") && ok;
+        world->Key('m', true);
+        world->Key('m', false);
         {
             auto savedWorld = std::move(world);
             world = std::make_unique<PrototypeWorld>(2026);
