@@ -1,0 +1,2431 @@
+{
+  "art_revision": 5,
+  "checks": [
+    {
+      "rig": "RIG_NPC_Humanoid_v1",
+      "clip": "NPC_Run_RootMotion",
+      "max_planted_ankle_error_m": 1.0745380149674383e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 9,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": []
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": []
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "clip": "MOB_00_Run_RootMotion",
+      "max_planted_ankle_error_m": 1.6049041769309353e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 9,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": []
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": []
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "clip": "MOB_01_Run_RootMotion",
+      "max_planted_ankle_error_m": 9.06402249678704e-08,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 9,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": []
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": []
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "clip": "MOB_02_Run_RootMotion",
+      "max_planted_ankle_error_m": 1.2013700229374393e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 9,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": []
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": []
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "clip": "MOB_03_Run_RootMotion",
+      "max_planted_ankle_error_m": 1.7881393432617188e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 9,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "foot.L"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": []
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "foot.R"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": []
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Run_RootMotion",
+      "max_planted_ankle_error_m": 1.9670097205704578e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 7,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Sprint_RootMotion",
+      "max_planted_ankle_error_m": 2.573418027038953e-07,
+      "max_requested_reach_error_m": 0.015422471246160918,
+      "all_feet_air_samples": 10,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Walk_RootMotion",
+      "max_planted_ankle_error_m": 2.394640249012142e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 0,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 12,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 24,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 25,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 26,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 27,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 28,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 29,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 30,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 31,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 32,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 33,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 34,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 35,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 36,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 37,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Run_RootMotion",
+      "max_planted_ankle_error_m": 3.478711107352004e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 7,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Sprint_RootMotion",
+      "max_planted_ankle_error_m": 2.862419592186592e-07,
+      "max_requested_reach_error_m": 0.01760145688655268,
+      "all_feet_air_samples": 10,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Walk_RootMotion",
+      "max_planted_ankle_error_m": 3.185504425530426e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 0,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 12,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 24,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 25,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 26,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 27,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 28,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 29,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 30,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 31,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 32,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 33,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 34,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 35,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 36,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 37,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Run_RootMotion",
+      "max_planted_ankle_error_m": 2.4405627480386493e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 7,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "front_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Sprint_RootMotion",
+      "max_planted_ankle_error_m": 2.8672637648722316e-07,
+      "max_requested_reach_error_m": 0.016763607135509173,
+      "all_feet_air_samples": 10,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": []
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": []
+        },
+        {
+          "frame": 11,
+          "contacts": []
+        },
+        {
+          "frame": 12,
+          "contacts": []
+        },
+        {
+          "frame": 13,
+          "contacts": []
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.R",
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": []
+        },
+        {
+          "frame": 22,
+          "contacts": []
+        },
+        {
+          "frame": 23,
+          "contacts": []
+        },
+        {
+          "frame": 24,
+          "contacts": []
+        },
+        {
+          "frame": 25,
+          "contacts": []
+        }
+      ]
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Walk_RootMotion",
+      "max_planted_ankle_error_m": 2.394640249012142e-07,
+      "max_requested_reach_error_m": 0,
+      "all_feet_air_samples": 0,
+      "contacts": [
+        {
+          "frame": 1,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 2,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 3,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 4,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 5,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 6,
+          "contacts": [
+            "hind_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 7,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 8,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 9,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 10,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 11,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 12,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 13,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 14,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 15,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 16,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 17,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 18,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 19,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L"
+          ]
+        },
+        {
+          "frame": 20,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 21,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 22,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 23,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 24,
+          "contacts": [
+            "hind_foot.L",
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 25,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 26,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 27,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 28,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R"
+          ]
+        },
+        {
+          "frame": 29,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 30,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 31,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 32,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 33,
+          "contacts": [
+            "front_foot.L",
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 34,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 35,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 36,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        },
+        {
+          "frame": 37,
+          "contacts": [
+            "hind_foot.R",
+            "front_foot.R"
+          ]
+        }
+      ]
+    }
+  ],
+  "issues": [],
+  "max_planted_ankle_error_m": 3.478711107352004e-07
+}

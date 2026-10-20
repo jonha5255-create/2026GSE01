@@ -41,9 +41,11 @@ try {
     if ($Legacy) {
         Check ($first.mode -eq 'level-one' -and @($first.villages).Count -eq 0 -and $first.counts.npcs -eq 0) 'legacy mode does not fabricate villages or NPCs'
     } else {
-        Check ($first.counts.npcs -eq 43 -and $first.counts.monsters -ge 51 -and @($first.villages).Count -eq 9) 'streamed world includes nine villages and wilderness monsters'
+        Check ($first.counts.npcs -eq 210 -and $first.counts.monsters -ge 51 -and @($first.villages).Count -eq 7) 'world includes seven persistent villages and 210 residents'
         Check ($first.villages[0].name -eq '잔명 마을') 'HTTP delivers Korean UTF-8 names'
-        Check ($first.villages[0].counts.npcs -eq 11 -and $first.villages[0].counts.monsters -eq 3) 'village population aggregation'
+        Check ($first.villages[0].counts.npcs -eq 30 -and $first.villages[0].counts.monsters -eq 3) 'village population aggregation'
+        Check (@($first.villages | Where-Object { $_.counts.npcs -ne 30 -or @($_.homes).Count -ne 36 }).Count -eq 0) 'every village exposes 30 residents and 36 house slots'
+        Check (@($first.npcs | Where-Object { $_.homeSlot -lt 0 }).Count -eq 0 -and @($first.npcs | Where-Object courier).Count -eq 7) 'every resident has a home and each village has a courier'
         $goldSum = ($first.npcs | Measure-Object -Property gold -Sum).Sum
         $villageGoldSum = ($first.villages | Measure-Object -Property totalGold -Sum).Sum
         Check ($villageGoldSum -eq $goldSum -and $first.economy.npcGold -eq $goldSum) 'village and world economy match individual NPC assets'

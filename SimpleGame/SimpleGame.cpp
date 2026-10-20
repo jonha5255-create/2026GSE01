@@ -12,6 +12,7 @@ Prototype scene extensions, 2026.
 #include "FrameProfiler.h"
 #include "RenderDiagnostics.h"
 #include "WorldMonitor.h"
+#include "AssetPreview.h"
 #include "Dependencies/freeglut.h"
 #include <windows.h>
 #include <algorithm>
@@ -24,6 +25,10 @@ namespace
 {
     PrototypeRenderer renderer;
     std::unique_ptr<PrototypeWorld> world;
+    std::unique_ptr<Art::AssetPreview> assetGallery;
+    float assetTime = 0;
+    bool assetPaused = false;
+    std::string assetError;
     int width = 1280, height = 800;
     bool initialized = false;
     bool profileTest = false;
@@ -43,6 +48,37 @@ namespace
         }
     }
 
+    void DrawContents()
+    {
+        if (assetGallery)
+        {
+            try
+            {
+                assetGallery->Draw(renderer, assetTime);
+                assetError.clear();
+            }
+            catch (const std::exception& error)
+            {
+                if (assetError != error.what())
+                {
+                    assetError = error.what();
+                    std::cerr << "[ASSET] " << assetError << '\n';
+                    RenderDiagnostics::Get().Event("asset_error", assetError);
+                }
+                renderer.Text(25, 90, "에셋 로딩 오류: " + assetError, Color(255, 130, 130), .65f);
+            }
+        }
+        else
+        {
+            world->Draw(renderer);
+        }
+        renderer.CompositeScene();
+        if (!assetGallery)
+        {
+            world->DrawUI(renderer);
+        }
+    }
+
     void Display()
     {
         if (!initialized)
@@ -54,9 +90,7 @@ namespace
             glutLeaveMainLoop();
             return;
         }
-        world->Draw(renderer);
-        renderer.CompositeScene();
-        world->DrawUI(renderer);
+        DrawContents();
         renderer.Flush();
         FrameProfiler::Get().EndRender();
         glutSwapBuffers();
@@ -85,6 +119,34 @@ namespace
         if (key >= 'A' && key <= 'Z')
         {
             key += 32;
+        }
+        if (assetGallery)
+        {
+            if (!effectKeys[key])
+            {
+                if (key == ' ')
+                {
+                    assetPaused = !assetPaused;
+                }
+                if (key >= '1' && key <= '9')
+                {
+                    assetGallery->SetAction(key - '1');
+                    assetTime = 0;
+                }
+                if (key == 'r')
+                {
+                    try
+                    {
+                        assetGallery->Reload();
+                    }
+                    catch (const std::exception& error)
+                    {
+                        std::cerr << "[ASSET] " << error.what() << '\n';
+                    }
+                }
+            }
+            effectKeys[key] = true;
+            return;
         }
         if (!effectKeys[key])
         {
@@ -136,6 +198,10 @@ namespace
 
     void MouseButton(int button, int state, int x, int y)
     {
+        if (assetGallery)
+        {
+            return;
+        }
         if (initialized && world && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
         {
             RenderDiagnostics::Get().Event("mouse_attack",
@@ -161,7 +227,17 @@ namespace
         float dt = std::chrono::duration<float>(now - lastTick).count();
         lastTick = now;
         auto updateStart = std::chrono::steady_clock::now();
-        world->Update(dt);
+        if (assetGallery)
+        {
+            if (!assetPaused)
+            {
+                assetTime += std::min(dt, .1f);
+            }
+        }
+        else
+        {
+            world->Update(dt);
+        }
         FrameProfiler::Get().RecordUpdate(std::chrono::duration<double, std::milli>(
                                               std::chrono::steady_clock::now() - updateStart)
                                               .count());
@@ -183,9 +259,7 @@ namespace
         {
             return false;
         }
-        world->Draw(renderer);
-        renderer.CompositeScene();
-        world->DrawUI(renderer);
+        DrawContents();
         renderer.Flush();
         glFinish();
         bool ok = renderer.Capture(ExecutableDirectory() + name);
@@ -287,6 +361,8 @@ int main(int argc, char** argv)
     bool smoke = false, selfTest = false, rebuildCache = false, legacy = false;
     bool monitorTest = false;
     bool monitorEnabled = true;
+    bool assetTest = false, assetSmoke = false, assetPreview = false;
+    std::filesystem::path assetRoot;
     unsigned short monitorPort = 8765;
     for (int i = 1; i < argc; ++i)
     {
@@ -297,7 +373,14 @@ int main(int argc, char** argv)
         legacy |= std::string(argv[i]) == "--level-one";
         monitorEnabled &= std::string(argv[i]) != "--no-monitor";
         monitorTest |= std::string(argv[i]) == "--monitor-test";
+        assetTest |= std::string(argv[i]) == "--asset-test";
+        assetSmoke |= std::string(argv[i]) == "--asset-smoke-test";
+        assetPreview |= std::string(argv[i]) == "--asset-preview";
         std::string argument = argv[i];
+        if (argument.find("--asset-root=") == 0)
+        {
+            assetRoot = std::filesystem::path(argument.substr(13));
+        }
         if (argument.find("--monitor-port=") == 0)
         {
             try
@@ -315,6 +398,29 @@ int main(int argc, char** argv)
                 std::cerr << "Monitor port must be an integer from 1 to 65535\n";
                 return 8;
             }
+        }
+    }
+    if (assetTest || assetSmoke || assetPreview)
+    {
+        try
+        {
+            if (assetRoot.empty())
+            {
+                assetRoot = Art::AssetLibrary::Discover();
+            }
+            if ((assetTest || assetSmoke) && !Art::AssetLibrary::SelfTest(assetRoot))
+            {
+                return 10;
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::cerr << "[ASSET] " << error.what() << '\n';
+            return 10;
+        }
+        if (assetTest && !assetSmoke && !assetPreview)
+        {
+            return 0;
         }
     }
     if ((selfTest || smoke) && (!PrototypeWorld::SelfTest() || !WorldMonitor::SelfTest()))
@@ -421,7 +527,24 @@ int main(int argc, char** argv)
         }
     }
     world.reset(new PrototypeWorld(seed, !legacy));
-    if (monitorEnabled && !smoke && !profileTest)
+    if (assetPreview || assetSmoke)
+    {
+        try
+        {
+            assetGallery = std::make_unique<Art::AssetPreview>(assetRoot);
+            renderer.Effects().edgeBlur = false;
+            renderer.Effects().vignette = false;
+            renderer.Effects().bloom = false;
+        }
+        catch (const std::exception& error)
+        {
+            std::cerr << "[ASSET] " << error.what() << '\n';
+            Close();
+            glutDestroyWindow(window);
+            return 10;
+        }
+    }
+    if (monitorEnabled && !smoke && !profileTest && !assetGallery)
     {
         WorldMonitor::Get().Start(monitorPort);
     }
@@ -440,6 +563,34 @@ int main(int argc, char** argv)
     glutMouseFunc(MouseButton);
     glutCloseFunc(Close);
     glutIgnoreKeyRepeat(1);
+    if (assetSmoke)
+    {
+        assetTime = .05f;
+        bool ok = Snapshot(L"lowpoly-assets-pose-a.bmp") && assetError.empty();
+        std::vector<unsigned char> before(static_cast<size_t>(width) * height * 3),
+            after(before.size());
+        glReadBuffer(GL_BACK);
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, before.data());
+        assetTime = .45f;
+        ok = Snapshot(L"lowpoly-assets-pose-b.bmp") && assetError.empty() && ok;
+        glReadBuffer(GL_BACK);
+        glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, after.data());
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        ok = before != after && ok;
+        std::cout << (ok ? "PASS " : "FAIL ")
+                  << "real GLB skeletal animation changes rendered pixels\n";
+        for (int action = 0; action < 9; ++action)
+        {
+            assetGallery->SetAction(action);
+            assetTime = .4f;
+            auto file = L"lowpoly-assets-action-" + std::to_wstring(action + 1) + L".bmp";
+            ok = Snapshot(file.c_str()) && assetError.empty() && ok;
+        }
+        Close();
+        glutDestroyWindow(window);
+        return ok ? 0 : 11;
+    }
     if (smoke)
     {
         for (int i = 0; i < 60; ++i)
@@ -485,6 +636,9 @@ int main(int argc, char** argv)
             world = std::make_unique<PrototypeWorld>(2026);
             world->PreviewExpedition();
             ok = Snapshot(L"living-world-expedition.bmp") && ok;
+            world = std::make_unique<PrototypeWorld>(2026);
+            world->PreviewRoadJunction();
+            ok = Snapshot(L"living-world-road-junction.bmp") && ok;
             world = std::move(savedWorld);
         }
         for (int form = 0; form < 3; ++form)

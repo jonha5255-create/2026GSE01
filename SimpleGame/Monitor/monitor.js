@@ -28,6 +28,8 @@
     if (!entity.active) return node("span", entity.alive ? "비활성" : "제압 / 비활성", "state inactive");
     if (entity.recoverySeconds > 0) return node("span", `회복 대기 ${format(entity.recoverySeconds)}초`, "state recovering");
     if (!entity.alive) return node("span", "쓰러짐", "state inactive");
+    if (entity.migrating) return node("span", "다른 마을로 이사 중", "state");
+    if (entity.courier && entity.travelTownIndex >= 0) return node("span", entity.letterSource >= 0 ? "편지 운반 중" : "전령 귀환 중", "state");
     if (entity.hostile) return node("span", "플레이어 적대", "state hostile");
     return node("span", "활동 중", "state");
   }
@@ -50,6 +52,7 @@
       node("p", `소속: ${villageName(entity.villageId)} / Actor ID: ${entity.id} / 목표 Actor: ${entity.targetId === "0" ? "없음" : entity.targetId}`),
       node("p", `성향: 생존 ${format(weights.survival)} / 재산 ${format(weights.wealth)} / 깨달음 ${format(weights.insight)} / 약탈 ${format(weights.raid)}`),
       node("p", `성장 ${format(entity.growth)} / 승리 ${format(entity.victories)} / 약탈 위반 ${entity.offender ? "있음" : "없음"}`),
+      node("p", `집: ${entity.homeSlot >= 0 ? `${entity.homeSlot + 1}번` : "없음"} / ${entity.courier ? "전령" : entity.migrating ? "이사 중" : "거주 중"}`),
       node("p", `플레이어 상대 위치: X ${format(entity.position.x)}, Y ${format(entity.position.y)}`));
   }
   function tables() {
@@ -105,12 +108,15 @@
         ["인간 주민 / 활동 중", `${village.counts.npcs} / ${village.counts.npcsAlive}`],
         ["몬스터 / 생존", `${village.counts.monsters} / ${village.counts.monstersAlive}`],
         ["주민 자산", `${format(village.totalGold)}전`], ["주민 평균 체력", `${format(village.averageHealthPercent)}%`],
-        ["잔향석", format(village.totalGoods)], ["깨달음 합계", format(village.totalInsight)]]) {
+        ["잔향석", format(village.totalGoods)], ["깨달음 합계", format(village.totalInsight)],
+        ["주택 배정/예약", `${village.occupiedHomes ?? 0} / ${village.homeCapacity ?? 36}`]]) {
         const item = node("div"); item.append(node("dt", label), node("dd", value)); dl.append(item);
       }
       const chips = node("div", undefined, "action-chips");
       for (const action of village.actions) chips.append(node("span", `${action.name} ${action.count}`));
       card.append(heading, dl, chips);
+      const reports = (village.knownNews ?? []).filter(report => report.sourceIndex !== village.index);
+      card.append(node("p", reports.length ? `전해 들은 소식 ${reports.length}건: ${reports.map(report => report.text).slice(0, 2).join(" / ")}` : "다른 마을의 편지를 기다리는 중입니다."));
       card.append(node("p", village.activity
         ? `누적 거래 ${village.activity.trades} / 사냥 ${village.activity.hunts} / 약탈 ${village.activity.raids}`
         : "이 마을의 누적 활동 통계는 아직 수집되지 않았습니다."));
@@ -125,14 +131,15 @@
     for (const event of rows) {
       const row = node("tr");
       cell(row, `#${event.id} / ${format(event.simulationSeconds)}초`);
-      cell(row, event.type === "murder" ? "살인 · 발생 확인" : "소문 · 미검증");
+      const kinds = {murder: "살인 · 발생 확인", rumor: "소문 · 미검증", letter_sent: "편지 발송", letter_delivered: "편지 전달", migration_depart: "이사 출발", migration_arrive: "전입 완료"};
+      cell(row, kinds[event.type] ?? event.type);
       cell(row, villageName(event.villageId));
       cell(row, `${event.actorName} → ${event.victimName}${event.witnessName ? ` / 목격: ${event.witnessName}` : " / 목격자 없음"}`);
       cell(row, event.text + (event.sourceId !== "0" ? ` / 원본 #${event.sourceId}` : ""));
       $("incidents").append(row);
     }
     if (!rows.length) emptyTable("incidents", 5, "조건에 맞는 사건이 없습니다. 사건 발생 시 자동 표시됩니다.");
-    $("incident-totals").textContent = `월드 누적 살인 ${latest?.incidentTotals?.murder ?? 0} · 소문 ${latest?.incidentTotals?.rumor ?? 0} / 보관 ${latest?.incidents?.length ?? 0}건`;
+    $("incident-totals").textContent = `살인 ${latest?.incidentTotals?.murder ?? 0} · 소문 ${latest?.incidentTotals?.rumor ?? 0} · 편지 ${latest?.settlementTotals?.lettersDelivered ?? 0}/${latest?.settlementTotals?.lettersSent ?? 0} 전달 · 전입 ${latest?.settlementTotals?.migrations ?? 0} / 보관 ${latest?.incidents?.length ?? 0}건`;
   }
   function render(data) {
     if (data.sessionId !== lastSession || data.worldEpoch !== latest?.worldEpoch) selectedNpc = null;

@@ -48,6 +48,7 @@ class BuildingActor : public Actor
     float width, depth, height;
     uint32_t seed;
     int style = 0;
+    int villageIndex = -1, homeSlot = -1;
 };
 
 class LampActor : public Actor

@@ -1,0 +1,2282 @@
+{
+  "schema_version": 1,
+  "art_revision": 5,
+  "fps": 30,
+  "units": "meters",
+  "source_front": "-Y",
+  "glTF_front": "+Z",
+  "root_bone": "root",
+  "npc_rig": "RIG_NPC_Humanoid_v1",
+  "npc_exports": [
+    {
+      "id": "NPC_LOOK_000",
+      "name": "도윤",
+      "file": "rigged/NPC_LOOK_000.glb",
+      "parts": {
+        "body": 0,
+        "hair": 0,
+        "top": 2,
+        "legs": 0,
+        "feet": 0,
+        "accessory": 2,
+        "prop": 0
+      }
+    },
+    {
+      "id": "NPC_LOOK_001",
+      "name": "유리",
+      "file": "rigged/NPC_LOOK_001.glb",
+      "parts": {
+        "body": 1,
+        "hair": 3,
+        "top": 2,
+        "legs": 2,
+        "feet": 0,
+        "accessory": 2,
+        "prop": 0
+      }
+    },
+    {
+      "id": "NPC_LOOK_002",
+      "name": "건우",
+      "file": "rigged/NPC_LOOK_002.glb",
+      "parts": {
+        "body": 0,
+        "hair": 2,
+        "top": 2,
+        "legs": 0,
+        "feet": 1,
+        "accessory": 0,
+        "prop": 0
+      }
+    },
+    {
+      "id": "NPC_LOOK_003",
+      "name": "갈치",
+      "file": "rigged/NPC_LOOK_003.glb",
+      "parts": {
+        "body": 0,
+        "hair": 0,
+        "top": 0,
+        "legs": 1,
+        "feet": 0,
+        "accessory": 0,
+        "prop": 1
+      }
+    },
+    {
+      "id": "NPC_LOOK_004",
+      "name": "붉은 눈",
+      "file": "rigged/NPC_LOOK_004.glb",
+      "parts": {
+        "body": 1,
+        "hair": 1,
+        "top": 1,
+        "legs": 2,
+        "feet": 0,
+        "accessory": 3,
+        "prop": 1
+      }
+    },
+    {
+      "id": "NPC_LOOK_005",
+      "name": "미령",
+      "file": "rigged/NPC_LOOK_005.glb",
+      "parts": {
+        "body": 1,
+        "hair": 1,
+        "top": 0,
+        "legs": 0,
+        "feet": 1,
+        "accessory": 1,
+        "prop": 2
+      }
+    },
+    {
+      "id": "NPC_LOOK_006",
+      "name": "덕수",
+      "file": "rigged/NPC_LOOK_006.glb",
+      "parts": {
+        "body": 0,
+        "hair": 2,
+        "top": 0,
+        "legs": 2,
+        "feet": 1,
+        "accessory": 1,
+        "prop": 2
+      }
+    },
+    {
+      "id": "NPC_LOOK_007",
+      "name": "이안",
+      "file": "rigged/NPC_LOOK_007.glb",
+      "parts": {
+        "body": 1,
+        "hair": 3,
+        "top": 4,
+        "legs": 2,
+        "feet": 1,
+        "accessory": 4,
+        "prop": -1
+      }
+    },
+    {
+      "id": "NPC_LOOK_008",
+      "name": "무명 순례자",
+      "file": "rigged/NPC_LOOK_008.glb",
+      "parts": {
+        "body": 0,
+        "hair": 1,
+        "top": 4,
+        "legs": 0,
+        "feet": 0,
+        "accessory": 4,
+        "prop": -1
+      }
+    },
+    {
+      "id": "NPC_LOOK_009",
+      "name": "초소장",
+      "file": "rigged/NPC_LOOK_009.glb",
+      "parts": {
+        "body": 0,
+        "hair": 2,
+        "top": 1,
+        "legs": 1,
+        "feet": 0,
+        "accessory": 3,
+        "prop": 1
+      }
+    },
+    {
+      "id": "NPC_LOOK_010",
+      "name": "백연",
+      "file": "rigged/NPC_LOOK_010.glb",
+      "parts": {
+        "body": 1,
+        "hair": 0,
+        "top": 3,
+        "legs": 0,
+        "feet": 1,
+        "accessory": 3,
+        "prop": 2
+      }
+    }
+  ],
+  "modular_library": "rigged/NPC_ModularParts_Library.glb",
+  "npc_clips": [
+    {
+      "name": "NPC_Idle",
+      "frames": [
+        1,
+        61
+      ],
+      "duration_s": 2.0,
+      "loop": true,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [],
+      "max_reach_error_m": 0.0040000115494600585
+    },
+    {
+      "name": "NPC_Walk",
+      "frames": [
+        1,
+        31
+      ],
+      "duration_s": 1.0,
+      "loop": true,
+      "speed_mps": 0.7,
+      "root_motion": false,
+      "events": [],
+      "max_reach_error_m": 0.0060457213549959254
+    },
+    {
+      "name": "NPC_Walk_RootMotion",
+      "frames": [
+        1,
+        31
+      ],
+      "duration_s": 1.0,
+      "loop": false,
+      "speed_mps": 0.7,
+      "root_motion": true,
+      "events": [],
+      "max_reach_error_m": 0.0060457213549959254
+    },
+    {
+      "name": "NPC_Run",
+      "frames": [
+        1,
+        23
+      ],
+      "duration_s": 0.7333333333333333,
+      "loop": true,
+      "speed_mps": 1.45,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.0,
+          "event": "foot_contact",
+          "foot": "L"
+        },
+        {
+          "time_s": 0.3667,
+          "event": "foot_contact",
+          "foot": "R"
+        }
+      ],
+      "max_reach_error_m": 0
+    },
+    {
+      "name": "NPC_Run_RootMotion",
+      "frames": [
+        1,
+        23
+      ],
+      "duration_s": 0.7333333333333333,
+      "loop": false,
+      "speed_mps": 1.45,
+      "root_motion": true,
+      "events": [
+        {
+          "time_s": 0.0,
+          "event": "foot_contact",
+          "foot": "L"
+        },
+        {
+          "time_s": 0.3667,
+          "event": "foot_contact",
+          "foot": "R"
+        }
+      ],
+      "max_reach_error_m": 0
+    },
+    {
+      "name": "NPC_Turn_L45",
+      "frames": [
+        1,
+        25
+      ],
+      "duration_s": 0.8,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.8,
+          "event": "yaw_complete",
+          "degrees": 45
+        }
+      ],
+      "max_reach_error_m": 1.9343388002468487e-09
+    },
+    {
+      "name": "NPC_Turn_R45",
+      "frames": [
+        1,
+        25
+      ],
+      "duration_s": 0.8,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.8,
+          "event": "yaw_complete",
+          "degrees": -45
+        }
+      ],
+      "max_reach_error_m": 1.9343388002468487e-09
+    },
+    {
+      "name": "NPC_Turn_L90",
+      "frames": [
+        1,
+        25
+      ],
+      "duration_s": 0.8,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.8,
+          "event": "yaw_complete",
+          "degrees": 90
+        }
+      ],
+      "max_reach_error_m": 1.9343388002468487e-09
+    },
+    {
+      "name": "NPC_Turn_R90",
+      "frames": [
+        1,
+        25
+      ],
+      "duration_s": 0.8,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.8,
+          "event": "yaw_complete",
+          "degrees": -90
+        }
+      ],
+      "max_reach_error_m": 1.934339133313756e-09
+    },
+    {
+      "name": "NPC_Jump",
+      "frames": [
+        1,
+        37
+      ],
+      "duration_s": 1.2,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.264,
+          "event": "takeoff"
+        },
+        {
+          "time_s": 0.96,
+          "event": "land"
+        }
+      ],
+      "max_reach_error_m": 0.011671321123927325
+    },
+    {
+      "name": "NPC_Attack_Sword",
+      "frames": [
+        1,
+        28
+      ],
+      "duration_s": 0.9,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.414,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 0.005594875595630433
+    },
+    {
+      "name": "NPC_Attack_SwordHeavy",
+      "frames": [
+        1,
+        40
+      ],
+      "duration_s": 1.3,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.598,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_Spear",
+      "frames": [
+        1,
+        31
+      ],
+      "duration_s": 1.0,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.46,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_Bow",
+      "frames": [
+        1,
+        43
+      ],
+      "duration_s": 1.4,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.952,
+          "event": "arrow_release"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_DualPistol",
+      "frames": [
+        1,
+        25
+      ],
+      "duration_s": 0.8,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.05,
+          "event": "fire"
+        },
+        {
+          "time_s": 0.25,
+          "event": "fire"
+        },
+        {
+          "time_s": 0.45,
+          "event": "fire"
+        },
+        {
+          "time_s": 0.65,
+          "event": "fire"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_Claw",
+      "frames": [
+        1,
+        31
+      ],
+      "duration_s": 1.0,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.46,
+          "event": "impact"
+        },
+        {
+          "time_s": 0.64,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_Scissors",
+      "frames": [
+        1,
+        37
+      ],
+      "duration_s": 1.2,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.552,
+          "event": "impact"
+        },
+        {
+          "time_s": 0.768,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Attack_Unarmed",
+      "frames": [
+        1,
+        28
+      ],
+      "duration_s": 0.9,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [
+        {
+          "time_s": 0.414,
+          "event": "impact"
+        },
+        {
+          "time_s": 0.576,
+          "event": "impact"
+        }
+      ],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Hit",
+      "frames": [
+        1,
+        16
+      ],
+      "duration_s": 0.5,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [],
+      "max_reach_error_m": 1.9343386892245462e-09
+    },
+    {
+      "name": "NPC_Death",
+      "frames": [
+        1,
+        40
+      ],
+      "duration_s": 1.3,
+      "loop": false,
+      "speed_mps": 0,
+      "root_motion": false,
+      "events": [],
+      "max_reach_error_m": 0
+    }
+  ],
+  "weapons": {
+    "sword": 3,
+    "dual_pistols": 4,
+    "claws": 5,
+    "scissors": 6,
+    "bow": 0,
+    "spear": 1,
+    "ledger": 2
+  },
+  "creatures": [
+    {
+      "index": 0,
+      "id": "SK_MOB_00_PaperBoxYokai",
+      "name": "종이상자 요괴",
+      "gait": "biped",
+      "file": "rigged/SK_MOB_00_PaperBoxYokai.glb",
+      "skeleton": "RIG_MOB_00_PaperBoxYokai",
+      "bones": 18,
+      "triangles": 534,
+      "clips": [
+        {
+          "name": "MOB_00_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.009088675178817673
+        },
+        {
+          "name": "MOB_00_Walk",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": true,
+          "speed_mps": 0.336,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Walk_RootMotion",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0.336,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Run",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": true,
+          "speed_mps": 1.0919999991144453,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Run_RootMotion",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": false,
+          "speed_mps": 1.0919999991144453,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.009085944789214373
+        },
+        {
+          "name": "MOB_00_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.009085952647836404
+        },
+        {
+          "name": "MOB_00_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0.008471023735377448
+        },
+        {
+          "name": "MOB_00_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_00_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "id": "SK_MOB_01_StationWarden",
+      "name": "역무원 요괴",
+      "gait": "biped",
+      "file": "rigged/SK_MOB_01_StationWarden.glb",
+      "skeleton": "RIG_MOB_01_StationWarden",
+      "bones": 18,
+      "triangles": 736,
+      "clips": [
+        {
+          "name": "MOB_01_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.010170709656543653
+        },
+        {
+          "name": "MOB_01_Walk",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": true,
+          "speed_mps": 0.376,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Walk_RootMotion",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0.376,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Run",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": true,
+          "speed_mps": 1.2219999858311246,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Run_RootMotion",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": false,
+          "speed_mps": 1.2219999858311246,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.010167681523232053
+        },
+        {
+          "name": "MOB_01_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.010167695287524425
+        },
+        {
+          "name": "MOB_01_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0.009479532806469071
+        },
+        {
+          "name": "MOB_01_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_01_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "id": "SK_MOB_02_RedHornOni",
+      "name": "붉은 뿔 요괴",
+      "gait": "biped",
+      "file": "rigged/SK_MOB_02_RedHornOni.glb",
+      "skeleton": "RIG_MOB_02_RedHornOni",
+      "bones": 18,
+      "triangles": 928,
+      "clips": [
+        {
+          "name": "MOB_02_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.010603463087066944
+        },
+        {
+          "name": "MOB_02_Walk",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": true,
+          "speed_mps": 0.392,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Walk_RootMotion",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0.392,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Run",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": true,
+          "speed_mps": 1.2739999805177962,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Run_RootMotion",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": false,
+          "speed_mps": 1.2739999805177962,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.010600229298323993
+        },
+        {
+          "name": "MOB_02_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.01060032602673372
+        },
+        {
+          "name": "MOB_02_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0.009882848015352219
+        },
+        {
+          "name": "MOB_02_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_02_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "id": "SK_MOB_03_SecurityConstruct",
+      "name": "보안 병기",
+      "gait": "biped",
+      "file": "rigged/SK_MOB_03_SecurityConstruct.glb",
+      "skeleton": "RIG_MOB_03_SecurityConstruct",
+      "bones": 18,
+      "triangles": 940,
+      "clips": [
+        {
+          "name": "MOB_03_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.01276750747259181
+        },
+        {
+          "name": "MOB_03_Walk",
+          "frames": [
+            1,
+            35
+          ],
+          "duration_s": 1.1333333333333333,
+          "loop": true,
+          "speed_mps": 0.472,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Walk_RootMotion",
+          "frames": [
+            1,
+            35
+          ],
+          "duration_s": 1.1333333333333333,
+          "loop": false,
+          "speed_mps": 0.472,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Run",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": true,
+          "speed_mps": 1.5339999539511546,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Run_RootMotion",
+          "frames": [
+            1,
+            23
+          ],
+          "duration_s": 0.7333333333333333,
+          "loop": false,
+          "speed_mps": 1.5339999539511546,
+          "root_motion": true,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.012763756190448117
+        },
+        {
+          "name": "MOB_03_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0.01276378707083392
+        },
+        {
+          "name": "MOB_03_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_AttackPrimary",
+          "frames": [
+            1,
+            43
+          ],
+          "duration_s": 1.4,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.644,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0.011866993104555523
+        },
+        {
+          "name": "MOB_03_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_03_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "id": "SK_MOB_04_IronHound",
+      "name": "철문 견마",
+      "gait": "quadruped",
+      "file": "rigged/SK_MOB_04_IronHound.glb",
+      "skeleton": "RIG_MOB_04_IronHound",
+      "bones": 21,
+      "triangles": 1568,
+      "clips": [
+        {
+          "name": "MOB_04_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Walk",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": true,
+          "speed_mps": 0.5335999971086328,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Walk_RootMotion",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0.5335999971086328,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Run",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 1.3799999925223263,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Run_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 1.3799999925223263,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_04_Sprint",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 2.0699999887834895,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.01542254726458192
+        },
+        {
+          "name": "MOB_04_Sprint_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 2.0699999887834895,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.015422471246160918
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "id": "SK_MOB_05_FusionBeast",
+      "name": "혼종체",
+      "gait": "quadruped",
+      "file": "rigged/SK_MOB_05_FusionBeast.glb",
+      "skeleton": "RIG_MOB_05_FusionBeast",
+      "bones": 21,
+      "triangles": 1500,
+      "clips": [
+        {
+          "name": "MOB_05_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Walk",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": true,
+          "speed_mps": 0.6090000163425099,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Walk_RootMotion",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0.6090000163425099,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Run",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 1.5750000422651118,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Run_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 1.5750000422651118,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_05_Sprint",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 2.362500063397668,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.01760149435277869
+        },
+        {
+          "name": "MOB_05_Sprint_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 2.362500063397668,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.01760145688655268
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "id": "SK_MOB_06_VoidStalker",
+      "name": "공허 추적자",
+      "gait": "quadruped",
+      "file": "rigged/SK_MOB_06_VoidStalker.glb",
+      "skeleton": "RIG_MOB_06_VoidStalker",
+      "bones": 21,
+      "triangles": 1508,
+      "clips": [
+        {
+          "name": "MOB_06_Idle",
+          "frames": [
+            1,
+            61
+          ],
+          "duration_s": 2.0,
+          "loop": true,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Walk",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": true,
+          "speed_mps": 0.5799999968572096,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Walk_RootMotion",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0.5799999968572096,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            },
+            {
+              "time_s": 0.3,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.6,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.9,
+              "event": "foot_contact",
+              "foot": "front.R"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Run",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 1.4999999918720939,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Run_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 1.4999999918720939,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Turn_L90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Turn_R90",
+          "frames": [
+            1,
+            34
+          ],
+          "duration_s": 1.1,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Jump",
+          "frames": [
+            1,
+            37
+          ],
+          "duration_s": 1.2,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_AttackPrimary",
+          "frames": [
+            1,
+            31
+          ],
+          "duration_s": 1.0,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.46,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_AttackSecondary",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.598,
+              "event": "impact"
+            }
+          ],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Hit",
+          "frames": [
+            1,
+            16
+          ],
+          "duration_s": 0.5,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Death",
+          "frames": [
+            1,
+            40
+          ],
+          "duration_s": 1.3,
+          "loop": false,
+          "speed_mps": 0,
+          "root_motion": false,
+          "events": [],
+          "max_reach_error_m": 0
+        },
+        {
+          "name": "MOB_06_Sprint",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": true,
+          "speed_mps": 2.249999987808141,
+          "root_motion": false,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.016763729525163584
+        },
+        {
+          "name": "MOB_06_Sprint_RootMotion",
+          "frames": [
+            1,
+            25
+          ],
+          "duration_s": 0.8,
+          "loop": false,
+          "speed_mps": 2.249999987808141,
+          "root_motion": true,
+          "events": [
+            {
+              "time_s": 0.0,
+              "event": "foot_contact",
+              "foot": "front.L"
+            },
+            {
+              "time_s": 0.096,
+              "event": "foot_contact",
+              "foot": "front.R"
+            },
+            {
+              "time_s": 0.4,
+              "event": "foot_contact",
+              "foot": "hind.R"
+            },
+            {
+              "time_s": 0.496,
+              "event": "foot_contact",
+              "foot": "hind.L"
+            }
+          ],
+          "max_reach_error_m": 0.016763607135509173
+        }
+      ]
+    }
+  ],
+  "monster_reference": "../../doc/몬스터 컨셉 아트_ 2.5D 오픈월드 RPG.png",
+  "run_revision": {
+    "npc_arm_extension": "about 26 percent",
+    "npc_stance": 0.34,
+    "quadruped_run": "diagonal trot",
+    "quadruped_touchdowns": {
+      "front.L": 0,
+      "hind.R": 0,
+      "front.R": 0.5,
+      "hind.L": 0.5
+    },
+    "quadruped_sprint": "rotary gallop",
+    "quadruped_sprint_touchdowns": {
+      "front.L": 0,
+      "front.R": 0.12,
+      "hind.R": 0.5,
+      "hind.L": 0.62
+    },
+    "quadruped_walk": "lateral four-beat",
+    "spine_translation_baked": true
+  }
+}

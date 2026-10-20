@@ -1,0 +1,15 @@
+{
+  "art_revision": 4,
+  "removed_exports": [
+    "rigged/SK_MOB_00_HornWraith.glb",
+    "rigged/SK_MOB_01_CorpseHound.glb",
+    "rigged/SK_MOB_02_RubbleGolem.glb",
+    "rigged/SK_MOB_03_Wolf.glb",
+    "rigged/SK_MOB_04_Boar.glb",
+    "rigged/SK_MOB_05_Bear.glb",
+    "rigged/SK_MOB_06_Deer.glb"
+  ],
+  "reference": "../../doc/몬스터 컨셉 아트_ 2.5D 오픈월드 RPG.png",
+  "bipeds": 4,
+  "quadrupeds": 3
+}

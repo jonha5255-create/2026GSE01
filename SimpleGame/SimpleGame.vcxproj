@@ -73,6 +73,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -165,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="AssetModel.h" />
+    <ClInclude Include="AssetLibrary.h" />
+    <ClInclude Include="AssetPreview.h" />
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
     <ClInclude Include="LevelOne.h" />
@@ -189,6 +193,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PrototypeRenderer.cpp" />
+    <ClCompile Include="AssetModel.cpp" />
+    <ClCompile Include="AssetLibrary.cpp" />
+    <ClCompile Include="AssetPreview.cpp" />
+    <ClCompile Include="AssetTests.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
     <ClCompile Include="CityGenerator.cpp" />
     <ClCompile Include="LevelOne.cpp" />

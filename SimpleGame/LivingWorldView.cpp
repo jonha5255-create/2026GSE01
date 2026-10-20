@@ -349,15 +349,20 @@ void PrototypeWorld::Draw(const NpcActor& npc)
     }
     r.Text(p.x - 25 * z,
            p.y - 84 * z,
-           (npc.fieldBoss               ? "[중간 보스] "
-            : npc.job == NpcJob::Wraith ? "[괴물] "
-                                        : "[주민] ")
+           (npc.courier                            ? "[전령] "
+            : npc.migrating && npc.travelTown >= 0 ? "[이사 중] "
+            : npc.fieldBoss                        ? "[중간 보스] "
+            : npc.job == NpcJob::Wraith            ? "[괴물] "
+                                                   : "[주민] ")
                + npc.Name(),
            color,
            .55f * z);
     r.Text(p.x - 25 * z,
            p.y - 68 * z,
-           LivingWorld::ActionName(npc.action),
+           npc.travelTown >= 0 ? (npc.migrating      ? "이사 이동 중"
+                                  : npc.letter.known ? "편지 운반 중"
+                                                     : "마을로 귀환 중")
+                               : LivingWorld::ActionName(npc.action),
            Color(205, 214, 220),
            .43f * z);
     float barY = p.y - (npc.job == NpcJob::Wraith ? 64 : 54) * z;
@@ -532,7 +537,7 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
         int next = !(sim.bossRelics & 1) ? 0 : !(sim.bossRelics & 2) ? 1 : 2;
         const char* names[] = {
             "핏빛 제단 / 핏빛 인장", "독안개 분지 / 독안개 심장", "붕괴 석정 / 석정 핵"};
-        int cx = next == 0 ? 1 : next == 2 ? -1 : 0, cy = next == 1 ? 1 : 0;
+        int cx = next == 0 ? 2 : next == 2 ? -2 : 0, cy = next == 1 ? 2 : 0;
         double dx = (double(cx) - double(player_.cx)) * 640 + 320 - player_.x;
         double dy = (double(cy) - double(player_.cy)) * 640 + 320 - player_.y;
         r.Text(34, 435, names[next], white, .58f);
@@ -566,7 +571,7 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
            .46f);
     auto mini = [&](FarmPoint relative)
     {
-        float factor = mapExpanded_ ? 1.6f : 1.f;
+        float factor = mapExpanded_ ? .22f : 1.f;
         return Point{mx + (relative.x - relative.y) * .12f * factor,
                      my + (relative.x + relative.y) * .06f * factor};
     };
@@ -575,6 +580,44 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
         return p.x >= mapLeft + 5 && p.x <= mapRight - 5 && p.y >= mapTop + 5
                && p.y <= mapBottom - 5;
     };
+    if (mapExpanded_)
+    {
+        for (auto* town : level_.Graph().Query<TownActor>())
+        {
+            for (auto* other : level_.Graph().Query<TownActor>())
+            {
+                auto a = town->Position(), b = other->Position();
+                if (other->Id() <= town->Id() || Length(Minus(a, b)) > 5800)
+                {
+                    continue;
+                }
+                MapQuad(r,
+                        mini({std::min(a.x, b.x) - 25, std::min(a.y, b.y) - 25}),
+                        mini({std::max(a.x, b.x) + 25, std::min(a.y, b.y) - 25}),
+                        mini({std::max(a.x, b.x) + 25, std::max(a.y, b.y) + 25}),
+                        mini({std::min(a.x, b.x) - 25, std::max(a.y, b.y) + 25}),
+                        mapLeft,
+                        mapTop,
+                        mapRight,
+                        mapBottom,
+                        Color(106, 111, 101));
+            }
+        }
+        for (auto* town : level_.Graph().Query<TownActor>())
+        {
+            auto a = town->Position();
+            MapQuad(r,
+                    mini({a.x - 730, a.y - 730}),
+                    mini({a.x + 1190, a.y - 730}),
+                    mini({a.x + 1190, a.y + 1190}),
+                    mini({a.x - 730, a.y + 1190}),
+                    mapLeft,
+                    mapTop,
+                    mapRight,
+                    mapBottom,
+                    Color(42, 73, 56));
+        }
+    }
     for (const auto& entry : chunkActors_)
     {
         auto* chunk = level_.Graph().Get<ChunkActor>(entry.second);
@@ -651,6 +694,26 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
         r.Triangle({p.x - 5, p.y - 7}, {p.x + 5, p.y - 7}, {p.x, p.y + 1}, gold);
     }
     r.Ellipse({mx, my}, 5, 5, white);
+    if (mapExpanded_)
+    {
+        for (auto* town : level_.Graph().Query<TownActor>())
+        {
+            auto p = mini(town->Position());
+            if (inside(p))
+            {
+                int residents = 0;
+                for (auto* npc : level_.Graph().Query<NpcActor>())
+                {
+                    residents += npc->Parent() == town->Id() && npc->job != NpcJob::Wraith ? 1 : 0;
+                }
+                r.Text(p.x - 25,
+                       p.y - 18,
+                       town->Name() + " " + std::to_string(residents) + "명",
+                       gold,
+                       .52f);
+            }
+        }
+    }
     r.Line({mx, my - 8}, {mx, my - 4}, 2, cyan);
     r.Text(mapLeft, mapBottom + 11, "흰색: 나 / 금색: 목표·보스 / 분홍: 괴물", muted, .52f);
     if (goal && !mapExpanded_ && level_.state != RunState::Lost)

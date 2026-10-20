@@ -1,0 +1,648 @@
+{
+  "schema_version": 1,
+  "units": "meters",
+  "up_axis": "Z (Blender); Y (glTF)",
+  "front": "-Y (Blender); +Z (glTF)",
+  "height_m": 1.8,
+  "head_height_m": 0.6,
+  "none_index": -1,
+  "slots": {
+    "body": {
+      "0": "SM_NPC_Body_00_Male",
+      "1": "SM_NPC_Body_01_Female"
+    },
+    "hair": {
+      "0": "SM_NPC_Hair_00_Short",
+      "1": "SM_NPC_Hair_01_Long",
+      "2": "SM_NPC_Hair_02_Crop",
+      "3": "SM_NPC_Hair_03_Ponytail"
+    },
+    "top": {
+      "0": "SM_NPC_Top_00_Citizen",
+      "1": "SM_NPC_Top_01_Armor",
+      "2": "SM_NPC_Top_02_Archer",
+      "3": "SM_NPC_Top_03_Recorder",
+      "4": "SM_NPC_Top_04_Pilgrim"
+    },
+    "legs": {
+      "0": "SM_NPC_Legs_00_Trousers",
+      "1": "SM_NPC_Legs_01_Guard",
+      "2": "SM_NPC_Legs_02_Wrapped"
+    },
+    "feet": {
+      "0": "SM_NPC_Feet_00_Boots",
+      "1": "SM_NPC_Feet_01_Shoes"
+    },
+    "accessory": {
+      "0": "SM_NPC_Accessory_00_Scarf",
+      "1": "SM_NPC_Accessory_01_Satchel",
+      "2": "SM_NPC_Accessory_02_Quiver",
+      "3": "SM_NPC_Accessory_03_BureauBadge",
+      "4": "SM_NPC_Accessory_04_PilgrimBeads"
+    },
+    "prop": {
+      "0": "SM_NPC_Prop_00_Bow",
+      "1": "SM_NPC_Prop_01_Spear",
+      "2": "SM_NPC_Prop_02_Ledger"
+    },
+    "building": {
+      "0": "SM_ENV_Building_00_House",
+      "1": "SM_ENV_Building_01_Market",
+      "2": "SM_ENV_Building_02_Clinic",
+      "3": "SM_ENV_Building_03_Archive",
+      "4": "SM_ENV_Building_04_Station",
+      "5": "SM_ENV_Building_05_Bureau",
+      "6": "SM_ENV_Building_06_ElevatedPlatform",
+      "7": "SM_ENV_Building_07_SignalTower",
+      "8": "SM_ENV_Building_08_DataCenter",
+      "9": "SM_ENV_Building_09_Checkpoint",
+      "10": "SM_ENV_Building_10_HospitalWard",
+      "11": "SM_ENV_Building_11_MedicalStorage",
+      "12": "SM_ENV_Building_12_FusionTemple",
+      "13": "SM_ENV_Building_13_CultGate",
+      "14": "SM_ENV_Building_14_RitualPagoda",
+      "15": "SM_ENV_Building_15_BrokenBuilding",
+      "16": "SM_ENV_Building_16_FloatingBuilding",
+      "17": "SM_ENV_Building_17_TwistedShop",
+      "18": "SM_ENV_Building_18_MemoryTower",
+      "19": "SM_ENV_Building_19_FloatingPlatform",
+      "20": "SM_ENV_Building_20_OriginGate"
+    },
+    "structure": {
+      "0": "SM_ENV_Structure_00_Wall",
+      "1": "SM_ENV_Structure_01_Gate",
+      "2": "SM_ENV_Structure_02_BrokenWall",
+      "3": "SM_ENV_Structure_03_Rubble",
+      "4": "SM_ENV_Structure_04_MemoryShrine",
+      "5": "SM_ENV_Structure_05_StreetLamp"
+    },
+    "tree": {
+      "0": "SM_ENV_Tree_00_Broadleaf",
+      "1": "SM_ENV_Tree_01_Pine",
+      "2": "SM_ENV_Tree_02_Dead",
+      "3": "SM_ENV_Tree_03_Distorted"
+    },
+    "foliage": {
+      "0": "SM_ENV_Foliage_00_Grass",
+      "1": "SM_ENV_Foliage_01_DryGrass",
+      "2": "SM_ENV_Foliage_02_Reeds",
+      "3": "SM_ENV_Foliage_03_Shrub"
+    },
+    "rock": {
+      "0": "SM_ENV_Rock_00_Small",
+      "1": "SM_ENV_Rock_01_Boulder",
+      "2": "SM_ENV_Rock_02_Slab",
+      "3": "SM_ENV_Rock_03_MemorySplit"
+    }
+  },
+  "meshes": [
+    {
+      "mesh": "SM_NPC_Body_00_Male",
+      "slot": "body",
+      "index": 0,
+      "file": "meshes/SM_NPC_Body_00_Male.glb",
+      "triangles": 300,
+      "notes": "Head, neck and hands only. Torso and legs supplied by clothing slots. Shared fit envelope."
+    },
+    {
+      "mesh": "SM_NPC_Body_01_Female",
+      "slot": "body",
+      "index": 1,
+      "file": "meshes/SM_NPC_Body_01_Female.glb",
+      "triangles": 300,
+      "notes": "Head, neck and hands only. Torso and legs supplied by clothing slots. Shared fit envelope."
+    },
+    {
+      "mesh": "SM_NPC_Hair_00_Short",
+      "slot": "hair",
+      "index": 0,
+      "file": "meshes/SM_NPC_Hair_00_Short.glb",
+      "triangles": 130,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Hair_01_Long",
+      "slot": "hair",
+      "index": 1,
+      "file": "meshes/SM_NPC_Hair_01_Long.glb",
+      "triangles": 214,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Hair_02_Crop",
+      "slot": "hair",
+      "index": 2,
+      "file": "meshes/SM_NPC_Hair_02_Crop.glb",
+      "triangles": 50,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Hair_03_Ponytail",
+      "slot": "hair",
+      "index": 3,
+      "file": "meshes/SM_NPC_Hair_03_Ponytail.glb",
+      "triangles": 194,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Top_00_Citizen",
+      "slot": "top",
+      "index": 0,
+      "file": "meshes/SM_NPC_Top_00_Citizen.glb",
+      "triangles": 172,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Top_01_Armor",
+      "slot": "top",
+      "index": 1,
+      "file": "meshes/SM_NPC_Top_01_Armor.glb",
+      "triangles": 256,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Top_02_Archer",
+      "slot": "top",
+      "index": 2,
+      "file": "meshes/SM_NPC_Top_02_Archer.glb",
+      "triangles": 260,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Top_03_Recorder",
+      "slot": "top",
+      "index": 3,
+      "file": "meshes/SM_NPC_Top_03_Recorder.glb",
+      "triangles": 240,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Top_04_Pilgrim",
+      "slot": "top",
+      "index": 4,
+      "file": "meshes/SM_NPC_Top_04_Pilgrim.glb",
+      "triangles": 256,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Legs_00_Trousers",
+      "slot": "legs",
+      "index": 0,
+      "file": "meshes/SM_NPC_Legs_00_Trousers.glb",
+      "triangles": 84,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Legs_01_Guard",
+      "slot": "legs",
+      "index": 1,
+      "file": "meshes/SM_NPC_Legs_01_Guard.glb",
+      "triangles": 172,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Legs_02_Wrapped",
+      "slot": "legs",
+      "index": 2,
+      "file": "meshes/SM_NPC_Legs_02_Wrapped.glb",
+      "triangles": 204,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Feet_00_Boots",
+      "slot": "feet",
+      "index": 0,
+      "file": "meshes/SM_NPC_Feet_00_Boots.glb",
+      "triangles": 88,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Feet_01_Shoes",
+      "slot": "feet",
+      "index": 1,
+      "file": "meshes/SM_NPC_Feet_01_Shoes.glb",
+      "triangles": 88,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Accessory_00_Scarf",
+      "slot": "accessory",
+      "index": 0,
+      "file": "meshes/SM_NPC_Accessory_00_Scarf.glb",
+      "triangles": 88,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Accessory_01_Satchel",
+      "slot": "accessory",
+      "index": 1,
+      "file": "meshes/SM_NPC_Accessory_01_Satchel.glb",
+      "triangles": 56,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Accessory_02_Quiver",
+      "slot": "accessory",
+      "index": 2,
+      "file": "meshes/SM_NPC_Accessory_02_Quiver.glb",
+      "triangles": 140,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Accessory_03_BureauBadge",
+      "slot": "accessory",
+      "index": 3,
+      "file": "meshes/SM_NPC_Accessory_03_BureauBadge.glb",
+      "triangles": 44,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Accessory_04_PilgrimBeads",
+      "slot": "accessory",
+      "index": 4,
+      "file": "meshes/SM_NPC_Accessory_04_PilgrimBeads.glb",
+      "triangles": 180,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Prop_00_Bow",
+      "slot": "prop",
+      "index": 0,
+      "file": "meshes/SM_NPC_Prop_00_Bow.glb",
+      "triangles": 100,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Prop_01_Spear",
+      "slot": "prop",
+      "index": 1,
+      "file": "meshes/SM_NPC_Prop_01_Spear.glb",
+      "triangles": 40,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_NPC_Prop_02_Ledger",
+      "slot": "prop",
+      "index": 2,
+      "file": "meshes/SM_NPC_Prop_02_Ledger.glb",
+      "triangles": 56,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_00_Wall",
+      "slot": "structure",
+      "index": 0,
+      "file": "meshes/SM_ENV_Structure_00_Wall.glb",
+      "triangles": 880,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_01_Gate",
+      "slot": "structure",
+      "index": 1,
+      "file": "meshes/SM_ENV_Structure_01_Gate.glb",
+      "triangles": 144,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_02_BrokenWall",
+      "slot": "structure",
+      "index": 2,
+      "file": "meshes/SM_ENV_Structure_02_BrokenWall.glb",
+      "triangles": 352,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_03_Rubble",
+      "slot": "structure",
+      "index": 3,
+      "file": "meshes/SM_ENV_Structure_03_Rubble.glb",
+      "triangles": 200,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_04_MemoryShrine",
+      "slot": "structure",
+      "index": 4,
+      "file": "meshes/SM_ENV_Structure_04_MemoryShrine.glb",
+      "triangles": 248,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Structure_05_StreetLamp",
+      "slot": "structure",
+      "index": 5,
+      "file": "meshes/SM_ENV_Structure_05_StreetLamp.glb",
+      "triangles": 128,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Tree_00_Broadleaf",
+      "slot": "tree",
+      "index": 0,
+      "file": "meshes/SM_ENV_Tree_00_Broadleaf.glb",
+      "triangles": 124,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Tree_01_Pine",
+      "slot": "tree",
+      "index": 1,
+      "file": "meshes/SM_ENV_Tree_01_Pine.glb",
+      "triangles": 100,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Tree_02_Dead",
+      "slot": "tree",
+      "index": 2,
+      "file": "meshes/SM_ENV_Tree_02_Dead.glb",
+      "triangles": 104,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Tree_03_Distorted",
+      "slot": "tree",
+      "index": 3,
+      "file": "meshes/SM_ENV_Tree_03_Distorted.glb",
+      "triangles": 144,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Foliage_00_Grass",
+      "slot": "foliage",
+      "index": 0,
+      "file": "meshes/SM_ENV_Foliage_00_Grass.glb",
+      "triangles": 36,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Foliage_01_DryGrass",
+      "slot": "foliage",
+      "index": 1,
+      "file": "meshes/SM_ENV_Foliage_01_DryGrass.glb",
+      "triangles": 36,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Foliage_02_Reeds",
+      "slot": "foliage",
+      "index": 2,
+      "file": "meshes/SM_ENV_Foliage_02_Reeds.glb",
+      "triangles": 216,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Foliage_03_Shrub",
+      "slot": "foliage",
+      "index": 3,
+      "file": "meshes/SM_ENV_Foliage_03_Shrub.glb",
+      "triangles": 60,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Rock_00_Small",
+      "slot": "rock",
+      "index": 0,
+      "file": "meshes/SM_ENV_Rock_00_Small.glb",
+      "triangles": 20,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Rock_01_Boulder",
+      "slot": "rock",
+      "index": 1,
+      "file": "meshes/SM_ENV_Rock_01_Boulder.glb",
+      "triangles": 80,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Rock_02_Slab",
+      "slot": "rock",
+      "index": 2,
+      "file": "meshes/SM_ENV_Rock_02_Slab.glb",
+      "triangles": 20,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Rock_03_MemorySplit",
+      "slot": "rock",
+      "index": 3,
+      "file": "meshes/SM_ENV_Rock_03_MemorySplit.glb",
+      "triangles": 64,
+      "notes": ""
+    },
+    {
+      "mesh": "SM_ENV_Building_00_House",
+      "slot": "building",
+      "index": 0,
+      "file": "meshes/SM_ENV_Building_00_House.glb",
+      "triangles": 4932,
+      "region": "01_Commercial",
+      "title": "Shop-house / apartments",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_01_Market",
+      "slot": "building",
+      "index": 1,
+      "file": "meshes/SM_ENV_Building_01_Market.glb",
+      "triangles": 2684,
+      "region": "01_Commercial",
+      "title": "Corner convenience store",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_02_Clinic",
+      "slot": "building",
+      "index": 2,
+      "file": "meshes/SM_ENV_Building_02_Clinic.glb",
+      "triangles": 3336,
+      "region": "04_Hospital",
+      "title": "Abandoned hospital main wing",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_03_Archive",
+      "slot": "building",
+      "index": 3,
+      "file": "meshes/SM_ENV_Building_03_Archive.glb",
+      "triangles": 5484,
+      "region": "01_Commercial",
+      "title": "Traditional tea and records shop",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_04_Station",
+      "slot": "building",
+      "index": 4,
+      "file": "meshes/SM_ENV_Building_04_Station.glb",
+      "triangles": 2316,
+      "region": "02_Rail",
+      "title": "Rail tunnel entrance",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_05_Bureau",
+      "slot": "building",
+      "index": 5,
+      "file": "meshes/SM_ENV_Building_05_Bureau.glb",
+      "triangles": 4564,
+      "region": "03_Bureau",
+      "title": "Memory bureau research block",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_06_ElevatedPlatform",
+      "slot": "building",
+      "index": 6,
+      "file": "meshes/SM_ENV_Building_06_ElevatedPlatform.glb",
+      "triangles": 624,
+      "region": "02_Rail",
+      "title": "Elevated railway platform",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_07_SignalTower",
+      "slot": "building",
+      "index": 7,
+      "file": "meshes/SM_ENV_Building_07_SignalTower.glb",
+      "triangles": 2468,
+      "region": "02_Rail",
+      "title": "Rail control tower",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_08_DataCenter",
+      "slot": "building",
+      "index": 8,
+      "file": "meshes/SM_ENV_Building_08_DataCenter.glb",
+      "triangles": 3344,
+      "region": "03_Bureau",
+      "title": "Secure data center",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_09_Checkpoint",
+      "slot": "building",
+      "index": 9,
+      "file": "meshes/SM_ENV_Building_09_Checkpoint.glb",
+      "triangles": 2448,
+      "region": "03_Bureau",
+      "title": "Bureau checkpoint gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_10_HospitalWard",
+      "slot": "building",
+      "index": 10,
+      "file": "meshes/SM_ENV_Building_10_HospitalWard.glb",
+      "triangles": 3944,
+      "region": "04_Hospital",
+      "title": "Abandoned isolation ward",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_11_MedicalStorage",
+      "slot": "building",
+      "index": 11,
+      "file": "meshes/SM_ENV_Building_11_MedicalStorage.glb",
+      "triangles": 3956,
+      "region": "04_Hospital",
+      "title": "Medical service and storage annex",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_12_FusionTemple",
+      "slot": "building",
+      "index": 12,
+      "file": "meshes/SM_ENV_Building_12_FusionTemple.glb",
+      "triangles": 5240,
+      "region": "05_Cult",
+      "title": "Two-tier fusion temple",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_13_CultGate",
+      "slot": "building",
+      "index": 13,
+      "file": "meshes/SM_ENV_Building_13_CultGate.glb",
+      "triangles": 1996,
+      "region": "05_Cult",
+      "title": "Traditional cult entrance gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_14_RitualPagoda",
+      "slot": "building",
+      "index": 14,
+      "file": "meshes/SM_ENV_Building_14_RitualPagoda.glb",
+      "triangles": 3688,
+      "region": "05_Cult",
+      "title": "Ritual pagoda",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_15_BrokenBuilding",
+      "slot": "building",
+      "index": 15,
+      "file": "meshes/SM_ENV_Building_15_BrokenBuilding.glb",
+      "triangles": 1686,
+      "region": "06_Distortion",
+      "title": "Fractured city apartment",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_17_TwistedShop",
+      "slot": "building",
+      "index": 17,
+      "file": "meshes/SM_ENV_Building_17_TwistedShop.glb",
+      "triangles": 4492,
+      "region": "06_Distortion",
+      "title": "Leaning distorted shop-house",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_18_MemoryTower",
+      "slot": "building",
+      "index": 18,
+      "file": "meshes/SM_ENV_Building_18_MemoryTower.glb",
+      "triangles": 384,
+      "region": "07_Origin",
+      "title": "Fragmented memory tower",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_19_FloatingPlatform",
+      "slot": "building",
+      "index": 19,
+      "file": "meshes/SM_ENV_Building_19_FloatingPlatform.glb",
+      "triangles": 336,
+      "region": "07_Origin",
+      "title": "Suspended ritual platform",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_20_OriginGate",
+      "slot": "building",
+      "index": 20,
+      "file": "meshes/SM_ENV_Building_20_OriginGate.glb",
+      "triangles": 180,
+      "region": "07_Origin",
+      "title": "Monumental origin gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_16_FloatingBuilding",
+      "slot": "building",
+      "index": 16,
+      "file": "meshes/SM_ENV_Building_16_FloatingBuilding.glb",
+      "triangles": 1508,
+      "region": "06_Distortion",
+      "title": "Apartment with separated upper floors",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    }
+  ],
+  "art_revision": 2,
+  "building_reference": "../../doc/로우 폴리 도시 건물 컨셉 보드.png"
+}

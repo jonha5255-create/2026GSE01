@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "materials": {
+    "skin": "#C2967D",
+    "skin_shadow": "#926E62",
+    "ink": "#202C35",
+    "hair": "#30363E",
+    "hair_light": "#66716D",
+    "cloth": "#596C68",
+    "cloth_light": "#929889",
+    "ochre": "#A17D50",
+    "rust": "#84544A",
+    "steel": "#616F78",
+    "edge": "#A2AFAD",
+    "stone": "#767E77",
+    "concrete": "#91948A",
+    "darkstone": "#474F50",
+    "wood": "#665A4B",
+    "leaf": "#586B56",
+    "leaf_light": "#788568",
+    "dry": "#9A9170",
+    "memory": "#64BCB5",
+    "paper": "#C5BE9F",
+    "eye": "#101B23"
+  },
+  "variants": [
+    {
+      "name": "village",
+      "cloth": "cloth",
+      "accent": "ochre"
+    },
+    {
+      "name": "bureau",
+      "cloth": "ink",
+      "accent": "memory"
+    },
+    {
+      "name": "pilgrim",
+      "cloth": "rust",
+      "accent": "paper"
+    },
+    {
+      "name": "wilderness",
+      "cloth": "leaf",
+      "accent": "dry"
+    }
+  ],
+  "note": "Variant indices are handoff suggestions. Exported meshes use default materials; runtime recoloring is not implemented."
+}

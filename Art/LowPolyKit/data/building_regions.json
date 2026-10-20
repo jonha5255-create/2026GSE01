@@ -1,0 +1,225 @@
+{
+  "art_revision": 2,
+  "reference": "../../doc/로우 폴리 도시 건물 컨셉 보드.png",
+  "regions": [
+    "01_Commercial",
+    "02_Rail",
+    "03_Bureau",
+    "04_Hospital",
+    "05_Cult",
+    "06_Distortion",
+    "07_Origin"
+  ],
+  "buildings": [
+    {
+      "mesh": "SM_ENV_Building_00_House",
+      "slot": "building",
+      "index": 0,
+      "file": "meshes/SM_ENV_Building_00_House.glb",
+      "triangles": 4932,
+      "region": "01_Commercial",
+      "title": "Shop-house / apartments",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_01_Market",
+      "slot": "building",
+      "index": 1,
+      "file": "meshes/SM_ENV_Building_01_Market.glb",
+      "triangles": 2684,
+      "region": "01_Commercial",
+      "title": "Corner convenience store",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_02_Clinic",
+      "slot": "building",
+      "index": 2,
+      "file": "meshes/SM_ENV_Building_02_Clinic.glb",
+      "triangles": 3336,
+      "region": "04_Hospital",
+      "title": "Abandoned hospital main wing",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_03_Archive",
+      "slot": "building",
+      "index": 3,
+      "file": "meshes/SM_ENV_Building_03_Archive.glb",
+      "triangles": 5484,
+      "region": "01_Commercial",
+      "title": "Traditional tea and records shop",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_04_Station",
+      "slot": "building",
+      "index": 4,
+      "file": "meshes/SM_ENV_Building_04_Station.glb",
+      "triangles": 2316,
+      "region": "02_Rail",
+      "title": "Rail tunnel entrance",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_05_Bureau",
+      "slot": "building",
+      "index": 5,
+      "file": "meshes/SM_ENV_Building_05_Bureau.glb",
+      "triangles": 4564,
+      "region": "03_Bureau",
+      "title": "Memory bureau research block",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_06_ElevatedPlatform",
+      "slot": "building",
+      "index": 6,
+      "file": "meshes/SM_ENV_Building_06_ElevatedPlatform.glb",
+      "triangles": 624,
+      "region": "02_Rail",
+      "title": "Elevated railway platform",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_07_SignalTower",
+      "slot": "building",
+      "index": 7,
+      "file": "meshes/SM_ENV_Building_07_SignalTower.glb",
+      "triangles": 2468,
+      "region": "02_Rail",
+      "title": "Rail control tower",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_08_DataCenter",
+      "slot": "building",
+      "index": 8,
+      "file": "meshes/SM_ENV_Building_08_DataCenter.glb",
+      "triangles": 3344,
+      "region": "03_Bureau",
+      "title": "Secure data center",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_09_Checkpoint",
+      "slot": "building",
+      "index": 9,
+      "file": "meshes/SM_ENV_Building_09_Checkpoint.glb",
+      "triangles": 2448,
+      "region": "03_Bureau",
+      "title": "Bureau checkpoint gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_10_HospitalWard",
+      "slot": "building",
+      "index": 10,
+      "file": "meshes/SM_ENV_Building_10_HospitalWard.glb",
+      "triangles": 3944,
+      "region": "04_Hospital",
+      "title": "Abandoned isolation ward",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_11_MedicalStorage",
+      "slot": "building",
+      "index": 11,
+      "file": "meshes/SM_ENV_Building_11_MedicalStorage.glb",
+      "triangles": 3956,
+      "region": "04_Hospital",
+      "title": "Medical service and storage annex",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_12_FusionTemple",
+      "slot": "building",
+      "index": 12,
+      "file": "meshes/SM_ENV_Building_12_FusionTemple.glb",
+      "triangles": 5240,
+      "region": "05_Cult",
+      "title": "Two-tier fusion temple",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_13_CultGate",
+      "slot": "building",
+      "index": 13,
+      "file": "meshes/SM_ENV_Building_13_CultGate.glb",
+      "triangles": 1996,
+      "region": "05_Cult",
+      "title": "Traditional cult entrance gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_14_RitualPagoda",
+      "slot": "building",
+      "index": 14,
+      "file": "meshes/SM_ENV_Building_14_RitualPagoda.glb",
+      "triangles": 3688,
+      "region": "05_Cult",
+      "title": "Ritual pagoda",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_15_BrokenBuilding",
+      "slot": "building",
+      "index": 15,
+      "file": "meshes/SM_ENV_Building_15_BrokenBuilding.glb",
+      "triangles": 1686,
+      "region": "06_Distortion",
+      "title": "Fractured city apartment",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_17_TwistedShop",
+      "slot": "building",
+      "index": 17,
+      "file": "meshes/SM_ENV_Building_17_TwistedShop.glb",
+      "triangles": 4492,
+      "region": "06_Distortion",
+      "title": "Leaning distorted shop-house",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_18_MemoryTower",
+      "slot": "building",
+      "index": 18,
+      "file": "meshes/SM_ENV_Building_18_MemoryTower.glb",
+      "triangles": 384,
+      "region": "07_Origin",
+      "title": "Fragmented memory tower",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_19_FloatingPlatform",
+      "slot": "building",
+      "index": 19,
+      "file": "meshes/SM_ENV_Building_19_FloatingPlatform.glb",
+      "triangles": 336,
+      "region": "07_Origin",
+      "title": "Suspended ritual platform",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_20_OriginGate",
+      "slot": "building",
+      "index": 20,
+      "file": "meshes/SM_ENV_Building_20_OriginGate.glb",
+      "triangles": 180,
+      "region": "07_Origin",
+      "title": "Monumental origin gate",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    },
+    {
+      "mesh": "SM_ENV_Building_16_FloatingBuilding",
+      "slot": "building",
+      "index": 16,
+      "file": "meshes/SM_ENV_Building_16_FloatingBuilding.glb",
+      "triangles": 1508,
+      "region": "06_Distortion",
+      "title": "Apartment with separated upper floors",
+      "notes": "Concept-board v2. Exterior static model; no collision, interiors or runtime integration."
+    }
+  ]
+}

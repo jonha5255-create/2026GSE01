@@ -88,7 +88,7 @@ void Location::Normalize()
 CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
 {
     auto chunk = GenerateCityChunk(c.first, c.second, seed);
-    chunk.bossRegion = c == Coord{1, 0} ? 0 : c == Coord{0, 1} ? 1 : c == Coord{-1, 0} ? 2 : -1;
+    chunk.bossRegion = c == Coord{2, 0} ? 0 : c == Coord{0, 2} ? 1 : c == Coord{-2, 0} ? 2 : -1;
     if (chunk.bossRegion >= 0)
     {
         // Preserve roads, but reserve a broad, accessible clearing for the encounter.
@@ -183,6 +183,8 @@ void PrototypeWorld::Stream()
                                                             entry.second.seed + uint32_t(i));
                 building.local = {plot.x, plot.y};
                 building.style = entry.second.styles[i];
+                building.villageIndex = entry.second.villageIndex;
+                building.homeSlot = plot.homeSlot;
                 chunk.buildings.push_back(building.Id());
             }
             if (entry.second.village)
@@ -226,27 +228,7 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
     ActorId parent = chunk.Id();
     if (village)
     {
-        const char* names[] = {"안개", "황혼", "잿빛", "달그늘", "청명"};
-        std::string name = std::string(names[next() % 5]) + " 마을 (" + std::to_string(coord.first)
-                           + "," + std::to_string(coord.second) + ")";
-        auto& town = graph.Spawn<TownActor>(parent, name);
-        town.local = {chunk.data.roadX, chunk.data.roadY};
-        parent = town.Id();
-        graph.Spawn<TownSiteActor>(parent, TownSite::Market).local = {-25, 0};
-        graph.Spawn<TownSiteActor>(parent, TownSite::Clinic).local = {0, -25};
-        const NpcJob jobs[] = {NpcJob::Merchant, NpcJob::Hunter, NpcJob::Guard, NpcJob::Seeker};
-        const FarmPoint points[] = {{-10, 0}, {0, 22}, {22, 0}, {0, -20}};
-        for (int i = 0; i < 4; ++i)
-        {
-            auto& npc =
-                graph.Spawn<NpcActor>(parent, name + " " + LivingWorld::JobName(jobs[i]), jobs[i]);
-            npc.local = npc.home = points[i];
-            npc.settlementResident = true;
-            npc.gold = 50 + int(next() % 70);
-            npc.goods = jobs[i] == NpcJob::Merchant ? 8 : 0;
-            npc.insightWeight = jobs[i] == NpcJob::Seeker ? .95f : .2f;
-        }
-        RenderDiagnostics::Get().Event("village_spawn", name + "; residents=4");
+        // Towns and their residents are persistent roots, not streamed chunk children.
         return;
     }
     int count = 3 + int(next() % 3);
@@ -339,7 +321,15 @@ bool PrototypeWorld::Blocked(const Location& p, float radius) const
     }
     // Unloaded procedural chunks still support navigation/collision queries.
     auto it = chunks_.find({p.cx, p.cy});
-    CityChunk chunk = it == chunks_.end() ? Generate({p.cx, p.cy}, seed_) : it->second;
+    if (it == chunks_.end() && !collisionChunks_.count({p.cx, p.cy}))
+    {
+        if (collisionChunks_.size() >= 256)
+        {
+            collisionChunks_.clear();
+        }
+        collisionChunks_.emplace(Coord{p.cx, p.cy}, Generate({p.cx, p.cy}, seed_));
+    }
+    const auto& chunk = it == chunks_.end() ? collisionChunks_.at({p.cx, p.cy}) : it->second;
     for (size_t i = 0; i < chunk.plots.size(); ++i)
     {
         const auto& b = chunk.plots[i];
@@ -658,9 +648,9 @@ void PrototypeWorld::LocalMesh(PrototypeRenderer& r,
 void PrototypeWorld::Floor(PrototypeRenderer& r, float x, float y, const CityChunk& chunk)
 {
     LocalMesh(r,
-              "floor:city-v9:" + std::to_string(chunk.bossRegion) + ":" + std::to_string(chunk.seed)
-                  + ":" + std::to_string(chunk.roadX) + ":" + std::to_string(chunk.roadY) + ":"
-                  + std::to_string(debug_),
+              "floor:city-v11:" + std::to_string(chunk.bossRegion) + ":"
+                  + std::to_string(chunk.seed) + ":" + std::to_string(chunk.roadX) + ":"
+                  + std::to_string(chunk.roadY) + ":" + std::to_string(debug_),
               x,
               y,
               1,
@@ -740,16 +730,60 @@ void PrototypeWorld::FloorGeometry(PrototypeRenderer& r, float x, float y, const
                 r.Triangle(p(a + 3, b + 5), p(a + 8, b + 3), p(a + 10, b + 8), Color(76, 71, 61));
             }
         }
-        // Preserve inter-village arterials; omit local streets and paved forecourts.
+        // Draw every shoulder before pavement so borders cannot cross junctions.
         for (const auto& road : chunk.roads)
         {
             if (!road.arterial)
             {
                 continue;
             }
-            rect(road.x - 3, road.y - 3, road.width + 6, road.depth + 6, Color(65, 58, 46));
-            rect(road.x, road.y, road.width, road.depth, Color(39, 40, 37));
+            rect(road.x - 9, road.y - 9, road.width + 18, road.depth + 18, Color(52, 46, 38));
+            rect(road.x - 4, road.y - 4, road.width + 8, road.depth + 8, Color(65, 58, 46));
         }
+        auto junctionCorners = [&](float reach, Ink ink)
+        {
+            for (size_t i = 0; i < chunk.roads.size(); ++i)
+            {
+                const auto& a = chunk.roads[i];
+                if (!a.arterial)
+                {
+                    continue;
+                }
+                for (size_t j = i + 1; j < chunk.roads.size(); ++j)
+                {
+                    const auto& b = chunk.roads[j];
+                    if (!b.arterial || (a.width > a.depth) == (b.width > b.depth))
+                    {
+                        continue;
+                    }
+                    float x0 = std::max(a.x, b.x), x1 = std::min(a.x + a.width, b.x + b.width);
+                    float y0 = std::max(a.y, b.y), y1 = std::min(a.y + a.depth, b.y + b.depth);
+                    if (x0 >= x1 || y0 >= y1)
+                    {
+                        continue;
+                    }
+                    for (int sx : {-1, 1})
+                    {
+                        for (int sy : {-1, 1})
+                        {
+                            float cx = sx < 0 ? x0 : x1, cy = sy < 0 ? y0 : y1;
+                            r.Triangle(
+                                p(cx, cy), p(cx + sx * reach, cy), p(cx, cy + sy * reach), ink);
+                        }
+                    }
+                }
+            }
+        };
+        junctionCorners(18, Color(52, 46, 38));
+        junctionCorners(14, Color(65, 58, 46));
+        for (const auto& road : chunk.roads)
+        {
+            if (road.arterial)
+            {
+                rect(road.x, road.y, road.width, road.depth, Color(36, 43, 44));
+            }
+        }
+        junctionCorners(10, Color(36, 43, 44));
         return;
     }
     for (size_t index = 0; index < chunk.plots.size(); ++index)
@@ -900,15 +934,21 @@ void PrototypeWorld::FloorGeometry(PrototypeRenderer& r, float x, float y, const
     }
 }
 
-void PrototypeWorld::Building(
-    PrototypeRenderer& r, float x, float y, float w, float d, float h, uint32_t seed)
+void PrototypeWorld::Building(PrototypeRenderer& r,
+                              float x,
+                              float y,
+                              float w,
+                              float d,
+                              float h,
+                              uint32_t seed,
+                              bool residential)
 {
     auto p = [&](float a, float b, float z = 0)
     {
         return Project(x + a, y + b, z);
     };
     Point a = p(0, 0, h), b = p(w, 0, h), c = p(w, d, h), e = p(0, d, h);
-    bool haunted = (seed % 5 == 0) && distortion_;
+    bool haunted = !residential && (seed % 5 == 0) && distortion_;
     float skew = haunted ? std::sin(time_ * .65f + float(seed % 19)) * 12 * zoom_ : 0;
     a.x += skew;
     b.x += skew;
@@ -927,8 +967,9 @@ void PrototypeWorld::Building(
     }
     if (!haunted)
     {
-        std::string key = "building:city-v2:" + std::to_string(seed) + ":" + std::to_string(w) + ":"
-                          + std::to_string(d) + ":" + std::to_string(h);
+        std::string key = "building:city-v3:" + std::to_string(residential) + ":"
+                          + std::to_string(seed) + ":" + std::to_string(w) + ":" + std::to_string(d)
+                          + ":" + std::to_string(h);
         LocalMesh(r,
                   key,
                   x,
@@ -936,11 +977,11 @@ void PrototypeWorld::Building(
                   alpha,
                   [&]()
                   {
-                      BuildingGeometry(r, 0, 0, w, d, h, seed, 1, false);
+                      BuildingGeometry(r, 0, 0, w, d, h, seed, 1, false, residential);
                   });
         return;
     }
-    BuildingGeometry(r, x, y, w, d, h, seed, alpha, true);
+    BuildingGeometry(r, x, y, w, d, h, seed, alpha, true, residential);
 }
 
 void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
@@ -951,7 +992,8 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
                                       float h,
                                       uint32_t seed,
                                       float alpha,
-                                      bool haunted)
+                                      bool haunted,
+                                      bool residential)
 {
     auto p = [&](float a, float b, float z = 0)
     {
@@ -1033,7 +1075,11 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
            2,
            neon);
     const char* names[] = {"CLINIC", "MOTEL", "RECORDS", "NO SIGNAL"};
-    r.Text(sign.x - 32 * zoom_, sign.y - 11 * zoom_, names[seed % 4], neon, .62f * zoom_);
+    r.Text(sign.x - 32 * zoom_,
+           sign.y - 11 * zoom_,
+           residential ? "주택" : names[seed % 4],
+           neon,
+           .62f * zoom_);
     if (haunted)
     {
         Point crack = p(w, d, h * .8f);
@@ -1821,8 +1867,8 @@ bool PrototypeWorld::SelfTest()
             deterministic &=
                 other && other->local.x == npc->local.x && other->local.y == npc->local.y;
         }
-        ok &= require(world.level_.Graph().Query<TownActor>().size() == 9,
-                      "initial streaming window includes nine distinct villages");
+        ok &= require(world.level_.Graph().Query<TownActor>().size() == 7,
+                      "world retains exactly seven persistent villages");
         ok &= require(wilderness >= 48 && safe,
                       "random wilderness monsters spawn outside village chunks and buildings");
         ok &= require(deterministic, "same seed reproduces wilderness spawn layout");
@@ -1837,7 +1883,7 @@ bool PrototypeWorld::SelfTest()
             int walls = int(std::count(chunk.styles.begin(), chunk.styles.end(), 2));
             districtStyles &=
                 chunk.village
-                    ? walls >= 4 && walls <= 8
+                    ? walls <= 4 && chunk.plots.size() >= 4
                     : walls == 0 && std::count(chunk.styles.begin(), chunk.styles.end(), 0) == 0;
         }
         ok &= require(districtStyles,
@@ -1869,6 +1915,36 @@ bool PrototypeWorld::SelfTest()
         }
         ok &= require(moved > 10 && bounded,
                       "wild monsters wander while remaining inside their wilderness chunk");
+        auto services = world.level_.Context(
+            [&](float x, float y, float radius)
+            {
+                return world.Walkable(x, y, radius);
+            });
+        auto* source = world.level_.society.Village(world.level_.Graph(), 0);
+        auto* target = world.level_.society.Village(world.level_.Graph(), 1);
+        auto* courier = world.level_.Graph().Get<NpcActor>(source->homes[11]);
+        courier->letter.known = true;
+        courier->letter.source = 0;
+        courier->letter.text = "실제 지형 경유 편지";
+        world.level_.society.BeginTravel(*courier, *target, false, services);
+        bool routeSafe = true;
+        for (int frame = 0; frame < 2200 && world.level_.society.lettersDelivered == 0; ++frame)
+        {
+            world.level_.society.UpdateNpc(*courier, .1f, services);
+            auto p = courier->Position();
+            routeSafe &= world.Walkable(p.x, p.y, 11);
+        }
+        ok &= require(routeSafe && world.level_.society.lettersDelivered == 1,
+                      "courier physically crosses gates and unloaded wilderness to deliver mail");
+        bool spacing = true;
+        for (int x = 1160; x <= 5050; x += 5)
+        {
+            spacing &= world.Walkable(float(x), 0, 12);
+        }
+        float gateSeconds = (5050.f - 1160) / world.level_.Player().MoveSpeed();
+        ok &=
+            require(spacing && gateSeconds >= 19 && gateSeconds <= 22,
+                    "neighboring town gates have a clear approximately twenty-second player route");
     }
     Location negative;
     negative.x = -1;
@@ -2273,6 +2349,15 @@ bool PrototypeWorld::SelfTest()
     return ok;
 }
 
+void PrototypeWorld::PreviewRoadJunction()
+{
+    for (int step = 0; step < 128; ++step)
+    {
+        Move(10, 0);
+    }
+    cameraLag_ = {0, 0};
+}
+
 void PrototypeWorld::PreviewExpedition()
 {
     auto& story = level_.society.story;
@@ -2409,7 +2494,29 @@ void PrototypeWorld::Draw(const BuildingActor& actor)
     }
     if (actor.style == 0)
     {
-        Building(*activeRenderer_, p.x, p.y, actor.width, actor.depth, actor.height, actor.seed);
+        Building(*activeRenderer_,
+                 p.x,
+                 p.y,
+                 actor.width,
+                 actor.depth,
+                 actor.height,
+                 actor.seed,
+                 actor.homeSlot >= 0);
+        if (actor.homeSlot >= 0)
+        {
+            auto* settlement = level_.society.Village(level_.Graph(), actor.villageIndex);
+            auto* owner = settlement
+                              ? level_.Graph().Get<NpcActor>(settlement->homes[actor.homeSlot])
+                              : nullptr;
+            auto label = Project(p.x + actor.width * .5f, p.y + actor.depth + 6, 8);
+            activeRenderer_->Text(
+                label.x - 25 * zoom_,
+                label.y,
+                owner ? owner->Name() + (owner->Parent() == settlement->Id() ? "의 집" : " 예약")
+                      : "빈집 " + std::to_string(actor.homeSlot + 1),
+                owner ? Color(195, 213, 185) : Color(133, 143, 137),
+                .4f * zoom_);
+        }
         return;
     }
     auto& r = *activeRenderer_;

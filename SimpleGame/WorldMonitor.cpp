@@ -225,7 +225,12 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
             << ",\"victories\":" << npc->victories << ",\"hostile\":" << Boolean(npc->playerHostile)
             << ",\"offender\":" << Boolean(npc->offender)
             << ",\"guardian\":" << Boolean(npc->storyGuardian)
-            << ",\"fieldBoss\":" << Boolean(npc->fieldBoss)
+            << ",\"fieldBoss\":" << Boolean(npc->fieldBoss) << ",\"homeSlot\":" << npc->homeSlot
+            << ",\"homePosition\":" << Position(LivingWorld::HomeDoor(std::max(0, npc->homeSlot)))
+            << ",\"courier\":" << Boolean(npc->courier)
+            << ",\"migrating\":" << Boolean(npc->migrating && npc->travelTown >= 0)
+            << ",\"travelTownIndex\":" << npc->travelTown
+            << ",\"letterSource\":" << (npc->letter.known ? npc->letter.source : -1)
             << ",\"monsterForm\":" << npc->monsterForm
             << ",\"attacking\":" << Boolean(npc->attackTime >= 0)
             << ",\"targetId\":" << Quote(std::to_string(npc->target))
@@ -264,6 +269,26 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
     for (auto* town : graph.Query<TownActor>(true))
     {
         const auto& stats = villages[town->Id()];
+        std::vector<std::string> homeRows, reportRows;
+        for (int slot = 0; slot < 36; ++slot)
+        {
+            auto door = LivingWorld::HomeDoor(slot);
+            auto origin = town->Position();
+            auto* owner = graph.Get<NpcActor>(town->homes[slot]);
+            homeRows.push_back("{\"slot\":" + std::to_string(slot) + ",\"ownerId\":"
+                               + Quote(std::to_string(town->homes[slot])) + ",\"reserved\":"
+                               + Boolean(owner && owner->Parent() != town->Id()) + ",\"position\":"
+                               + Position({origin.x + door.x, origin.y + door.y}) + "}");
+        }
+        for (const auto& report : town->news)
+        {
+            if (report.known)
+            {
+                reportRows.push_back("{\"sourceIndex\":" + std::to_string(report.source)
+                                     + ",\"recordedAt\":" + Number(report.time)
+                                     + ",\"text\":" + Quote(report.text) + "}");
+            }
+        }
         std::vector<std::string> actions;
         for (const auto& action : stats.actions)
         {
@@ -282,7 +307,16 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
             + std::to_string(stats.gold) + ",\"totalGoods\":" + std::to_string(stats.goods)
             + ",\"totalInsight\":" + std::to_string(stats.insight) + ",\"averageHealthPercent\":"
             + Number(stats.npcs ? stats.healthPercent / stats.npcs : 0)
-            + ",\"actions\":" + Join(actions) + ",\"activity\":" + activity + "}");
+            + ",\"actions\":" + Join(actions) + ",\"activity\":" + activity
+            + ",\"index\":" + std::to_string(town->index) + ",\"homes\":" + Join(homeRows)
+            + ",\"knownNews\":" + Join(reportRows) + ",\"homeCapacity\":36,\"occupiedHomes\":"
+            + std::to_string(std::count_if(town->homes.begin(),
+                                           town->homes.end(),
+                                           [](ActorId id)
+                                           {
+                                               return id != NoActor;
+                                           }))
+            + "}");
     }
     for (const auto& event : sim.events)
     {
@@ -315,6 +349,9 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
         << ",\"monsters\":" << Join(monsters) << ",\"sites\":" << Join(sites)
         << ",\"events\":" << Join(events) << ",\"incidents\":" << Join(incidentRows)
         << ",\"incidentTotals\":{\"murder\":" << sim.murders << ",\"rumor\":" << sim.rumors << "}"
+        << ",\"settlementTotals\":{\"lettersSent\":" << sim.lettersSent
+        << ",\"lettersDelivered\":" << sim.lettersDelivered << ",\"migrations\":" << sim.migrations
+        << "}"
         << ",\"yokaiProgress\":[";
     for (int form = 0; form < 3; ++form)
     {
@@ -537,7 +574,7 @@ bool WorldMonitor::SelfTest()
     LevelOne level(2026);
     level.society.Initialize(level.Graph(), 2026);
     auto initial = Snapshot(level, Location{}, 25, 2026);
-    check(initial.find("\"npcs\":11,\"npcsAlive\":11") != std::string::npos
+    check(initial.find("\"npcs\":210,\"npcsAlive\":210") != std::string::npos
               && initial.find("\"monsters\":3,\"monstersAlive\":3") != std::string::npos,
           "monitor separates human and monster counts");
     auto& secondTown = level.Graph().Spawn<TownActor>(NoActor, "두 번째 마을");
@@ -553,7 +590,7 @@ bool WorldMonitor::SelfTest()
     check(snapshot.find("인용\\\"과 줄바꿈\\u000a") != std::string::npos,
           "monitor JSON escapes quotes and control characters");
     level.Graph().Destroy(npc.Id());
-    check(Snapshot(level, Location{}, 25, 2026).find("\"npcs\":12") == std::string::npos,
+    check(Snapshot(level, Location{}, 25, 2026).find("\"npcs\":211") == std::string::npos,
           "monitor excludes actors pending destruction");
     check(Number(std::numeric_limits<double>::infinity()) == "null",
           "monitor serializes non-finite numbers as JSON null");

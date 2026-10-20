@@ -21,6 +21,7 @@ class PrototypeWorld : private ActorRenderContext
     void PreviewAttack(YokaiForm form, float phase);
     void PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill = true);
     void PreviewExpedition();
+    void PreviewRoadJunction();
 
   private:
     using Coord = std::pair<int64_t, int64_t>;
@@ -47,9 +48,16 @@ class PrototypeWorld : private ActorRenderContext
                           float h,
                           uint32_t seed,
                           float alpha,
-                          bool haunted);
-    void Building(
-        PrototypeRenderer& r, float x, float y, float w, float d, float height, uint32_t seed);
+                          bool haunted,
+                          bool residential);
+    void Building(PrototypeRenderer& r,
+                  float x,
+                  float y,
+                  float w,
+                  float d,
+                  float height,
+                  uint32_t seed,
+                  bool residential = false);
     void Player(PrototypeRenderer& r, const PlayerActor& actor);
     void Weapon(PrototypeRenderer& r, const WeaponActor& actor);
     void Rift(PrototypeRenderer& r, float x, float y);
@@ -77,6 +85,7 @@ class PrototypeWorld : private ActorRenderContext
     PrototypeRenderer* activeRenderer_ = nullptr;
     std::map<Coord, ActorId> chunkActors_;
     std::map<Coord, CityChunk> chunks_;
+    mutable std::map<Coord, CityChunk> collisionChunks_;
     uint64_t monitorWorldId_ = 0;
     Location player_;
     uint32_t seed_ = 2026;

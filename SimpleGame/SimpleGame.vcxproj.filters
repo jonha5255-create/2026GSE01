@@ -24,6 +24,9 @@
     <ClInclude Include="stdafx.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="AssetModel.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="AssetLibrary.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="AssetPreview.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -70,6 +73,10 @@
     <ClCompile Include="PrototypeRenderer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="AssetModel.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="AssetLibrary.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="AssetPreview.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="AssetTests.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LevelOne.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>

@@ -3,6 +3,7 @@
 #include "GameplayContext.h"
 #include "GameplayActors.h"
 #include "RenderDiagnostics.h"
+#include "WorldTypes.h"
 #include <algorithm>
 #include <array>
 #include <queue>
@@ -32,8 +33,8 @@ namespace
                                 FarmPoint origin,
                                 const Walkable& walkable)
     {
-        constexpr int Width = 31;
-        constexpr float Cell = 24, Offset = -120;
+        constexpr int Width = 81;
+        constexpr float Cell = 24, Offset = -660;
         auto index = [=](FarmPoint p)
         {
             int x = std::max(0, std::min(Width - 1, int(std::round((p.x - Offset) / Cell))));
@@ -198,6 +199,7 @@ void LivingWorld::Initialize(SceneGraph& graph, uint32_t seed)
     enabled = true;
     random_ = seed ? seed : 1;
     town = graph.Spawn<TownActor>(NoActor).Id();
+    graph.Get<TownActor>(town)->index = 0;
     const FarmPoint sites[] = {
         {-40, 0}, {0, -70}, {0, 70}, {150, 0}, {0, 250}, {0, 450}, {1190, 0}, {1830, 0}, {2470, 0}};
     for (int i = 0; i < 9; ++i)
@@ -285,7 +287,78 @@ void LivingWorld::Initialize(SceneGraph& graph, uint32_t seed)
         }
         npc.decision = float(i) * .08f;
     }
-    Note("잔명 마을: 주민 11명과 외곽 잔향귀 3체의 생활을 시작합니다.", "world_start");
+    auto* homeTown = graph.Get<TownActor>(town);
+    int slot = 0;
+    for (auto* npc : graph.Query<NpcActor>())
+    {
+        if (npc->job != NpcJob::Wraith)
+        {
+            npc->homeSlot = slot;
+            npc->home = HomeDoor(slot);
+            npc->storyResident = npc->job == NpcJob::Recorder;
+            homeTown->homes[slot++] = npc->Id();
+        }
+    }
+    const auto& layouts = VillageLayouts();
+    for (int village = 0; village < 7; ++village)
+    {
+        auto* settlement =
+            village == 0 ? homeTown : &graph.Spawn<TownActor>(NoActor, layouts[village].name);
+        settlement->index = village;
+        settlement->local = {layouts[village].x * 640.f, layouts[village].y * 640.f};
+        settlement->dispatchTimer = 10 + village * 2.f;
+        if (village != 0)
+        {
+            graph.Spawn<TownSiteActor>(settlement->Id(), TownSite::Market).local = {-25, 0};
+            graph.Spawn<TownSiteActor>(settlement->Id(), TownSite::Clinic).local = {0, -25};
+        }
+        const NpcJob roles[] = {NpcJob::Hunter,
+                                NpcJob::Merchant,
+                                NpcJob::Seeker,
+                                NpcJob::Guard,
+                                NpcJob::Hunter,
+                                NpcJob::Raider};
+        for (int resident = village == 0 ? 11 : 0; resident < 30; ++resident)
+        {
+            auto job = roles[resident % 6];
+            auto& npc = graph.Spawn<NpcActor>(settlement->Id(),
+                                              std::string(layouts[village].name) + " 주민 "
+                                                  + std::to_string(resident + 1),
+                                              job);
+            npc.homeSlot = resident;
+            npc.local = npc.home = HomeDoor(resident);
+            npc.settlementResident = true;
+            npc.courier = resident == (village == 0 ? 11 : 0);
+            npc.gold = job == NpcJob::Merchant ? 200 : 40 + int(Random() % 65);
+            npc.goods = job == NpcJob::Merchant ? 8 : 1;
+            npc.wealthWeight = .3f + float(Random() % 70) / 100;
+            npc.survivalWeight = .3f + float(Random() % 70) / 100;
+            npc.insightWeight = job == NpcJob::Seeker ? 1.f : float(Random() % 70) / 100;
+            npc.raidWeight = job == NpcJob::Raider ? .9f : .05f;
+            npc.migrationCooldown = 35 + float(Random() % 70);
+            settlement->homes[resident] = npc.Id();
+        }
+    }
+    Note("7개 마을 / 주민 210명: 전령이 편지와 소식을 전달합니다.", "world_start");
+}
+
+FarmPoint LivingWorld::HomeDoor(int slot)
+{
+    int chunk = slot / 4;
+    return {float((chunk % 3 - 1) * 640 + 129 + (slot % 2) * 230),
+            float((chunk / 3 - 1) * 640 + 196 + (slot % 4 / 2) * 230)};
+}
+
+TownActor* LivingWorld::Village(SceneGraph& graph, int index) const
+{
+    for (auto* settlement : graph.Query<TownActor>())
+    {
+        if (settlement->index == index)
+        {
+            return settlement;
+        }
+    }
+    return nullptr;
 }
 
 NpcAction LivingWorld::Choose(const NpcActor& npc)
@@ -650,6 +723,10 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     {
         npc.attackTime = -1;
     }
+    if (Travel(npc, dt, context))
+    {
+        return;
+    }
     if (npc.attackTime >= 0 && npc.health > 0)
     {
         npc.attackTime += dt;
@@ -852,11 +929,13 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     FarmPoint destination{};
     if (npc.action == NpcAction::Meditate)
     {
-        destination = npc.job == NpcJob::Recorder ? npc.home : FarmPoint{0, 420};
+        destination = npc.job == NpcJob::Recorder && npc.storyResident ? FarmPoint{0, 70}
+                      : npc.job == NpcJob::Recorder                    ? npc.home
+                                                                       : FarmPoint{0, 420};
     }
     else if (npc.action == NpcAction::Rest)
     {
-        destination = {0, -60};
+        destination = npc.homeSlot >= 0 ? npc.home : FarmPoint{0, -60};
     }
     else if (npc.action == NpcAction::Trade)
     {
@@ -869,7 +948,11 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     }
     if (npc.settlementResident)
     {
-        destination = npc.home;
+        destination = npc.action == NpcAction::Rest || npc.courier ? npc.home
+                      : npc.action == NpcAction::Trade             ? FarmPoint{-15, 0}
+                      : npc.action == NpcAction::Meditate
+                          ? FarmPoint{0, 420}
+                          : FarmPoint{0, std::sin(float(npc.Id()) + clock * .03f) * 650};
     }
     MoveTo(npc, destination, dt, context);
     if (Length(Minus(npc.local, destination)) < 40)
@@ -904,6 +987,7 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
 void LivingWorld::Tick(float dt, GameplayContext& context)
 {
     clock += dt;
+    UpdateSettlements(dt, context);
     std::vector<WorldIncident> reports;
     for (auto& incident : incidents)
     {
@@ -949,5 +1033,293 @@ void LivingWorld::Tick(float dt, GameplayContext& context)
                     << ":insight_weight=" << npc->insightWeight << '|';
         }
         RenderDiagnostics::Get().Event("world_snapshot", summary.str());
+    }
+}
+
+TownNews LivingWorld::MakeNews(const TownActor& settlement, GameplayContext& context) const
+{
+    TownNews news;
+    news.known = true;
+    news.source = settlement.index;
+    news.time = clock;
+    int count = 0, raiders = 0;
+    for (auto* npc : context.scene.Query<NpcActor>())
+    {
+        if (npc->Parent() != settlement.Id() || npc->job == NpcJob::Wraith)
+        {
+            continue;
+        }
+        ++count;
+        news.wealth += npc->gold;
+        news.insight += npc->insight;
+        raiders += npc->offender || npc->raidWeight > .8f ? 1 : 0;
+    }
+    news.wealth = news.wealth / std::max(1, count) / 200.f + (settlement.index % 3) * .2f;
+    news.insight = news.insight / std::max(1, count) / 20.f + (settlement.index % 4) * .15f;
+    news.safety = std::max(.05f, 1.f - raiders * .045f);
+    for (const auto& incident : incidents)
+    {
+        if (incident.village == settlement.Id() && incident.type == "murder"
+            && clock - incident.time < 180)
+        {
+            news.safety = std::max(.05f, news.safety - .12f);
+        }
+    }
+    news.text = settlement.Name() + ": 주민 " + std::to_string(count) + "명 / 치안 "
+                + std::to_string(int(news.safety * 100)) + "% / 교역과 수련 소식";
+    for (const auto& incident : incidents)
+    {
+        if (incident.village == settlement.Id() && incident.type == "rumor"
+            && clock - incident.time < 180)
+        {
+            news.text += " / 목격 소문: " + incident.text;
+            break;
+        }
+    }
+    return news;
+}
+
+bool LivingWorld::BeginTravel(NpcActor& npc,
+                              TownActor& target,
+                              bool migrate,
+                              GameplayContext& context)
+{
+    if (npc.travelTown >= 0 || !Alive(npc) || target.index < 0)
+    {
+        return false;
+    }
+    int slot = -1;
+    if (migrate)
+    {
+        for (int i = 0; i < 36; ++i)
+        {
+            if (!target.homes[i])
+            {
+                slot = i;
+                break;
+            }
+        }
+        if (slot < 0)
+        {
+            return false;
+        }
+        target.homes[slot] = npc.Id(); // Reserve before departing; release on failure/death.
+    }
+    auto* parent = context.scene.Get<TownActor>(npc.Parent());
+    if (!parent)
+    {
+        return false;
+    }
+    auto delta = Minus(target.Position(), parent->Position());
+    auto goal = migrate ? HomeDoor(slot) : FarmPoint{0, 0};
+    goal = Add(delta, goal);
+    float roadX = std::floor((npc.local.x + 90) / 640.f) * 640;
+    float roadY = std::floor((npc.local.y + 90) / 640.f) * 640;
+    float targetRoadX = std::floor((goal.x + 90) / 640.f) * 640;
+    npc.travelRoute = {
+        {roadX, npc.local.y}, {roadX, roadY}, {targetRoadX, roadY}, {targetRoadX, goal.y}, goal};
+    npc.travelTown = target.index;
+    npc.travelSlot = slot;
+    npc.migrating = migrate;
+    npc.travelStep = 0;
+    npc.target = NoActor;
+    npc.path.clear();
+    if (migrate)
+    {
+        WorldIncident incident;
+        incident.type = "migration_depart";
+        incident.actor = npc.Id();
+        incident.actorName = npc.Name();
+        incident.village = parent->Id();
+        incident.text =
+            npc.Name() + ": 전달받은 소식과 성향에 따라 " + target.Name() + "로 이사 출발";
+        RecordIncident(std::move(incident));
+    }
+    return true;
+}
+
+bool LivingWorld::Travel(NpcActor& npc, float dt, GameplayContext& context)
+{
+    if (npc.travelTown < 0)
+    {
+        return false;
+    }
+    auto* destination = Village(context.scene, npc.travelTown);
+    auto* source = context.scene.Get<TownActor>(npc.Parent());
+    if (!destination || !source || !Alive(npc))
+    {
+        if (destination && npc.travelSlot >= 0)
+        {
+            destination->homes[npc.travelSlot] = NoActor;
+        }
+        npc.travelTown = -1;
+        npc.travelSlot = -1;
+        npc.migrating = false;
+        npc.travelRoute.clear();
+        npc.letter = {};
+        return false;
+    }
+    npc.action = NpcAction::Patrol;
+    if (npc.travelStep < npc.travelRoute.size())
+    {
+        auto goal = npc.travelRoute[npc.travelStep];
+        if (Length(Minus(npc.local, goal)) <= 8)
+        {
+            ++npc.travelStep;
+            npc.path.clear();
+        }
+        else
+        {
+            auto step = Times(Unit(Minus(goal, npc.local)),
+                              std::min(110.f * dt, Length(Minus(goal, npc.local))));
+            auto candidate = Add(npc.Position(), step);
+            if (Navigation::Sight(npc.Position(), candidate, context.walkable, 11))
+            {
+                npc.SetPosition(candidate);
+            }
+            else
+            {
+                MoveTo(npc, goal, dt, context);
+            }
+        }
+        return true;
+    }
+    bool migrated = npc.migrating;
+    npc.travelTown = -1;
+    npc.travelRoute.clear();
+    if (migrated)
+    {
+        if (npc.homeSlot >= 0 && source->homes[npc.homeSlot] == npc.Id())
+        {
+            source->homes[npc.homeSlot] = NoActor;
+        }
+        context.scene.Reparent(npc.Id(), destination->Id(), true);
+        npc.homeSlot = npc.travelSlot;
+        npc.home = HomeDoor(npc.homeSlot);
+        npc.settlementResident = true;
+        npc.travelSlot = -1;
+        npc.migrating = false;
+        npc.migrationCooldown = 180;
+        ++migrations;
+        WorldIncident incident;
+        incident.type = "migration_arrive";
+        incident.actor = npc.Id();
+        incident.actorName = npc.Name();
+        incident.village = destination->Id();
+        incident.text = npc.Name() + ": " + destination->Name() + "의 "
+                        + std::to_string(npc.homeSlot + 1) + "번 집으로 전입 완료";
+        RecordIncident(std::move(incident));
+    }
+    else if (npc.letter.known)
+    {
+        auto letter = npc.letter;
+        destination->news[letter.source] = letter;
+        ++lettersDelivered;
+        WorldIncident incident;
+        incident.type = "letter_delivered";
+        incident.actor = npc.Id();
+        incident.actorName = npc.Name();
+        incident.village = destination->Id();
+        incident.text =
+            npc.Name() + "이(가) " + destination->Name() + "에 편지를 전달: " + letter.text;
+        RecordIncident(std::move(incident));
+        npc.letter = {};
+        BeginTravel(npc, *source, false, context);
+    }
+    return true;
+}
+
+void LivingWorld::UpdateSettlements(float dt, GameplayContext& context)
+{
+    auto people = context.scene.Query<NpcActor>();
+    for (auto* npc : people)
+    {
+        npc->migrationCooldown = std::max(0.f, npc->migrationCooldown - dt);
+    }
+    for (auto* settlement : context.scene.Query<TownActor>())
+    {
+        if (settlement->index < 0)
+        {
+            continue;
+        }
+        settlement->news[settlement->index] = MakeNews(*settlement, context);
+        settlement->dispatchTimer -= dt;
+        settlement->migrationTimer -= dt;
+        if (settlement->dispatchTimer <= 0)
+        {
+            settlement->dispatchTimer = 25;
+            std::vector<TownActor*> neighbors;
+            for (auto* other : context.scene.Query<TownActor>())
+            {
+                if (other != settlement && other->index >= 0
+                    && Length(Minus(other->Position(), settlement->Position())) <= 5800)
+                {
+                    neighbors.push_back(other);
+                }
+            }
+            for (auto* npc : people)
+            {
+                if (npc->Parent() == settlement->Id() && npc->courier && npc->travelTown < 0
+                    && Alive(*npc) && !neighbors.empty())
+                {
+                    auto* destination = neighbors[Random() % neighbors.size()];
+                    npc->letter = settlement->news[settlement->index];
+                    if (BeginTravel(*npc, *destination, false, context))
+                    {
+                        ++lettersSent;
+                        WorldIncident incident;
+                        incident.type = "letter_sent";
+                        incident.actor = npc->Id();
+                        incident.actorName = npc->Name();
+                        incident.village = settlement->Id();
+                        incident.text =
+                            settlement->Name() + " → " + destination->Name() + ": 전령 편지 발송";
+                        RecordIncident(std::move(incident));
+                    }
+                    break;
+                }
+            }
+        }
+        if (settlement->migrationTimer > 0)
+        {
+            continue;
+        }
+        settlement->migrationTimer = 15;
+        for (auto* npc : people)
+        {
+            if (npc->Parent() != settlement->Id() || npc->job == NpcJob::Wraith || npc->courier
+                || npc->storyResident || npc->travelTown >= 0 || !Alive(*npc)
+                || npc->migrationCooldown > 0)
+            {
+                continue;
+            }
+            auto score = [&](const TownNews& report)
+            {
+                return npc->wealthWeight * report.wealth + npc->survivalWeight * report.safety
+                       + npc->insightWeight * report.insight
+                       + npc->raidWeight * (1 - report.safety);
+            };
+            float best = score(settlement->news[settlement->index]) + .08f;
+            TownActor* target = nullptr;
+            for (const auto& report : settlement->news)
+            {
+                if (report.known && report.source != settlement->index && clock - report.time < 300
+                    && score(report) > best)
+                {
+                    auto* candidate = Village(context.scene, report.source);
+                    if (candidate
+                        && std::find(candidate->homes.begin(), candidate->homes.end(), NoActor)
+                               != candidate->homes.end())
+                    {
+                        best = score(report);
+                        target = candidate;
+                    }
+                }
+            }
+            if (target && BeginTravel(*npc, *target, true, context))
+            {
+                break; // Bound departures so a single letter cannot empty a village.
+            }
+        }
     }
 }

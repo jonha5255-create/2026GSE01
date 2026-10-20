@@ -4,6 +4,7 @@
 #include "GameTypes.h"
 #include <deque>
 #include <vector>
+#include <array>
 
 struct GameplayContext;
 class SceneGraph;
@@ -52,12 +53,25 @@ struct StoryProgress
     int suppliesDelivered = 0;
 };
 
+struct TownNews
+{
+    bool known = false;
+    int source = -1;
+    float time = 0, wealth = 0, safety = 0, insight = 0;
+    std::string text;
+};
+
 class TownActor : public Actor
 {
   public:
     explicit TownActor(std::string name = "잔명 마을") : Actor(std::move(name))
     {
     }
+
+    int index = -1;
+    std::array<ActorId, 36> homes{};
+    std::array<TownNews, 7> news{};
+    float dispatchTimer = 10, migrationTimer = 30;
 };
 
 class TownSiteActor : public Actor
@@ -112,6 +126,13 @@ class NpcActor : public Actor
     FarmPoint attackDirection{1, 0};
     bool attackPlayer = false, attackHit = false;
     bool settlementResident = false;
+    bool courier = false, storyResident = false;
+    int homeSlot = -1, travelTown = -1, travelSlot = -1;
+    bool migrating = false;
+    float migrationCooldown = 0;
+    TownNews letter;
+    std::vector<FarmPoint> travelRoute;
+    size_t travelStep = 0;
     FarmPoint wanderGoal;
     float wanderTimer = 0;
     FarmPoint home, destination;
@@ -157,6 +178,9 @@ class LivingWorld
     static NpcAction Choose(const NpcActor& npc);
     static bool Transfer(NpcActor& seller, NpcActor& buyer, int price);
     static bool SelfTest();
+    static FarmPoint HomeDoor(int slot);
+    TownActor* Village(SceneGraph& graph, int index) const;
+    bool BeginTravel(NpcActor& npc, TownActor& target, bool migrate, GameplayContext& context);
 
     ActorId town = NoActor;
     ActorId guardian = NoActor;
@@ -170,6 +194,7 @@ class LivingWorld
     std::deque<std::string> events;
     std::deque<WorldIncident> incidents;
     uint64_t murders = 0, rumors = 0;
+    uint64_t lettersSent = 0, lettersDelivered = 0, migrations = 0;
 
   private:
     void BeginMonsterAttack(
@@ -178,6 +203,9 @@ class LivingWorld
     void RecordIncident(WorldIncident incident);
     uint64_t nextIncident_ = 1;
     void Decide(NpcActor& npc, GameplayContext& context);
+    TownNews MakeNews(const TownActor& town, GameplayContext& context) const;
+    void UpdateSettlements(float dt, GameplayContext& context);
+    bool Travel(NpcActor& npc, float dt, GameplayContext& context);
     void MoveTo(NpcActor& npc, FarmPoint localGoal, float dt, GameplayContext& context);
     void Trade(NpcActor& npc, GameplayContext& context);
     void Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& context);

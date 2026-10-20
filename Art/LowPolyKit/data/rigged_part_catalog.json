@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "parts": [
+    {
+      "slot": "body",
+      "index": 0,
+      "mesh_node": "SK_NPC_Body_00_Male",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "body",
+      "index": 1,
+      "mesh_node": "SK_NPC_Body_01_Female",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "hair",
+      "index": 0,
+      "mesh_node": "SK_NPC_Hair_00_Short",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "hair",
+      "index": 1,
+      "mesh_node": "SK_NPC_Hair_01_Long",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "hair",
+      "index": 2,
+      "mesh_node": "SK_NPC_Hair_02_Crop",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "hair",
+      "index": 3,
+      "mesh_node": "SK_NPC_Hair_03_Ponytail",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "top",
+      "index": 0,
+      "mesh_node": "SK_NPC_Top_00_Citizen",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "top",
+      "index": 1,
+      "mesh_node": "SK_NPC_Top_01_Armor",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "top",
+      "index": 2,
+      "mesh_node": "SK_NPC_Top_02_Archer",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "top",
+      "index": 3,
+      "mesh_node": "SK_NPC_Top_03_Recorder",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "top",
+      "index": 4,
+      "mesh_node": "SK_NPC_Top_04_Pilgrim",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "legs",
+      "index": 0,
+      "mesh_node": "SK_NPC_Legs_00_Trousers",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "legs",
+      "index": 1,
+      "mesh_node": "SK_NPC_Legs_01_Guard",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "legs",
+      "index": 2,
+      "mesh_node": "SK_NPC_Legs_02_Wrapped",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "feet",
+      "index": 0,
+      "mesh_node": "SK_NPC_Feet_00_Boots",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "feet",
+      "index": 1,
+      "mesh_node": "SK_NPC_Feet_01_Shoes",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "accessory",
+      "index": 0,
+      "mesh_node": "SK_NPC_Accessory_00_Scarf",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "accessory",
+      "index": 1,
+      "mesh_node": "SK_NPC_Accessory_01_Satchel",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "accessory",
+      "index": 2,
+      "mesh_node": "SK_NPC_Accessory_02_Quiver",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "accessory",
+      "index": 3,
+      "mesh_node": "SK_NPC_Accessory_03_BureauBadge",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "accessory",
+      "index": 4,
+      "mesh_node": "SK_NPC_Accessory_04_PilgrimBeads",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 0,
+      "mesh_node": "SK_NPC_Prop_00_Bow",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 1,
+      "mesh_node": "SK_NPC_Prop_01_Spear",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 2,
+      "mesh_node": "SK_NPC_Prop_02_Ledger",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 3,
+      "mesh_node": "SK_NPC_Prop_03_Sword",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 4,
+      "mesh_node": "SK_NPC_Prop_04_DualPistols",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 5,
+      "mesh_node": "SK_NPC_Prop_05_Claws",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    },
+    {
+      "slot": "prop",
+      "index": 6,
+      "mesh_node": "SK_NPC_Prop_06_Scissors",
+      "library": "rigged/NPC_ModularParts_Library.glb",
+      "skin": "RIG_NPC_Humanoid_v1"
+    }
+  ],
+  "none_index": -1
+}

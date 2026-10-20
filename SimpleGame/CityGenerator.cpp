@@ -15,7 +15,33 @@ namespace
 
 bool IsVillageChunk(int64_t x, int64_t y)
 {
-    return x % 2 == 0 && y % 2 == 0;
+    return VillageIndex(x, y) >= 0;
+}
+
+const std::vector<VillageLayout>& VillageLayouts()
+{
+    static const std::vector<VillageLayout> villages = {{0, 0, "잔명 마을"},
+                                                        {9, 0, "황혼 마을"},
+                                                        {-9, 0, "안개 마을"},
+                                                        {0, 9, "청명 마을"},
+                                                        {0, -9, "달그늘 마을"},
+                                                        {9, 9, "잿빛 마을"},
+                                                        {-9, -9, "새벽 마을"}};
+    return villages;
+}
+
+int VillageIndex(int64_t x, int64_t y)
+{
+    const auto& layouts = VillageLayouts();
+    for (size_t i = 0; i < layouts.size(); ++i)
+    {
+        if (x >= layouts[i].x - 1 && x <= layouts[i].x + 1 && y >= layouts[i].y - 1
+            && y <= layouts[i].y + 1)
+        {
+            return int(i);
+        }
+    }
+    return -1;
 }
 
 CityChunk GenerateCityChunk(int64_t x, int64_t y, uint32_t seed)
@@ -24,10 +50,11 @@ CityChunk GenerateCityChunk(int64_t x, int64_t y, uint32_t seed)
     result.seed = uint32_t(Hash(uint64_t(x) ^ Hash(uint64_t(y)) ^ seed));
     result.district = int(result.seed % 3);
     result.village = IsVillageChunk(x, y);
+    result.villageIndex = VillageIndex(x, y);
     // Axis-specific keys give both neighbors exactly the same road at a shared edge.
     uint64_t column = Hash(uint64_t(x) ^ seed ^ 0x8142), row = Hash(uint64_t(y) ^ seed ^ 0x9217);
-    result.roadX = x == 0 ? 90.f : 68.f + float(column % 47);
-    result.roadY = y == 0 ? 90.f : 68.f + float(row % 47);
+    result.roadX = 90.f;
+    result.roadY = 90.f;
     float verticalWidth = 42.f + float((column >> 8) % 3) * 8;
     float horizontalWidth = 42.f + float((row >> 8) % 3) * 8;
     result.roads.push_back({result.roadX - verticalWidth / 2, 0, verticalWidth, 640, true});
@@ -100,6 +127,20 @@ CityChunk GenerateCityChunk(int64_t x, int64_t y, uint32_t seed)
     }
     else
     {
+        // Nine chunks share one town. Four homes per chunk give 36 ownership slots.
+        result.plots.clear();
+        result.heights.clear();
+        result.styles.clear();
+        const auto& center = VillageLayouts()[result.villageIndex];
+        int localX = int(x - center.x), localY = int(y - center.y);
+        for (int i = 0; i < 4; ++i)
+        {
+            int slot = ((localY + 1) * 3 + localX + 1) * 4 + i;
+            result.plots.push_back(
+                {180.f + (i % 2) * 230.f, 200.f + (i / 2) * 230.f, 78, 68, slot});
+            result.heights.push_back(42.f + float(Hash(result.seed + i) % 18));
+            result.styles.push_back(0);
+        }
         auto wall = [&](float px, float py, float w, float d)
         {
             if (w <= 0 || d <= 0)
@@ -113,12 +154,17 @@ CityChunk GenerateCityChunk(int64_t x, int64_t y, uint32_t seed)
         // Four gates align with the continuous arterial roads; the full road and sidewalks fit.
         float gx = result.roadX, gy = result.roadY;
         float xGap = verticalWidth / 2 + 28, yGap = horizontalWidth / 2 + 28;
-        for (float edge : {20.f, 610.f})
+        if (localY != 0)
         {
-            wall(20, edge, gx - xGap - 20, 10);
-            wall(gx + xGap, edge, 620 - gx - xGap, 10);
-            wall(edge, 20, 10, gy - yGap - 20);
-            wall(edge, gy + yGap, 10, 620 - gy - yGap);
+            float edge = localY < 0 ? 20.f : 610.f;
+            wall(0, edge, gx - xGap, 10);
+            wall(gx + xGap, edge, 640 - gx - xGap, 10);
+        }
+        if (localX != 0)
+        {
+            float edge = localX < 0 ? 20.f : 610.f;
+            wall(edge, 0, 10, gy - yGap);
+            wall(edge, gy + yGap, 10, 640 - gy - yGap);
         }
     }
     return result;

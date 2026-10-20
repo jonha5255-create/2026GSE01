@@ -35,7 +35,7 @@ bool LivingWorld::SelfTest()
               "living nearby witness reports a linked unverified rumor");
         society.Tick(4.f, services);
         check(society.rumors == 1, "rumor is generated once per witnessed incident");
-        society.Damage(*people.back(), 10000, nullptr, services);
+        society.Damage(*people[11], 10000, nullptr, services);
         check(society.murders == 1, "monster hunts are not classified as murder");
         for (int i = 0; i < 140; ++i)
         {
@@ -46,6 +46,65 @@ bool LivingWorld::SelfTest()
         }
         check(society.incidents.size() == 128 && society.rumors == 141,
               "incident history is bounded while lifetime totals are preserved");
+    }
+    {
+        LevelOne postal(2026);
+        auto& sim = postal.society;
+        sim.Initialize(postal.Graph(), 2026);
+        auto context = postal.Context(clear);
+        auto* source = sim.Village(postal.Graph(), 0);
+        auto* target = sim.Village(postal.Graph(), 1);
+        bool homes = true;
+        for (auto* settlement : postal.Graph().Query<TownActor>())
+        {
+            int owned = 0;
+            for (auto id : settlement->homes)
+            {
+                owned += id ? 1 : 0;
+            }
+            homes &= owned == 30;
+        }
+        check(homes, "each of seven villages starts with 30 owned homes and six vacant homes");
+        auto* messenger = postal.Graph().Get<NpcActor>(source->homes[11]);
+        messenger->letter = sim.MakeNews(*source, context);
+        check(sim.BeginTravel(*messenger, *target, false, context) && !target->news[0].known,
+              "dispatch does not instantly reveal another village's news");
+        for (int frame = 0; frame < 2000 && sim.lettersDelivered == 0; ++frame)
+        {
+            sim.UpdateNpc(*messenger, .1f, context);
+        }
+        check(sim.lettersDelivered == 1 && target->news[0].known && messenger->travelTown == 0,
+              "physical messenger arrival delivers dated news and starts return trip");
+        for (auto* npc : postal.Graph().Query<NpcActor>())
+        {
+            npc->migrationCooldown = 1000;
+        }
+        auto* mover = postal.Graph().Get<NpcActor>(target->homes[1]);
+        mover->wealthWeight = 1;
+        mover->survivalWeight = mover->insightWeight = mover->raidWeight = 0;
+        mover->migrationCooldown = 0;
+        target->news[0].wealth = 10;
+        target->migrationTimer = 0;
+        sim.UpdateSettlements(.1f, context);
+        check(mover->migrating && mover->travelTown == 0 && mover->Parent() == target->Id(),
+              "delivered prosperity report triggers a wealth-seeking resident's physical move");
+        int oldSlot = mover->homeSlot;
+        for (int frame = 0; frame < 2500 && sim.migrations == 0; ++frame)
+        {
+            sim.UpdateNpc(*mover, .1f, context);
+        }
+        check(sim.migrations == 1 && mover->Parent() == source->Id()
+                  && target->homes[oldSlot] == NoActor
+                  && source->homes[mover->homeSlot] == mover->Id(),
+              "migration arrival transfers village membership and house ownership without "
+              "duplicating NPC");
+        check(sim.BeginTravel(*mover, *target, true, context),
+              "vacant home can be reserved for migration");
+        int reserved = mover->travelSlot;
+        mover->health = 0;
+        sim.UpdateNpc(*mover, .1f, context);
+        check(target->homes[reserved] == NoActor && mover->travelTown < 0,
+              "defeated migrant releases reserved destination house");
     }
     LevelOne level(2026);
     {
@@ -97,7 +156,8 @@ bool LivingWorld::SelfTest()
     sim.Initialize(level.Graph(), 2026);
     auto context = level.Context(clear);
     auto citizens = level.Graph().Query<NpcActor>();
-    check(citizens.size() == 14 && level.Graph().Query<TownSiteActor>().size() == 9,
+    check(citizens.size() == 213 && level.Graph().Query<TownSiteActor>().size() == 21
+              && level.Graph().Query<TownActor>().size() == 7,
           "living world spawns bounded citizens and town facilities as actors");
     {
         LevelOne tutorial(2026);
@@ -140,7 +200,7 @@ bool LivingWorld::SelfTest()
         check(quests.QuestStep() == 11 && guardian && guardian->storyGuardian,
               "relay signal and station interactions spawn one quest guardian");
         quests.Interact(tutorialContext);
-        check(tutorial.Graph().Query<NpcActor>().size() == 15 && !quests.story.echoRecovered,
+        check(tutorial.Graph().Query<NpcActor>().size() == 214 && !quests.story.echoRecovered,
               "station cannot duplicate guardians or bypass combat");
         if (guardian)
         {
@@ -225,7 +285,7 @@ bool LivingWorld::SelfTest()
     check(victim->cooldown == timer, "disabled citizen is excluded from scene updates");
     victim->enabled = true;
 
-    auto* prey = citizens.back();
+    auto* prey = citizens[13];
     before = sim.story.hunted;
     sim.Damage(*prey, 10000, nullptr, context);
     check(sim.story.hunted == before + 1 && sim.story.mukSync == 13,
@@ -256,7 +316,7 @@ bool LivingWorld::SelfTest()
     auto combat = arsenal.Context(clear);
     auto& hero = arsenal.Player();
     auto& weapon = arsenal.Weapon();
-    auto* dummy = arsenal.Graph().Query<NpcActor>().back();
+    auto* dummy = arsenal.Graph().Query<NpcActor>()[13];
     for (auto* npc : arsenal.Graph().Query<NpcActor>())
     {
         npc->local = {1000, 1000};
@@ -358,7 +418,7 @@ bool LivingWorld::SelfTest()
                  && npc->gold >= 0 && npc->goods >= 0;
     }
     check(insight && valid, "continuous NPC updates grow insight and preserve valid resources");
-    check(ecosystem.Graph().Query<NpcActor>().size() == 14 && living.events.size() <= 5,
+    check(ecosystem.Graph().Query<NpcActor>().size() == 213 && living.events.size() <= 5,
           "simulation keeps population and UI event history bounded");
     return ok;
 }
