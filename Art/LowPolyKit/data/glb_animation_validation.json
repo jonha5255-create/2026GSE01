@@ -7,13 +7,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2698,
+      "vertices": 4785,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -28,7 +24,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -36,13 +36,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 3046,
+      "vertices": 5878,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -57,7 +53,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -65,13 +65,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2326,
+      "vertices": 3199,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -86,7 +82,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -94,13 +94,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2470,
+      "vertices": 2818,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -115,7 +111,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -123,13 +123,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2782,
+      "vertices": 4124,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -144,7 +140,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -152,13 +152,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2398,
+      "vertices": 3112,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -173,7 +169,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -181,13 +181,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2206,
+      "vertices": 3124,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -202,7 +198,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -210,13 +210,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 6,
-      "vertices": 3050,
+      "vertices": 4330,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -231,7 +227,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -239,13 +239,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 6,
-      "vertices": 2870,
+      "vertices": 3651,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -260,7 +256,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -268,13 +268,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2350,
+      "vertices": 2456,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -289,7 +285,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -297,13 +297,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 7,
-      "vertices": 2350,
+      "vertices": 2784,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -318,7 +314,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -326,13 +326,9 @@
       "skins": 1,
       "bones": 19,
       "meshes": 28,
-      "vertices": 9684,
+      "vertices": 15468,
       "clips": [
         "NPC_Idle",
-        "NPC_Walk",
-        "NPC_Walk_RootMotion",
-        "NPC_Run",
-        "NPC_Run_RootMotion",
         "NPC_Turn_L45",
         "NPC_Turn_R45",
         "NPC_Turn_L90",
@@ -347,7 +343,11 @@
         "NPC_Attack_Scissors",
         "NPC_Attack_Unarmed",
         "NPC_Hit",
-        "NPC_Death"
+        "NPC_Death",
+        "NPC_Walk",
+        "NPC_Walk_RootMotion",
+        "NPC_Run",
+        "NPC_Run_RootMotion"
       ]
     },
     {
@@ -355,11 +355,9 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 1230,
+      "vertices": 3783,
       "clips": [
         "MOB_00_Idle",
-        "MOB_00_Walk",
-        "MOB_00_Walk_RootMotion",
         "MOB_00_Turn_L90",
         "MOB_00_Turn_R90",
         "MOB_00_Jump",
@@ -367,6 +365,8 @@
         "MOB_00_AttackSecondary",
         "MOB_00_Hit",
         "MOB_00_Death",
+        "MOB_00_Walk",
+        "MOB_00_Walk_RootMotion",
         "MOB_00_Run",
         "MOB_00_Run_RootMotion"
       ]
@@ -376,11 +376,9 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 1824,
+      "vertices": 4232,
       "clips": [
         "MOB_01_Idle",
-        "MOB_01_Walk",
-        "MOB_01_Walk_RootMotion",
         "MOB_01_Turn_L90",
         "MOB_01_Turn_R90",
         "MOB_01_Jump",
@@ -388,6 +386,8 @@
         "MOB_01_AttackSecondary",
         "MOB_01_Hit",
         "MOB_01_Death",
+        "MOB_01_Walk",
+        "MOB_01_Walk_RootMotion",
         "MOB_01_Run",
         "MOB_01_Run_RootMotion"
       ]
@@ -397,11 +397,9 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 2312,
+      "vertices": 5939,
       "clips": [
         "MOB_02_Idle",
-        "MOB_02_Walk",
-        "MOB_02_Walk_RootMotion",
         "MOB_02_Turn_L90",
         "MOB_02_Turn_R90",
         "MOB_02_Jump",
@@ -409,6 +407,8 @@
         "MOB_02_AttackSecondary",
         "MOB_02_Hit",
         "MOB_02_Death",
+        "MOB_02_Walk",
+        "MOB_02_Walk_RootMotion",
         "MOB_02_Run",
         "MOB_02_Run_RootMotion"
       ]
@@ -418,11 +418,9 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 2508,
+      "vertices": 4739,
       "clips": [
         "MOB_03_Idle",
-        "MOB_03_Walk",
-        "MOB_03_Walk_RootMotion",
         "MOB_03_Turn_L90",
         "MOB_03_Turn_R90",
         "MOB_03_Jump",
@@ -430,6 +428,8 @@
         "MOB_03_AttackSecondary",
         "MOB_03_Hit",
         "MOB_03_Death",
+        "MOB_03_Walk",
+        "MOB_03_Walk_RootMotion",
         "MOB_03_Run",
         "MOB_03_Run_RootMotion"
       ]
@@ -437,11 +437,15 @@
     {
       "file": "rigged/SK_MOB_04_IronHound.glb",
       "skins": 1,
-      "bones": 21,
+      "bones": 27,
       "meshes": 1,
-      "vertices": 4054,
+      "vertices": 10611,
       "clips": [
         "MOB_04_Idle",
+        "MOB_04_Walk",
+        "MOB_04_Walk_RootMotion",
+        "MOB_04_Run",
+        "MOB_04_Run_RootMotion",
         "MOB_04_Turn_L90",
         "MOB_04_Turn_R90",
         "MOB_04_Jump",
@@ -449,10 +453,6 @@
         "MOB_04_AttackSecondary",
         "MOB_04_Hit",
         "MOB_04_Death",
-        "MOB_04_Walk",
-        "MOB_04_Walk_RootMotion",
-        "MOB_04_Run",
-        "MOB_04_Run_RootMotion",
         "MOB_04_Sprint",
         "MOB_04_Sprint_RootMotion"
       ]
@@ -460,11 +460,15 @@
     {
       "file": "rigged/SK_MOB_05_FusionBeast.glb",
       "skins": 1,
-      "bones": 21,
+      "bones": 27,
       "meshes": 1,
-      "vertices": 3742,
+      "vertices": 10957,
       "clips": [
         "MOB_05_Idle",
+        "MOB_05_Walk",
+        "MOB_05_Walk_RootMotion",
+        "MOB_05_Run",
+        "MOB_05_Run_RootMotion",
         "MOB_05_Turn_L90",
         "MOB_05_Turn_R90",
         "MOB_05_Jump",
@@ -472,10 +476,6 @@
         "MOB_05_AttackSecondary",
         "MOB_05_Hit",
         "MOB_05_Death",
-        "MOB_05_Walk",
-        "MOB_05_Walk_RootMotion",
-        "MOB_05_Run",
-        "MOB_05_Run_RootMotion",
         "MOB_05_Sprint",
         "MOB_05_Sprint_RootMotion"
       ]
@@ -483,11 +483,15 @@
     {
       "file": "rigged/SK_MOB_06_VoidStalker.glb",
       "skins": 1,
-      "bones": 21,
+      "bones": 27,
       "meshes": 1,
-      "vertices": 3826,
+      "vertices": 10904,
       "clips": [
         "MOB_06_Idle",
+        "MOB_06_Walk",
+        "MOB_06_Walk_RootMotion",
+        "MOB_06_Run",
+        "MOB_06_Run_RootMotion",
         "MOB_06_Turn_L90",
         "MOB_06_Turn_R90",
         "MOB_06_Jump",
@@ -495,10 +499,6 @@
         "MOB_06_AttackSecondary",
         "MOB_06_Hit",
         "MOB_06_Death",
-        "MOB_06_Walk",
-        "MOB_06_Walk_RootMotion",
-        "MOB_06_Run",
-        "MOB_06_Run_RootMotion",
         "MOB_06_Sprint",
         "MOB_06_Sprint_RootMotion"
       ]

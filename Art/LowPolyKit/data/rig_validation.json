@@ -1,110 +1,109 @@
 {
+  "art_revision": 6,
   "unweighted_vertices": 0,
   "bad_weight_sums": 0,
+  "weighted_vertices": 51544,
   "foot_checks": [
     {
       "rig": "RIG_NPC_Humanoid_v1",
-      "action": "NPC_Run_RootMotion",
-      "max_ankle_target_error_m": 1.0745380149674383e-07
-    },
-    {
-      "rig": "RIG_MOB_00_PaperBoxYokai",
-      "action": "MOB_00_Run_RootMotion",
-      "max_ankle_target_error_m": 1.6049041769309353e-07
-    },
-    {
-      "rig": "RIG_MOB_01_StationWarden",
-      "action": "MOB_01_Run_RootMotion",
-      "max_ankle_target_error_m": 9.06402249678704e-08
-    },
-    {
-      "rig": "RIG_MOB_02_RedHornOni",
-      "action": "MOB_02_Run_RootMotion",
-      "max_ankle_target_error_m": 1.2013700229374393e-07
-    },
-    {
-      "rig": "RIG_MOB_03_SecurityConstruct",
-      "action": "MOB_03_Run_RootMotion",
-      "max_ankle_target_error_m": 1.7881393432617188e-07
-    },
-    {
-      "rig": "RIG_MOB_04_IronHound",
-      "action": "MOB_04_Run_RootMotion",
-      "max_ankle_target_error_m": 1.9670097205704578e-07
-    },
-    {
-      "rig": "RIG_MOB_04_IronHound",
-      "action": "MOB_04_Sprint_RootMotion",
-      "max_ankle_target_error_m": 2.573418027038953e-07
-    },
-    {
-      "rig": "RIG_MOB_04_IronHound",
-      "action": "MOB_04_Walk_RootMotion",
-      "max_ankle_target_error_m": 2.394640249012142e-07
-    },
-    {
-      "rig": "RIG_MOB_05_FusionBeast",
-      "action": "MOB_05_Run_RootMotion",
-      "max_ankle_target_error_m": 3.478711107352004e-07
-    },
-    {
-      "rig": "RIG_MOB_05_FusionBeast",
-      "action": "MOB_05_Sprint_RootMotion",
-      "max_ankle_target_error_m": 2.862419592186592e-07
-    },
-    {
-      "rig": "RIG_MOB_05_FusionBeast",
-      "action": "MOB_05_Walk_RootMotion",
-      "max_ankle_target_error_m": 3.185504425530426e-07
-    },
-    {
-      "rig": "RIG_MOB_06_VoidStalker",
-      "action": "MOB_06_Run_RootMotion",
-      "max_ankle_target_error_m": 2.4405627480386493e-07
-    },
-    {
-      "rig": "RIG_MOB_06_VoidStalker",
-      "action": "MOB_06_Sprint_RootMotion",
-      "max_ankle_target_error_m": 2.8672637648722316e-07
-    },
-    {
-      "rig": "RIG_MOB_06_VoidStalker",
-      "action": "MOB_06_Walk_RootMotion",
-      "max_ankle_target_error_m": 2.394640249012142e-07
+      "action": "NPC_Walk_RootMotion",
+      "max_ankle_target_error_m": 1.1920928955078125e-07
     },
     {
       "rig": "RIG_NPC_Humanoid_v1",
-      "action": "NPC_Walk_RootMotion",
-      "max_ankle_target_error_m": 7.598131170262075e-08
+      "action": "NPC_Run_RootMotion",
+      "max_ankle_target_error_m": 1.228781230931777e-07
     },
     {
       "rig": "RIG_MOB_00_PaperBoxYokai",
       "action": "MOB_00_Walk_RootMotion",
-      "max_ankle_target_error_m": 1.4675941767984784e-07
+      "max_ankle_target_error_m": 1.6858739404357614e-07
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "action": "MOB_00_Run_RootMotion",
+      "max_ankle_target_error_m": 1.55572690202453e-07
     },
     {
       "rig": "RIG_MOB_01_StationWarden",
       "action": "MOB_01_Walk_RootMotion",
-      "max_ankle_target_error_m": 1.2013700229374393e-07
+      "max_ankle_target_error_m": 1.228781230931777e-07
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "action": "MOB_01_Run_RootMotion",
+      "max_ankle_target_error_m": 1.228781230931777e-07
     },
     {
       "rig": "RIG_MOB_02_RedHornOni",
       "action": "MOB_02_Walk_RootMotion",
-      "max_ankle_target_error_m": 1.1638178938488147e-07
+      "max_ankle_target_error_m": 1.7943374184954607e-07
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "action": "MOB_02_Run_RootMotion",
+      "max_ankle_target_error_m": 2.0701354726329154e-07
     },
     {
       "rig": "RIG_MOB_03_SecurityConstruct",
       "action": "MOB_03_Walk_RootMotion",
-      "max_ankle_target_error_m": 1.9880628681371114e-07
+      "max_ankle_target_error_m": 2.4027400458748785e-07
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "action": "MOB_03_Run_RootMotion",
+      "max_ankle_target_error_m": 1.6049041769309353e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "action": "MOB_04_Walk_RootMotion",
+      "max_ankle_target_error_m": 1.9556887072930765e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "action": "MOB_04_Run_RootMotion",
+      "max_ankle_target_error_m": 1.2665987014770508e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "action": "MOB_04_Sprint_RootMotion",
+      "max_ankle_target_error_m": 1.4466410755327046e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "action": "MOB_05_Walk_RootMotion",
+      "max_ankle_target_error_m": 2.457562461863554e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "action": "MOB_05_Run_RootMotion",
+      "max_ankle_target_error_m": 1.999200562387517e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "action": "MOB_05_Sprint_RootMotion",
+      "max_ankle_target_error_m": 1.744136200952474e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "action": "MOB_06_Walk_RootMotion",
+      "max_ankle_target_error_m": 1.862645149230957e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "action": "MOB_06_Run_RootMotion",
+      "max_ankle_target_error_m": 1.6743097494724565e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "action": "MOB_06_Sprint_RootMotion",
+      "max_ankle_target_error_m": 1.399837004248495e-07
     }
   ],
-  "max_ik_reach_error_m": 0.021236913014569814,
   "npc_actions": 20,
   "creature_actions": 90,
   "rig_count": 8,
+  "quadruped_bones": 27,
   "game_integration": false,
-  "art_revision": 5,
-  "biped_monsters": 4,
-  "quadruped_monsters": 3,
-  "run_revision_checks": "data/run_revision_validation.json"
+  "issues": []
 }

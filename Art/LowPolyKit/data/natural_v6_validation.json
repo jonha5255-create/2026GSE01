@@ -1,0 +1,123 @@
+{
+  "art_revision": 6,
+  "checks": [
+    {
+      "rig": "RIG_NPC_Humanoid_v1",
+      "clip": "NPC_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_NPC_Humanoid_v1",
+      "clip": "NPC_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "clip": "MOB_00_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "clip": "MOB_00_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "clip": "MOB_01_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "clip": "MOB_01_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "clip": "MOB_02_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "clip": "MOB_02_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "clip": "MOB_03_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "clip": "MOB_03_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Sprint_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Sprint_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Walk_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Run_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Sprint_RootMotion",
+      "finite": true,
+      "max_requested_reach_error_m": 0
+    }
+  ],
+  "issues": [],
+  "weighted_vertices": 51544,
+  "unweighted_vertices": 0,
+  "bad_weight_sums": 0
+}

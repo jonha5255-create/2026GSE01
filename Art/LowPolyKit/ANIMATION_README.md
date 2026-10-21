@@ -1,5 +1,9 @@
 # 캐릭터 리깅 · 몹 7종 · 키프레임 애니메이션
 
+최신 revision 6: 캐릭터/몹의 둥근 부위에 면을 추가하고 모서리 베벨·부드러운 면 음영을 적용했습니다. NPC 다리에 무릎 변형용 링을 추가하고, 걷기는 체중 이동·뒤꿈치 접촉·발끝 밀기·편한 팔 흔들기, 달리기는 더 열린 팔꿈치 각도와 반대팔 반동으로 다시 구웠습니다. 4족은 scapula.L/R(어깨뼈), carpus.L/R(앞발목), hock.L/R(뒷발목)을 추가한 27본 골격이며 모든 클립을 새 다리 구조로 다시 구웠습니다. 메시에 넣은 관절과 면 음영을 유지해야 하므로, 적용 시 GLB의 NORMAL/JOINTS_0/WEIGHTS_0와 새 27본 계층을 사용하십시오. 가져온 법선을 면 법선으로 다시 생성하면 각진 음영으로 돌아갑니다.
+
+최신 미리보기는 `npc_walk_v6.gif`, `npc_run_v6.gif`, `quadruped_walk_v6.gif`, `quadruped_run_v6.gif`입니다. 전체 외형은 `characters_natural_v6.png`, 검증은 `natural_v6_validation.json`과 `natural_v6_contact_validation.json`을 확인하십시오. 아래 revision 4/5 설명은 이전 단계의 변경 기록입니다.
+
 달리기 revision 5: NPC 바지의 골반 셸을 허벅지 가중치에서 분리하고 팔 길이를 약 26% 늘렸습니다. 소매에 팔꿈치 굽힘용 링을 추가했으며, 새 바인드 포즈에 맞춰 NPC 20개 클립을 다시 구웠습니다. 2족 Run은 작은 골반 회전과 상체 반대 회전, 굽힌 팔 반동을 사용합니다. 4족은 Walk(4박), Run(대각선 트로트), Sprint(회전 갤럽)로 구분합니다. 최신 달리기 검증은 `data/run_revision_validation.json`, 측면 미리보기는 `npc_run_side.gif`와 `quadruped_run_side.gif`입니다.
 
 몬스터 아트 revision 4: `doc/몬스터 컨셉 아트_ 2.5D 오픈월드 RPG.png`를 기준으로 인간형 4종 + 4족보행 3종으로 교체했습니다. 기존 잔향귀·시체 사냥개·석괴·늑대·멧돼지·곰·사슴 초안의 메시/골격/액션과 GLB는 활성 세트에서 제거했습니다. 교체 전 원본은 `revisions/Characters_before_monster_concept.blend`에 보관합니다. NPC 리깅/파츠/20개 액션은 유지합니다.
@@ -23,7 +27,7 @@
 | `previews/creature_lineup.png` | 몹 7종 모델 시안 |
 | `previews/npc_walk.gif`, `npc_run.gif` | 2족 걷기·달리기 미리보기 |
 | `previews/quadruped_walk.gif`, `quadruped_run.gif` | 새 철문 견마의 4족 걷기·달리기 미리보기 |
-| `previews/npc_run_side.gif`, `quadruped_run_side.gif` | v5 달리기 측면 확인용 |
+| `previews/npc_run_side.gif`, `quadruped_run_side.gif` | 최신 달리기 측면 확인용 (v6) |
 | `previews/quadruped_sprint.gif` | 별도 4족 전력질주/갤럽 |
 | `previews/npc_sword.gif`, `npc_bow.gif` | 검·활 공격 미리보기 |
 | `previews/npc_jump.gif`, `quadruped_turn.gif` | 점프·방향 전환 미리보기 |
@@ -59,9 +63,9 @@
 | 1 | 역무원 요괴 / StationWarden | 2족, 18본 | 제복·제모·신호봉, 전진/내려찍기 |
 | 2 | 붉은 뿔 요괴 / RedHornOni | 2족, 18본 | 붉은 가면·굽은 뿔·손톱, 발톱 공격 |
 | 3 | 보안 병기 / SecurityConstruct | 2족, 18본 | 백색 장갑·검은 관절·붉은 핵, 주먹/양팔 공격 |
-| 4 | 철문 견마 / IronHound | 4족, 21본 | 관절 장갑·기계 턱·등 돌기, 물기/옆 물기 |
-| 5 | 혼종체 / FusionBeast | 4족, 21본 | 노출 조직·뼈 장갑·촉수, 머리로 들이받기 |
-| 6 | 공허 추적자 / VoidStalker | 4족, 21본 | 암자색 장갑·가시·붉은 눈, 돌진 물기 |
+| 4 | 철문 견마 / IronHound | 4족, 27본 | 관절 장갑·기계 턱·등 돌기, 물기/옆 물기 |
+| 5 | 혼종체 / FusionBeast | 4족, 27본 | 노출 조직·뼈 장갑·촉수, 머리로 들이받기 |
+| 6 | 공허 추적자 / VoidStalker | 4족, 27본 | 암자색 장갑·가시·붉은 눈, 돌진 물기 |
 
 몹은 완성형 메시 1개와 종별 골격 1개입니다. 4족은 몸통/어깨/골반·목·머리·턱·꼬리와 앞뒤 다리를 구분했습니다. Walk는 뒷왼발→앞왼발→뒷오른발→앞오른발의 4박 보행입니다. Run은 앞왼발+뒷오른발 / 앞오른발+뒷왼발을 교대로 쓰는 트로트입니다. Sprint는 앞왼발→앞오른발→뒷오른발→뒷왼발의 회전 갤럽으로, 몸을 모으고 뻗는 두 공중 구간과 척추·목·꼬리 반동을 별도로 키프레임화했습니다. NPC와 인간형 몹은 좌우 다리 반대 위상과 팔 반동을 사용합니다. 보드의 전체 몬스터 수십 종을 모두 제작한 것이 아니라 위의 7종을 대표로 선정했습니다.
 
@@ -89,3 +93,7 @@
 v5 최종 제작 단계는 `refine_running_v5.py` → `render_running_v5.py` → `package_animation_previews.py` → `validate_rig_exports.py`입니다. 팔 길이를 중복해서 늘리지 않으며 기존 메시 이름/슬롯 인덱스를 유지합니다. v5는 스킨 에셋 `rigged/`와 `Characters_Rigged.blend`에 적용되며 기존 정적 환경 세트는 유지합니다.
 
 동작 구조 참고: [개 보행 전환과 발 착지 순서](https://journals.biologists.com/jeb/article/216/12/2257/11423/Gait-transitions-and-modular-organization-of), [달리기 중 팔 반동과 골반 회전](https://journals.biologists.com/jeb/article/217/14/2456/12120/The-metabolic-cost-of-human-running-is-swinging). 연구의 모션 캡처를 복제한 결과물이 아니라 3등신 체형에 맞춘 제작 키프레임입니다.
+
+v6 최종 단계: `natural_character_pass_v6.py` → `render_natural_v6.py` → `package_animation_previews.py` → `check_natural_v6_contacts.py` → `finalize_natural_v6.py` → `validate_rig_exports.py`。v6를 재생성할 때는 보관한 `revisions/Characters_before_natural_v6.blend`를 입력으로 사용해 이미 추가한 관절/면을 중복 생성하지 않습니다. 기존 파츠·몹 이름과 인덱스, 클립 이름은 유지했습니다. GLB는 여전히 표준 본 키프레임이며 런타임 IK는 필요하지 않습니다.
+
+v6 동물 관절 참고: [개 보행 중 어깨·사지 근육과 견갑골](https://journals.biologists.com/jeb/article/215/2/287/11087/Activity-of-extrinsic-limb-muscles-in-dogs-at-walk), [고양잇과 다리 관절 구조와 보행](https://journals.biologists.com/jeb/article/210/4/642/17244/Interspecific-scaling-of-the-morphology-and).

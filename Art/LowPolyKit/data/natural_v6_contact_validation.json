@@ -1,0 +1,121 @@
+{
+  "art_revision": 6,
+  "checks": [
+    {
+      "rig": "RIG_NPC_Humanoid_v1",
+      "clip": "NPC_Walk_RootMotion",
+      "contact_samples": 38,
+      "max_contact_error_m": 1.1920928955078125e-07
+    },
+    {
+      "rig": "RIG_NPC_Humanoid_v1",
+      "clip": "NPC_Run_RootMotion",
+      "contact_samples": 14,
+      "max_contact_error_m": 1.228781230931777e-07
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "clip": "MOB_00_Walk_RootMotion",
+      "contact_samples": 38,
+      "max_contact_error_m": 1.6858739404357614e-07
+    },
+    {
+      "rig": "RIG_MOB_00_PaperBoxYokai",
+      "clip": "MOB_00_Run_RootMotion",
+      "contact_samples": 14,
+      "max_contact_error_m": 1.55572690202453e-07
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "clip": "MOB_01_Walk_RootMotion",
+      "contact_samples": 38,
+      "max_contact_error_m": 1.228781230931777e-07
+    },
+    {
+      "rig": "RIG_MOB_01_StationWarden",
+      "clip": "MOB_01_Run_RootMotion",
+      "contact_samples": 14,
+      "max_contact_error_m": 1.228781230931777e-07
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "clip": "MOB_02_Walk_RootMotion",
+      "contact_samples": 38,
+      "max_contact_error_m": 1.7943374184954607e-07
+    },
+    {
+      "rig": "RIG_MOB_02_RedHornOni",
+      "clip": "MOB_02_Run_RootMotion",
+      "contact_samples": 14,
+      "max_contact_error_m": 2.0701354726329154e-07
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "clip": "MOB_03_Walk_RootMotion",
+      "contact_samples": 38,
+      "max_contact_error_m": 2.4027400458748785e-07
+    },
+    {
+      "rig": "RIG_MOB_03_SecurityConstruct",
+      "clip": "MOB_03_Run_RootMotion",
+      "contact_samples": 14,
+      "max_contact_error_m": 1.6049041769309353e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Walk_RootMotion",
+      "contact_samples": 92,
+      "max_contact_error_m": 1.9556887072930765e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Run_RootMotion",
+      "contact_samples": 40,
+      "max_contact_error_m": 1.2665987014770508e-07
+    },
+    {
+      "rig": "RIG_MOB_04_IronHound",
+      "clip": "MOB_04_Sprint_RootMotion",
+      "contact_samples": 18,
+      "max_contact_error_m": 1.4466410755327046e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Walk_RootMotion",
+      "contact_samples": 92,
+      "max_contact_error_m": 2.457562461863554e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Run_RootMotion",
+      "contact_samples": 40,
+      "max_contact_error_m": 1.999200562387517e-07
+    },
+    {
+      "rig": "RIG_MOB_05_FusionBeast",
+      "clip": "MOB_05_Sprint_RootMotion",
+      "contact_samples": 18,
+      "max_contact_error_m": 1.744136200952474e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Walk_RootMotion",
+      "contact_samples": 92,
+      "max_contact_error_m": 1.862645149230957e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Run_RootMotion",
+      "contact_samples": 40,
+      "max_contact_error_m": 1.6743097494724565e-07
+    },
+    {
+      "rig": "RIG_MOB_06_VoidStalker",
+      "clip": "MOB_06_Sprint_RootMotion",
+      "contact_samples": 18,
+      "max_contact_error_m": 1.399837004248495e-07
+    }
+  ],
+  "max_contact_error_m": 2.457562461863554e-07,
+  "issues": []
+}
