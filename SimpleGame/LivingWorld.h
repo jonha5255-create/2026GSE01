@@ -66,6 +66,7 @@ class TownActor : public Actor
   public:
     explicit TownActor(std::string name = "잔명 마을") : Actor(std::move(name))
     {
+        tickEnabled = false;
     }
 
     int index = -1;
@@ -79,6 +80,7 @@ class TownSiteActor : public Actor
   public:
     explicit TownSiteActor(TownSite site) : Actor("TownSite"), site(site)
     {
+        tickEnabled = false;
     }
 
     void Render(ActorRenderContext& context) const override
@@ -110,6 +112,9 @@ class NpcActor : public Actor
     float health = 100, maximumHealth = 100;
     float wealthWeight = .6f, survivalWeight = .8f, insightWeight = .2f, raidWeight = .1f;
     float decision = 0, cooldown = 0, recovery = 0, actionTime = 0, repath = 0;
+    float sightTimer = 0;
+    FarmPoint sightGoal{};
+    bool directSight = false;
     int gold = 60, goods = 0, insight = 0, growth = 0, victories = 0;
     ActorId target = NoActor, aggressor = NoActor;
     bool playerHostile = false;
@@ -119,6 +124,7 @@ class NpcActor : public Actor
     bool fieldBoss = false;
     int bossRegion = -1;
     int monsterForm = 0; // 0: horned wraith, 1: carrion hound, 2: stone brute.
+    int appearancePreset = 0, artCreature = -1;
     float gaitPhase = 0, moveBlend = 0;
     FarmPoint moveFacing{1, 0};
     float attackTime = -1, attackDamage = 0;

@@ -1,10 +1,18 @@
 # 2026GSE01
 
+## 2026-11-03 Blender 에셋 월드 적용과 FPS 개선
+
+LowPolyKit의 GLB 캐릭터·무기 파츠·7종 몬스터·지역별 건물·성벽·자연물을 실제 월드에 적용했습니다. 메시를 GPU에 캐싱하고 GPU 스키닝으로 애니메이션을 재생합니다. NPC 경로 검사와 장면 조회·정렬 비용도 줄였습니다.
+
+기본 실행은 **VSync 해제 + 60FPS 제한**입니다. 무제한 측정은 `--fps-limit=0`, VSync 요청은 `--vsync=1`을 사용합니다. 플레이 성능 확인은 Release x64 빌드를 사용하세요. Debug 빌드의 최적화 해제 설정은 유지합니다.
+
+[적용 범위·원인 분석·측정 결과](doc/LowPolyKit_월드적용과_FPS_개선.md)
+
 ## 2026-11-03 GLFW 프레임워크
 
 창·입력·OpenGL 문맥·렌더 루프를 GLFW 3.4로 전환했습니다. `SimpleGame.sln`을 빌드하면 `SimpleGame/Dependencies/GLFW`의 포함된 소스에서 정적 라이브러리를 함께 만듭니다. 별도 GLFW 설치나 다운로드는 필요하지 않습니다. Windows / Visual Studio 2022 C++ / Windows SDK 기준으로 x86·x64, Debug·Release를 지원합니다.
 
-기본 VSync는 켜져 있으며 `--vsync=0`으로 해제할 수 있습니다. `tools/build_glfw_matrix.ps1 -RuntimeChecks`로 네 가지 구성을 독립 빌드·검사합니다.
+현재 기본값은 VSync 해제이며 `--vsync=1`로 요청할 수 있습니다. `tools/build_glfw_matrix.ps1 -RuntimeChecks`로 네 가지 구성을 독립 빌드·검사합니다.
 
 [전환 내용·성능 비교·검증 결과](doc/GLFW_전환과_성능검증.md)
 

@@ -93,6 +93,30 @@ namespace
 
 NpcActor::NpcActor(std::string name, NpcJob role) : Actor(std::move(name)), job(role)
 {
+    appearancePreset = role == NpcJob::Raider     ? 3
+                       : role == NpcJob::Merchant ? 5
+                       : role == NpcJob::Seeker   ? 7
+                       : role == NpcJob::Guard    ? 9
+                       : role == NpcJob::Recorder ? 10
+                                                  : int(Name().size() % 3);
+    const char* names[] = {"도윤",
+                           "유리",
+                           "건우",
+                           "갈치",
+                           "붉은 눈",
+                           "미령",
+                           "덕수",
+                           "이안",
+                           "무명 순례자",
+                           "초소장",
+                           "백연"};
+    for (int i = 0; i < 11; ++i)
+    {
+        if (Name() == names[i])
+        {
+            appearancePreset = i;
+        }
+    }
 }
 
 void NpcActor::Update(float dt, ActorUpdateContext& services)
@@ -281,6 +305,8 @@ void LivingWorld::Initialize(SceneGraph& graph, uint32_t seed)
         if (npc.job == NpcJob::Wraith)
         {
             npc.monsterForm = (i - 11) % 3;
+            const int art[] = {0, 4, 3};
+            npc.artCreature = art[i - 11];
             npc.maximumHealth = npc.health = 48;
             npc.gold = 12;
             npc.goods = 1;
@@ -476,7 +502,16 @@ void LivingWorld::MoveTo(NpcActor& npc, FarmPoint goal, float dt, GameplayContex
     }
     FarmPoint worldGoal = Add(origin, goal);
     FarmPoint next = goal;
-    if (!Navigation::Sight(npc.Position(), worldGoal, context.walkable, 12))
+    // The short movement segment is still checked every frame. The expensive
+    // whole route can be reused briefly while the goal and static town stay put.
+    npc.sightTimer -= dt;
+    if (npc.sightTimer <= 0 || Length(Minus(npc.sightGoal, goal)) > 12)
+    {
+        npc.directSight = Navigation::Sight(npc.Position(), worldGoal, context.walkable, 12);
+        npc.sightGoal = goal;
+        npc.sightTimer = .2f + float(npc.Id() % 7) * .011f;
+    }
+    if (!npc.directSight)
     {
         if (npc.repath <= 0
             && (npc.pathIndex >= npc.path.size() || Length(Minus(npc.destination, goal)) > 35))
@@ -517,6 +552,7 @@ void LivingWorld::MoveTo(NpcActor& npc, FarmPoint goal, float dt, GameplayContex
     else
     {
         npc.path.clear();
+        npc.sightTimer = 0;
     }
 }
 
@@ -1242,7 +1278,11 @@ void LivingWorld::UpdateSettlements(float dt, GameplayContext& context)
         {
             continue;
         }
-        settlement->news[settlement->index] = MakeNews(*settlement, context);
+        auto& localNews = settlement->news[settlement->index];
+        if (!localNews.known || clock - localNews.time >= 1.f)
+        {
+            localNews = MakeNews(*settlement, context);
+        }
         settlement->dispatchTimer -= dt;
         settlement->migrationTimer -= dt;
         if (settlement->dispatchTimer <= 0)

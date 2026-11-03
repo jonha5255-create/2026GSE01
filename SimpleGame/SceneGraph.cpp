@@ -4,56 +4,57 @@
 
 bool SceneGraph::Pending(ActorId id) const
 {
-    while (id)
+    auto found = index_.find(id);
+    if (found == index_.end())
     {
-        auto found = actors_.find(id);
-        if (found == actors_.end() || found->second->destroyed_)
+        return true;
+    }
+    for (auto* node = found->second; node; node = node->parentNode_)
+    {
+        if (node->destroyed_)
         {
             return true;
         }
-        id = found->second->parent_;
     }
     return false;
 }
 
 Actor* SceneGraph::Get(ActorId id) const
 {
-    auto found = actors_.find(id);
-    return found == actors_.end() || Pending(id) ? nullptr : found->second.get();
+    auto found = index_.find(id);
+    return found == index_.end() || Pending(id) ? nullptr : found->second;
 }
 
 bool SceneGraph::Active(ActorId id) const
 {
-    if (!Get(id))
+    auto found = index_.find(id);
+    if (found == index_.end())
     {
         return false;
     }
-    while (id)
+    for (auto* actor = found->second; actor; actor = actor->parentNode_)
     {
-        const auto& actor = *actors_.at(id);
-        if (!actor.enabled)
+        if (actor->destroyed_ || !actor->enabled)
         {
             return false;
         }
-        id = actor.parent_;
     }
     return true;
 }
 
 bool SceneGraph::Visible(ActorId id) const
 {
-    if (!Active(id))
+    auto found = index_.find(id);
+    if (found == index_.end())
     {
         return false;
     }
-    while (id)
+    for (auto* actor = found->second; actor; actor = actor->parentNode_)
     {
-        const auto& actor = *actors_.at(id);
-        if (!actor.visible)
+        if (actor->destroyed_ || !actor->enabled || !actor->visible)
         {
             return false;
         }
-        id = actor.parent_;
     }
     return true;
 }
@@ -61,16 +62,12 @@ bool SceneGraph::Visible(ActorId id) const
 ActorPosition SceneGraph::WorldPosition(ActorId id) const
 {
     ActorPosition result;
-    while (id)
+    auto found = index_.find(id);
+    for (auto* node = found == index_.end() ? nullptr : found->second; node;
+         node = node->parentNode_)
     {
-        auto found = actors_.find(id);
-        if (found == actors_.end())
-        {
-            break;
-        }
-        result.x += found->second->local.x;
-        result.y += found->second->local.y;
-        id = found->second->parent_;
+        result.x += node->local.x;
+        result.y += node->local.y;
     }
     return result;
 }
@@ -91,6 +88,7 @@ bool SceneGraph::Reparent(ActorId id, ActorId parent, bool preserveWorld)
     }
     ActorPosition position = actor->Position();
     actor->parent_ = parent;
+    actor->parentNode_ = parent ? Get(parent) : nullptr;
     if (preserveWorld)
     {
         actor->SetPosition(position);
@@ -121,33 +119,46 @@ void SceneGraph::CollectDestroyed()
             dead.push_back(entry.first);
         }
     }
+    if (!dead.empty())
+    {
+        queryCache_.clear();
+    }
     for (ActorId id : dead)
     {
+        index_.erase(id);
         actors_.erase(id);
     }
 }
 
 void SceneGraph::Update(float dt, ActorUpdateContext& context)
 {
-    std::vector<ActorId> snapshot;
+    struct Item
+    {
+        ActorId id;
+        int order;
+    };
+
+    std::vector<Item> snapshot;
+    snapshot.reserve(actors_.size());
     for (const auto& entry : actors_)
     {
-        if (Active(entry.first))
+        if (entry.second->tickEnabled && Active(entry.first))
         {
-            snapshot.push_back(entry.first);
+            snapshot.push_back({entry.first, entry.second->UpdateOrder()});
         }
     }
     std::stable_sort(snapshot.begin(),
                      snapshot.end(),
-                     [&](ActorId a, ActorId b)
+                     [](const Item& a, const Item& b)
                      {
-                         return actors_.at(a)->UpdateOrder() < actors_.at(b)->UpdateOrder();
+                         return a.order < b.order;
                      });
     ++traversalDepth_;
     try
     {
-        for (ActorId id : snapshot)
+        for (auto item : snapshot)
         {
+            ActorId id = item.id;
             if (Active(id))
             {
                 Get(id)->Update(dt, context);
@@ -166,32 +177,40 @@ void SceneGraph::Update(float dt, ActorUpdateContext& context)
 
 void SceneGraph::Render(ActorRenderContext& context, RenderLayer first, RenderLayer last)
 {
-    std::vector<ActorId> snapshot;
+    struct Item
+    {
+        ActorId id;
+        RenderLayer layer;
+        float depth;
+    };
+
+    std::vector<Item> snapshot;
+    snapshot.reserve(actors_.size());
     for (const auto& entry : actors_)
     {
         const auto& actor = *entry.second;
         if (Visible(entry.first) && actor.layer >= first && actor.layer <= last)
         {
-            snapshot.push_back(entry.first);
+            auto p = actor.Position();
+            snapshot.push_back({entry.first, actor.layer, p.x + p.y + actor.depthBias});
         }
     }
     std::stable_sort(snapshot.begin(),
                      snapshot.end(),
-                     [&](ActorId a, ActorId b)
+                     [](const Item& a, const Item& b)
                      {
-                         const Actor &left = *actors_.at(a), &right = *actors_.at(b);
-                         if (left.layer != right.layer)
+                         if (a.layer != b.layer)
                          {
-                             return left.layer < right.layer;
+                             return a.layer < b.layer;
                          }
-                         auto p = left.Position(), q = right.Position();
-                         return p.x + p.y + left.depthBias < q.x + q.y + right.depthBias;
+                         return a.depth < b.depth;
                      });
     ++traversalDepth_;
     try
     {
-        for (ActorId id : snapshot)
+        for (auto item : snapshot)
         {
+            ActorId id = item.id;
             if (Visible(id))
             {
                 Get(id)->Render(context);

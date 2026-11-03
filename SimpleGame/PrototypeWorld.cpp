@@ -2,6 +2,7 @@
 #include "PrototypeWorld.h"
 #include "RenderDiagnostics.h"
 #include "WorldMonitor.h"
+#include "WorldArt.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -232,6 +233,19 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
         return;
     }
     int count = 3 + int(next() % 3);
+    for (int i = 0; i < 5; ++i)
+    {
+        FarmPoint point{35.f + float(next() % 570), 35.f + float(next() % 570)};
+        auto origin = chunk.Position();
+        if (std::abs(point.x - chunk.data.roadX) < 65 || std::abs(point.y - chunk.data.roadY) < 65
+            || !Walkable(origin.x + point.x, origin.y + point.y, 25))
+        {
+            continue;
+        }
+        auto& nature =
+            graph.Spawn<NatureActor>(parent, i % 2 == 0 ? "tree" : "rock", int(next() % 4));
+        nature.local = point;
+    }
     if (chunk.data.bossRegion >= 0)
     {
         int region = chunk.data.bossRegion;
@@ -240,6 +254,8 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
         boss.local = boss.home = {320, 320};
         boss.wilderness = boss.fieldBoss = true;
         boss.bossRegion = boss.monsterForm = region;
+        const int bossArt[] = {2, 5, 3};
+        boss.artCreature = bossArt[region];
         boss.health = boss.maximumHealth = 420 + region * 90.f;
         boss.gold = 85;
         boss.goods = 6;
@@ -258,16 +274,26 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
             continue;
         }
         bool boss = chunk.data.bossRegion < 0 && spawned == 0 && chunk.data.seed % 3 == 0;
-        const char* monsterNames[] = {"뿔 잔향귀", "시체 사냥개", "폐허 석괴"};
+        const char* monsterNames[] = {"종이상자 요괴",
+                                      "역무원 요괴",
+                                      "붉은 뿔 요괴",
+                                      "보안 병기",
+                                      "철문 견마",
+                                      "혼종체",
+                                      "공허 추적자"};
         int form = int((chunk.data.seed + uint32_t(spawned)) % 3);
+        int art = form == 1   ? 4 + int((chunk.data.seed + spawned) % 3)
+                  : form == 2 ? 3
+                              : int((chunk.data.seed + spawned) % 3);
         auto& monster = graph.Spawn<NpcActor>(parent,
                                               boss ? std::string("폐허의 포식자")
-                                                   : std::string(monsterNames[form]) + " "
+                                                   : std::string(monsterNames[art]) + " "
                                                          + std::to_string(spawned + 1),
                                               NpcJob::Wraith);
         monster.local = monster.home = point;
         monster.wilderness = true;
         monster.monsterForm = form;
+        monster.artCreature = art;
         monster.health = monster.maximumHealth = 65 + float(next() % 46);
         monster.gold = 12;
         monster.goods = 1;
@@ -1090,6 +1116,13 @@ void PrototypeWorld::BuildingGeometry(PrototypeRenderer& r,
 
 void PrototypeWorld::Player(PrototypeRenderer& r, const PlayerActor& actor)
 {
+    if (art_)
+    {
+        auto p = Project(actor.Position().x, actor.Position().y);
+        r.Ellipse(p, 14 * zoom_, 5 * zoom_, Color(0, 0, 0, .5f));
+        art_->Player(r, actor, level_.Weapon(), p, zoom_, time_);
+        return;
+    }
     auto position = actor.Position();
     Point p = Project(position.x, position.y);
     float z = zoom_, step = std::sin(level_.Player().walkPhase) * 3;
@@ -1203,6 +1236,16 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
                 {p.x + facing.x * 30 * z, p.y - 25 * z + facing.y * 30 * z}, 45 * fade * z, energy);
             Ring(r, position.x, position.y, 40 + t * 50, energy, 2);
         }
+    }
+    if (art_ && owner->weapon)
+    {
+        if (actor.muzzleFlash > 0)
+        {
+            r.Glow({p.x + facing.x * 35 * z, p.y - 29 * z + facing.y * 35 * z},
+                   18 * z,
+                   Emissive(evolutionInk, 3));
+        }
+        return;
     }
     // Both forms inherit the same carapace, ivory horns and soul-core palette.
     Ink shell = owner->yokai == YokaiForm::Sword    ? Color(42, 69, 91)
@@ -1722,8 +1765,27 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.SetScale(1);
 }
 
+void PrototypeWorld::PrepareArt()
+{
+    if (art_ || artFailed_)
+    {
+        return;
+    }
+    try
+    {
+        art_ = Art::WorldArt::Shared();
+    }
+    catch (const std::exception& e)
+    {
+        artFailed_ = true;
+        std::cerr << "[WORLD ART] " << e.what() << '\n';
+        RenderDiagnostics::Get().Event("world_art_error", e.what());
+    }
+}
+
 void PrototypeWorld::Draw(PrototypeRenderer& r)
 {
+    PrepareArt();
     zoom_ = std::min(r.Width() / 1280.f, r.Height() / 800.f);
     center_ = {r.Width() * .48f, r.Height() * .54f};
     activeRenderer_ = &r;
@@ -1746,6 +1808,18 @@ void PrototypeWorld::Ring(
 
 void PrototypeWorld::Enemy(PrototypeRenderer& r, const EnemyActor& enemy)
 {
+    if (art_)
+    {
+        auto p = Project(enemy.Position().x, enemy.Position().y);
+        if (p.x < -120 || p.x > r.Width() + 120 || p.y < -120 || p.y > r.Height() + 160)
+        {
+            return;
+        }
+        float z = zoom_ * (enemy.boss ? 1.8f : 1);
+        r.Ellipse(p, 16 * z, 5 * z, Color(0, 0, 0, .5f));
+        art_->Enemy(r, enemy, p, z, time_);
+        return;
+    }
     Point p = Project(enemy.Position().x, enemy.Position().y);
     float z = zoom_ * (enemy.boss ? 1.8f : 1.f);
     Ink flesh = enemy.hitFlash > 0 ? Color(255, 220, 211) : Color(126, 49, 69);
@@ -2492,16 +2566,65 @@ void PrototypeWorld::Draw(const BuildingActor& actor)
     {
         return;
     }
+    if (art_ && actor.style != 0)
+    {
+        if (actor.style == 2)
+        {
+            bool vertical = actor.depth > actor.width;
+            float length = vertical ? actor.depth : actor.width;
+            int count = int(std::ceil(length / 64));
+            float span = length / count;
+            for (int i = 0; i < count; ++i)
+            {
+                float w = vertical ? actor.width : span, d = vertical ? span : actor.depth;
+                auto base = Project(p.x + (vertical ? w * .5f : (i + .5f) * span),
+                                    p.y + (vertical ? (i + .5f) * span : d * .5f));
+                art_->Static(*activeRenderer_, "structure", 0, base, w, d, zoom_, 1, vertical);
+            }
+        }
+        else
+        {
+            art_->Static(*activeRenderer_,
+                         "building",
+                         15 + int(actor.seed % 3),
+                         screen,
+                         actor.width,
+                         actor.depth,
+                         zoom_);
+        }
+        return;
+    }
     if (actor.style == 0)
     {
-        Building(*activeRenderer_,
-                 p.x,
-                 p.y,
-                 actor.width,
-                 actor.depth,
-                 actor.height,
-                 actor.seed,
-                 actor.homeSlot >= 0);
+        if (art_)
+        {
+            float opacity = 1;
+            float half = (actor.width + actor.depth) * .425f * zoom_;
+            if (std::abs(screen.x - center_.x) < half && screen.y > center_.y
+                && screen.y - 250 * zoom_ < center_.y)
+            {
+                opacity = .35f;
+            }
+            art_->Static(*activeRenderer_,
+                         "building",
+                         art_->BuildingIndex(actor.villageIndex, actor.seed),
+                         screen,
+                         actor.width,
+                         actor.depth,
+                         zoom_,
+                         opacity);
+        }
+        else
+        {
+            Building(*activeRenderer_,
+                     p.x,
+                     p.y,
+                     actor.width,
+                     actor.depth,
+                     actor.height,
+                     actor.seed,
+                     actor.homeSlot >= 0);
+        }
         if (actor.homeSlot >= 0)
         {
             auto* settlement = level_.society.Village(level_.Graph(), actor.villageIndex);
@@ -2627,12 +2750,41 @@ void PrototypeWorld::Draw(const LampActor& actor)
 {
     auto& r = *activeRenderer_;
     auto p = actor.Position();
+    if (art_)
+    {
+        auto screen = Project(p.x, p.y);
+        if (screen.x < -120 || screen.x > r.Width() + 120 || screen.y < -100
+            || screen.y > r.Height() + 150)
+        {
+            return;
+        }
+        art_->Static(r, "structure", 5, screen, 24, 18, zoom_);
+        r.Glow({screen.x, screen.y - 80 * zoom_}, 28 * zoom_, Color(87, 218, 190, .45f));
+        return;
+    }
     Point a = Project(p.x, p.y), b = Project(p.x, p.y, 95), c{b.x + 24 * zoom_, b.y};
     r.Ellipse(a, 43 * zoom_, 15 * zoom_, Color(79, 199, 177, .09f));
     r.Line(a, b, 3 * zoom_, Color(69, 90, 100));
     r.Line(b, c, 3 * zoom_, Color(114, 148, 146));
     r.Glow(c, 65 * zoom_, Color(87, 218, 190, .9f));
     r.Line(c, {c.x - 13 * zoom_, c.y}, 3 * zoom_, Emissive(Color(183, 251, 215), 5));
+}
+
+void PrototypeWorld::Draw(const NatureActor& actor)
+{
+    if (!art_)
+    {
+        return;
+    }
+    auto p = actor.Position();
+    auto s = Project(p.x, p.y);
+    auto& r = *activeRenderer_;
+    if (s.x < -150 || s.x > r.Width() + 150 || s.y < -120 || s.y > r.Height() + 250)
+    {
+        return;
+    }
+    float size = actor.slot == "tree" ? 32.f : 22.f;
+    art_->Static(r, actor.slot, actor.index, s, size, size, zoom_);
 }
 
 void PrototypeWorld::Draw(const RainActor&)

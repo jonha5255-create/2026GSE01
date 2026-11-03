@@ -6,6 +6,11 @@
 #include <map>
 #include <utility>
 
+namespace Art
+{
+    class WorldArt;
+}
+
 class PrototypeWorld : private ActorRenderContext
 {
   public:
@@ -14,6 +19,7 @@ class PrototypeWorld : private ActorRenderContext
     void Key(unsigned char key, bool down);
     void MouseAttack(int x, int y, int width, int height);
     void MouseSkill();
+    void PrepareArt();
     void Draw(PrototypeRenderer& r);
     void DrawUI(PrototypeRenderer& r);
     static bool SelfTest();
@@ -82,6 +88,9 @@ class PrototypeWorld : private ActorRenderContext
     void Draw(const LampActor& actor) override;
     void Draw(const RainActor& actor) override;
     void Draw(const HudActor& actor) override;
+    void Draw(const NatureActor& actor) override;
+    std::shared_ptr<Art::WorldArt> art_;
+    bool artFailed_ = false;
     PrototypeRenderer* activeRenderer_ = nullptr;
     std::map<Coord, ActorId> chunkActors_;
     std::map<Coord, CityChunk> chunks_;

@@ -1,0 +1,329 @@
+PASS GLFW repeats do not retrigger gameplay actions
+PASS focus loss releases held movement keys exactly once
+PASS GLFW key mapping preserves existing controls
+PASS high-DPI mouse coordinates match framebuffer picking pixels
+PASS typed query cache initializes
+PASS scene graph inherits ancestor transforms
+PASS reparent preserves world position
+PASS scene graph rejects cycles
+PASS typed query cache refreshes after spawn and filters current ancestor state
+PASS disabled ancestor suppresses subtree updates
+PASS hidden ancestor suppresses subtree rendering
+PASS origin rebasing transforms roots only
+PASS typed query cache excludes pending subtrees
+PASS destroyed ancestor immediately hides children from queries
+PASS typed query cache invalidates freed actor pointers
+PASS deferred destruction collects the entire subtree
+PASS actor handles are never reused
+PASS actors spawned during update begin on next traversal
+PASS new actors update on the next frame
+PASS destruction during traversal is safe and skips pending actors
+PASS scene traversal preserves layer and isometric depth order
+PASS scene graph rejects missing parents
+PASS screen-space roots ignore world rebasing
+PASS reparent can retain local coordinates
+PASS three distinct bosses award relics and complete the side quest
+PASS recreated boss cannot repeat relic completion reward
+PASS shot recoil pushes backward and suppresses walking during firing hold
+PASS movement resumes after the short firing hold
+PASS shotgun skill has stronger recoil
+PASS death clears recoil and firing hold
+PASS yokai skills are locked before level three
+PASS yokai experience evolves independently from the character
+PASS each yokai retains independent progression
+PASS unlocked sword skill starts its cast
+PASS skill charge animation precedes damage
+PASS sword skill damages monsters without harming civilians
+PASS skill cooldown prevents repeated casts
+PASS switching cancels a skill without resetting its cooldown
+PASS ranged skill launches five real projectiles
+PASS claw skill resolves three separate strikes
+PASS auto aim acquires a visible enemy
+PASS projectile cooldown cannot be bypassed
+PASS ranged projectile deals damage
+PASS auto aim respects range
+PASS auto aim cannot see through a wall
+PASS XP improves damage cooldown and max health
+PASS healing drop restores health
+PASS upgrade drop improves weapon rank
+PASS magnet pickup extends collection range
+PASS magnetic attraction collects soul stones
+PASS loot cannot pass through walls
+PASS all four drop types are obtainable
+PASS dead actors immediately leave gameplay queries
+PASS boss summon requires proximity
+PASS boss encounter starts once
+PASS boss can be defeated through normal projectiles
+PASS death stops encounter simulation
+PASS progression has safe caps
+PASS farming objectives unlock boss portal
+PASS projectile expires at maximum travel distance
+PASS in-flight projectiles collide with walls
+PASS hit immunity prevents stacked contact damage
+PASS boss owns its telegraph child
+PASS world rebasing shifts hierarchy exactly once and keeps telegraph anchored
+PASS boss destruction removes its telegraph
+PASS disabled weapon actor stops automatic fire
+PASS re-enabled weapon actor resumes automatic fire
+PASS gameplay context owns temporary collision callbacks
+PASS human lethal defeat records one murder with participants
+PASS recovering victims do not duplicate murders
+PASS living nearby witness reports a linked unverified rumor
+PASS rumor is generated once per witnessed incident
+PASS monster hunts are not classified as murder
+PASS incident history is bounded while lifetime totals are preserved
+PASS each of seven villages starts with 30 owned homes and six vacant homes
+PASS dispatch does not instantly reveal another village's news
+PASS physical messenger arrival delivers dated news and starts return trip
+PASS delivered prosperity report triggers a wealth-seeking resident's physical move
+PASS migration arrival transfers village membership and house ownership without duplicating NPC
+PASS vacant home can be reserved for migration
+PASS defeated migrant releases reserved destination house
+PASS monster windup does not cause immediate damage
+PASS monster attack damages once at animation impact
+PASS moving out of reach avoids a telegraphed monster attack
+PASS defeated monster cancels its attack animation
+PASS field boss grants enhanced loot and uses a longer respawn timer
+PASS field boss respawns with full health and renewed boss rewards
+PASS living world spawns bounded citizens and town facilities as actors
+PASS quest guidance starts at the home
+PASS E prioritizes reachable quest facility over closer unrelated facilities
+PASS hunting guidance targets a living monster instead of the shrine
+PASS initial hunt continues into the expedition quest
+PASS hunt report unlocks market preparation
+PASS two actual player sales unlock the expedition
+PASS station encounter requires decoded route evidence
+PASS relay signal and station interactions spawn one quest guardian
+PASS station cannot duplicate guardians or bypass combat
+PASS recovering Harin memory permanently strengthens the companion
+PASS expedition completion grants rewards once and clears navigation
+PASS trade conserves money and transfers inventory
+PASS trade rejects insufficient funds and self trade
+PASS high raid weight selects predation
+PASS low raid weight selects legitimate income
+PASS survival overrides wealth goals
+PASS insight utility selects meditation
+PASS student card requires home investigation
+PASS contract cannot skip recorder evidence
+PASS MAP01 home card recorder contract progression
+PASS repeat interactions do not duplicate contract rewards
+PASS human attacks require explicit PK opt-in
+PASS PK damages citizen and triggers retaliation and wanted state
+PASS turning off PK does not erase crime
+PASS player kill transfers half victim money and cargo exactly once
+PASS dead citizen cannot be looted twice
+PASS citizen recovery preserves post-loot wealth
+PASS disabled citizen is excluded from scene updates
+PASS player hunt grants story progress and yokai synchronization
+PASS renewable hunting encounter restores bounded resource reward
+PASS town hierarchy rebases once while local NPC paths remain stable
+PASS player sells at living town market
+PASS player buys merchant stock to recover health
+PASS sword selection always returns to companion form
+PASS sword performs melee without ranged auto fire
+PASS successful sword strike starts timed animation
+PASS attack pose advances with simulation time
+PASS switching an equipped weapon restores yokai companion state
+PASS switch cannot reset attack cooldown
+PASS claw uses a shorter alternating attack animation
+PASS claw has faster repeat attacks and shorter reach
+PASS companion switching clears melee pose
+PASS ranged companion does not auto fire
+PASS ranged click launches projectile instead of instant melee damage
+PASS selected ranged projectile applies damage on impact
+PASS ranged human attack requires PK consent
+PASS PK permits selected human projectile
+PASS ranged PK hits authorized target without harming human bystanders
+PASS autonomous population completes hunting trade and predation without player
+PASS continuous NPC updates grow insight and preserve valid resources
+PASS simulation keeps population and UI event history bounded
+PASS world retains exactly seven persistent villages
+PASS random wilderness monsters spawn outside village chunks and buildings
+PASS same seed reproduces wilderness spawn layout
+PASS repeated streaming does not duplicate towns or monsters
+PASS villages have defensive walls and wilderness has only ruins or plains
+PASS wild monsters wander while remaining inside their wilderness chunk
+PASS courier physically crosses gates and unloaded wilderness to deliver mail
+PASS neighboring town gates have a clear approximately twenty-second player route
+PASS negative chunk normalization
+PASS deterministic distant generation
+PASS different seeds change building footprints
+PASS neighboring chunks share arterial positions and widths
+PASS variable parcel counts preserve road clearance
+PASS bounded resident chunks after travel
+PASS streaming removes old actor subtrees and keeps a bounded scene
+PASS return regenerates same chunk
+PASS building collision and clear spawn
+PASS building actor activation controls collision
+PASS input movement
+PASS transform is edge triggered
+PASS restart resets progression and player
+PASS disabled player actor stops movement
+PASS player movement streams actor subtrees safely during scene traversal
+PASS HUD weather and attached weapon are scene actors
+PASS 128 seeds / 1152 chunks: all walkable cells and exits connected
+Living world 180s: hunts=17 trades=160 raids=147
+PASS NPC paths never enter generated building collision
+PASS real procedural town supports autonomous hunting trade and raids
+PASS offscreen town continues simulation after streaming out of view
+PASS walkable world route and E key complete the MAP01 evidence contract sequence
+PASS expedition road route and interactions work beyond the unloaded starting town
+PASS real world combat return route and E interactions finish the extended quest
+PASS K no longer casts a skill
+PASS right mouse skill entry starts casting and cooldown
+PASS M expands map once while held
+PASS second M press restores minimap
+PASS number three then Q equips claw
+PASS number two unequips claw and selects ranged companion
+PASS number one selects sword companion
+PASS mouse human attack respects PK opt-in
+PASS mouse attacks selected monster before contract without hitting closer humans
+PASS rapid clicks cannot bypass attack cooldown
+PASS mouse picking scales with odd window sizes and preserves PK consequences
+PASS empty-space click never falls back to nearest target
+PASS selected mouse target cannot be hit through walls
+PASS HUD consumes clicks over a nearby target
+PASS mouse attack respects melee range
+PASS dead player cannot mouse attack
+PASS monitor separates human and monster counts
+PASS monitor aggregates nested village membership and inactive NPCs
+PASS monitor JSON escapes quotes and control characters
+PASS monitor excludes actors pending destruction
+PASS monitor serializes non-finite numbers as JSON null
+[PERF] Persistent logs: Logs/render-*.csv and *.jsonl (next to executable)
+OpenGL 3.3.0 Core Profile Context 24.10.20.01.240627 / AMD Radeon(TM) Graphics
+PASS cached mesh matches dynamic geometry, transform, opacity and draw order
+PASS cached mesh matches dynamic geometry, transform, opacity and draw order
+PASS cached mesh matches dynamic geometry, transform, opacity and draw order
+PASS same cached geometry generated once across frames
+PASS ordered instancing matches separate GL submissions pixel for pixel
+PASS heterogeneous transparent meshes merge into one scene and one UI draw
+PASS mesh file round trip preserves vertex data
+PASS truncated or corrupt mesh file rejected
+PASS mesh checksum mismatch rejected
+PASS obsolete cache schema rejected
+PASS oversized payload rejected before allocation
+PASS invalid cache can be replaced atomically
+PASS persistent mesh cache validation
+PASS packed model stream preserves pixels and cached/static painter order
+PASS GPU skinning matches CPU projection, bone translation, opacity and painter order
+PASS packed model stream preserves pixels and cached/static painter order
+PASS GPU skinning matches CPU projection, bone translation, opacity and painter order
+PASS packed model stream preserves pixels and cached/static painter order
+PASS GPU skinning matches CPU projection, bone translation, opacity and painter order
+PASS bone animation reuses immutable GPU geometry
+PASS descriptor-capacity batch splits preserve pixels
+PASS atlas-page batch splits preserve pixels
+PASS evicted mesh reloads from disk without running builder
+PASS cache eviction test framebuffer
+PASS different mesh keys create independent atlas entries
+PASS cache eviction next frame
+PASS LRU eviction bounds GPU mesh cache after travel
+PASS mesh cache has no OpenGL errors
+PASS draw counter includes all four bloom GL submissions
+PASS bloom changes rendered highlights
+PASS vignette changes scene edges
+PASS draw counter resets per frame and includes edge blur
+PASS edge blur changes scene edges
+PASS exposure changes tone mapping
+PASS UI is composited after post processing
+PASS draw counter excludes disabled post passes
+PASS master bypass ignores all effect settings
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 139
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 129
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+PASS melee animation changes rendered pixels
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 178
+PASS melee animation changes rendered pixels
+PASS HDR scene radiance > 1 (peak 4.8125)
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 170
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 180
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 180
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 122
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 129
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 129
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 122
+Mesh cache: 94801 hits, 300 admissions, 43 evictions, 2540880 resident bytes

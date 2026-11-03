@@ -1,0 +1,13 @@
+[PERF] Persistent logs: Logs/render-*.csv and *.jsonl (next to executable)
+OpenGL 3.3.0 Core Profile Context 24.10.20.01.240627 / AMD Radeon(TM) Graphics
+PASS GLFW repeats do not retrigger gameplay actions
+PASS focus loss releases held movement keys exactly once
+PASS GLFW key mapping preserves existing controls
+PASS high-DPI mouse coordinates match framebuffer picking pixels
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 181
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 181
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 172
+PASS GLFW core context, framebuffer resize and clean shutdown

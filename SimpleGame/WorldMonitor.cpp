@@ -232,6 +232,8 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
             << ",\"travelTownIndex\":" << npc->travelTown
             << ",\"letterSource\":" << (npc->letter.known ? npc->letter.source : -1)
             << ",\"monsterForm\":" << npc->monsterForm
+            << ",\"appearancePreset\":" << npc->appearancePreset
+            << ",\"artCreature\":" << npc->artCreature
             << ",\"attacking\":" << Boolean(npc->attackTime >= 0)
             << ",\"targetId\":" << Quote(std::to_string(npc->target))
             << ",\"position\":" << Position(npc->Position())

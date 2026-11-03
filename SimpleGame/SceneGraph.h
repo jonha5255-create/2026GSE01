@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdexcept>
 #include <utility>
+#include <unordered_map>
+#include <typeindex>
 
 class SceneGraph
 {
@@ -23,8 +25,11 @@ class SceneGraph
         T& result = *value;
         result.id_ = nextId_++;
         result.parent_ = parent;
+        result.parentNode_ = parent ? Get(parent) : nullptr;
         result.scene_ = this;
         actors_.emplace(result.Id(), std::move(value));
+        index_.emplace(result.Id(), &result);
+        queryCache_.clear();
         return result;
     }
 
@@ -39,14 +44,26 @@ class SceneGraph
     template <class T> std::vector<T*> Query(bool includeInactive = false) const
     {
         std::vector<T*> result;
-        for (const auto& entry : actors_)
+        auto key = std::type_index(typeid(T));
+        auto found = queryCache_.find(key);
+        if (found == queryCache_.end())
         {
-            if (includeInactive ? !Pending(entry.first) : Active(entry.first))
+            std::vector<Actor*> matches;
+            for (const auto& entry : actors_)
             {
-                if (auto actor = dynamic_cast<T*>(entry.second.get()))
+                if (dynamic_cast<T*>(entry.second.get()))
                 {
-                    result.push_back(actor);
+                    matches.push_back(entry.second.get());
                 }
+            }
+            found = queryCache_.emplace(key, std::move(matches)).first;
+        }
+        result.reserve(found->second.size());
+        for (auto* actor : found->second)
+        {
+            if (includeInactive ? !Pending(actor->Id()) : Active(actor->Id()))
+            {
+                result.push_back(static_cast<T*>(actor));
             }
         }
         return result;
@@ -72,6 +89,8 @@ class SceneGraph
   private:
     bool Pending(ActorId id) const;
     std::map<ActorId, std::unique_ptr<Actor>> actors_;
+    std::unordered_map<ActorId, Actor*> index_;
+    mutable std::unordered_map<std::type_index, std::vector<Actor*>> queryCache_;
     ActorId nextId_ = 1;
     unsigned traversalDepth_ = 0;
 };

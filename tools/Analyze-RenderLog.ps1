@@ -25,7 +25,7 @@ function Stats($items, $column) {
 }
 $warm = @($rows | Select-Object -Skip $SkipWarmupFrames)
 $interval = Sum $rows 'frame_ms'
-[ordered]@{
+$report = [ordered]@{
     source = [IO.Path]::GetFileName($Csv)
     frames = $rows.Count
     excluded_warmup_frames = $SkipWarmupFrames
@@ -34,6 +34,8 @@ $interval = Sum $rows 'frame_ms'
     first_render_cpu_ms = Number $rows[0].render_cpu_ms
     warm_frame_ms = Stats $warm 'frame_ms'
     warm_render_cpu_ms = Stats $warm 'render_cpu_ms'
+    warm_update_cpu_ms = Stats $warm 'update_cpu_ms'
+    warm_fps = 1000 * $warm.Count / (Sum $warm 'frame_ms')
     draw_calls = Stats $rows 'draw_calls'
     mesh_generations_all = Sum $rows 'mesh_generations'
     disk_loads_all = Sum $rows 'disk_loads'
@@ -43,4 +45,11 @@ $interval = Sum $rows 'frame_ms'
     warm_mesh_upload_bytes = Sum $warm 'mesh_upload_bytes'
     warm_instance_upload_bytes = Stats $warm 'instance_upload_bytes'
     batch_splits_all = Sum $rows 'batch_splits'
-} | ConvertTo-Json -Depth 5
+}
+foreach ($column in @('present_ms', 'pacing_ms', 'pose_builds', 'pose_hits', 'art_pose_ms', 'gpu_model_uploads', 'gpu_model_resident_bytes', 'gpu_model_entries')) {
+    if ($rows[0].PSObject.Properties.Name -contains $column) {
+        $report["warm_${column}"] = Stats $warm $column
+    }
+}
+$report['warm_upload_bytes_per_frame'] = ((Sum $warm 'instance_upload_bytes') + (Sum $warm 'mesh_upload_bytes')) / $warm.Count
+$report | ConvertTo-Json -Depth 5

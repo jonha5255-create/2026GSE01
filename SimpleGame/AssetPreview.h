@@ -7,6 +7,12 @@ namespace Art
     class ModelRenderer
     {
       public:
+        std::vector<float> Bake(const Model& model,
+                                const Pose& pose,
+                                const std::vector<size_t>& selected,
+                                float yaw = 0,
+                                Vec3 stretch = {1, 1, 1},
+                                Vec3 offset = {});
         void Draw(PrototypeRenderer& renderer,
                   const Model& model,
                   const Pose& pose,

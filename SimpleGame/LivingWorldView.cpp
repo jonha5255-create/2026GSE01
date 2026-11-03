@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "WorldArt.h"
 #include "PrototypeWorld.h"
 #include <algorithm>
 
@@ -94,9 +95,16 @@ void PrototypeWorld::Draw(const NpcActor& npc)
         r.Ellipse(p, 30 * zoom_, 12 * zoom_, Color(206, 78, 37, .45f));
     }
     r.Ellipse(p, 14 * z, 5 * z, Color(0, 0, 0, .65f));
+    if (art_)
+    {
+        art_->Npc(r, npc, p, z, time_);
+    }
     if (npc.health <= 0)
     {
-        r.Line({p.x - 12 * z, p.y - 5 * z}, {p.x + 12 * z, p.y - 5 * z}, 7 * z, color);
+        if (!art_)
+        {
+            r.Line({p.x - 12 * z, p.y - 5 * z}, {p.x + 12 * z, p.y - 5 * z}, 7 * z, color);
+        }
         r.Text(p.x - 24 * z,
                p.y - 24 * z,
                "회복 " + std::to_string(int(npc.recovery)),
@@ -104,247 +112,260 @@ void PrototypeWorld::Draw(const NpcActor& npc)
                .48f * z);
         return;
     }
-    if (npc.job == NpcJob::Wraith)
+    if (!art_)
     {
-        float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
-        auto ease = [](float value)
+        if (npc.job == NpcJob::Wraith)
         {
-            float t = std::max(0.f, std::min(1.f, value));
-            return t * t * (3 - 2 * t);
-        };
-        float phase = npc.attackTime / windup;
-        float progress = npc.attackTime < 0 ? 0
-                         : phase < .65f     ? -.2f * ease(phase / .65f)
-                         : phase < 1        ? -.2f + 1.2f * ease((phase - .65f) / .35f)
-                                            : 1 - ease((npc.attackTime - windup) / .4f);
-        auto heading = npc.attackTime >= 0 ? npc.attackDirection : npc.moveFacing;
-        Point origin = Project(0, 0), direction = Project(heading.x * 12, heading.y * 12);
-        p.x += (direction.x - origin.x) * progress;
-        p.y += (direction.y - origin.y) * progress;
-        float walk = npc.attackTime < 0 ? npc.moveBlend : 0.f;
-        float bob = (npc.monsterForm == 0 ? std::sin(time_ * 2 + float(npc.Id())) * 1.8f
-                                          : -.7f * std::abs(std::sin(npc.gaitPhase)) * walk)
-                    * z;
-        auto at = [&](float x, float y)
-        {
-            return Point{p.x + x * z, p.y + y * z + bob};
-        };
-        Ink hide = Color(62, 29, 61), bone = Color(190, 164, 181);
-        auto limb = [&](Point a, Point joint, Point b, float width, Ink ink)
-        {
-            r.Line(a, joint, (width + 1.5f) * z, Color(23, 27, 29));
-            r.Line(joint, b, (width + .5f) * z, Color(23, 27, 29));
-            r.Line(a, joint, width * z, ink);
-            r.Line(joint, b, std::max(1.f, width - 1) * z, ink);
-            r.Ellipse(joint, width * .5f * z, width * .5f * z, ink);
-        };
-        if (npc.monsterForm == 1)
-        {
-            Ink fur = Color(105, 48, 38);
-            for (int leg = 0; leg < 4; ++leg)
+            float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
+            auto ease = [](float value)
             {
-                float x = leg < 2 ? -16.f : 15.f;
-                float cycle = npc.gaitPhase + (leg == 0 || leg == 3 ? 0.f : 3.14159f);
-                float stride = std::sin(cycle) * 7 * walk;
-                float lift = std::max(0.f, std::cos(cycle)) * 5 * walk;
-                limb(at(x, -22),
-                     at(x - stride * .5f, -12),
-                     at(x + stride, -2 - lift),
-                     4,
-                     leg % 2 ? fur : Color(59, 35, 32));
-                r.Ellipse(at(x + stride + 2, -2 - lift), 5 * z, 2.4f * z, bone);
-            }
-            r.Ellipse(at(0, -24), 25 * z, 13 * z, Color(43, 29, 28));
-            r.Ellipse(at(0, -25), 23 * z, 11 * z, fur);
-            r.Ellipse(at(-5, -29), 15 * z, 5 * z, Color(133, 68, 49));
-            float facing = direction.x >= origin.x ? 1.f : -1.f;
-            r.Ellipse(at(facing * 23, -28), 13 * z, 10 * z, fur);
-            r.Ellipse(at(facing * 31, -26), 9 * z, 5 * z, Color(161, 120, 83));
-            r.Ellipse(at(facing * 38, -27), 3 * z, 3 * z, Color(27, 27, 28));
-            r.Triangle(at(facing * 16, -33), at(facing * 19, -48), at(facing * 26, -34), bone);
-            r.Line(
-                at(facing * 23, -24), at(facing * 38, -24 + std::abs(progress) * 5), 4 * z, bone);
-            r.Ellipse(at(facing * 26, -31), 3 * z, 2 * z, Emissive(Color(255, 170, 51), 2));
-            limb(at(-facing * 20, -24),
-                 at(-facing * 29, -29),
-                 at(-facing * 37, -32 + std::sin(time_ * 3) * 3),
-                 4,
-                 fur);
-        }
-        else if (npc.monsterForm == 2)
-        {
-            Ink stone = Color(83, 102, 89);
-            r.Quad(at(-23, -47), at(21, -49), at(18, -13), at(-18, -13), stone);
-            r.Quad(at(-23, -47), at(-8, -52), at(4, -28), at(-18, -13), Color(104, 122, 102));
-            r.Quad(at(4, -47), at(21, -49), at(18, -13), at(4, -20), Color(51, 71, 64));
-            r.Ellipse(at(0, -56), 12 * z, 11 * z, Color(48, 64, 57));
-            r.Quad(at(-9, -65), at(8, -65), at(11, -51), at(-10, -48), Color(121, 135, 109));
-            for (int side = -1; side <= 1; side += 2)
+                float t = std::max(0.f, std::min(1.f, value));
+                return t * t * (3 - 2 * t);
+            };
+            float phase = npc.attackTime / windup;
+            float progress = npc.attackTime < 0 ? 0
+                             : phase < .65f     ? -.2f * ease(phase / .65f)
+                             : phase < 1        ? -.2f + 1.2f * ease((phase - .65f) / .35f)
+                                                : 1 - ease((npc.attackTime - windup) / .4f);
+            auto heading = npc.attackTime >= 0 ? npc.attackDirection : npc.moveFacing;
+            Point origin = Project(0, 0), direction = Project(heading.x * 12, heading.y * 12);
+            p.x += (direction.x - origin.x) * progress;
+            p.y += (direction.y - origin.y) * progress;
+            float walk = npc.attackTime < 0 ? npc.moveBlend : 0.f;
+            float bob = (npc.monsterForm == 0 ? std::sin(time_ * 2 + float(npc.Id())) * 1.8f
+                                              : -.7f * std::abs(std::sin(npc.gaitPhase)) * walk)
+                        * z;
+            auto at = [&](float x, float y)
             {
-                float stride = std::sin(npc.gaitPhase + (side < 0 ? 3.14159f : 0)) * 5 * walk;
-                limb(at(side * 12.f, -18),
-                     at(side * 14.f + stride * .5f, -10),
-                     at(side * 16.f + stride, -1),
-                     10,
-                     stone);
-                r.Ellipse(at(side * 16.f + stride, -1), 8 * z, 4 * z, Color(110, 120, 101));
-                float lift = npc.attackTime < 0 ? -stride
-                             : phase < .65f     ? -22 * ease(phase / .65f)
-                             : phase < 1        ? -22 + 34 * ease((phase - .65f) / .35f)
-                                                : 12 * progress;
-                limb(at(side * 22.f, -43),
-                     at(side * 29.f, -34 + lift * .5f),
-                     at(side * 32.f, -24 + lift),
-                     11,
-                     stone);
-                r.Ellipse(at(side * 32.f, -24 + lift), 9 * z, 10 * z, Color(130, 133, 106));
-            }
-            r.Line(at(-7, -55), at(7, -55), 3 * z, Emissive(Color(147, 233, 92), 2));
-            r.Line(at(0, -45), at(-7, -28), 2 * z, Color(34, 49, 42));
-        }
-        else
-        {
-            r.Glow(at(0, -25), 25 * z, Color(163, 43, 110, .3f));
-            r.Quad(at(-15, -39), at(13, -42), at(10, -17), at(-12, -15), hide);
-            r.Quad(at(-15, -39), at(-4, -44), at(0, -18), at(-12, -15), Color(93, 48, 83));
-            r.Quad(at(3, -40), at(13, -42), at(10, -17), at(2, -22), Color(38, 26, 45));
-            for (int i = 0; i < 4; ++i)
+                return Point{p.x + x * z, p.y + y * z + bob};
+            };
+            Ink hide = Color(62, 29, 61), bone = Color(190, 164, 181);
+            auto limb = [&](Point a, Point joint, Point b, float width, Ink ink)
             {
-                float x = -13 + i * 7.f;
-                r.Triangle(at(x, -23), at(x + 8, -23), at(x + 3, -5 - (i % 2) * 5.f), hide);
-            }
-            r.Ellipse(at(0, -45), 10 * z, 11 * z, Color(39, 23, 42));
-            for (int side = -1; side <= 1; side += 2)
+                r.Line(a, joint, (width + 1.5f) * z, Color(23, 27, 29));
+                r.Line(joint, b, (width + .5f) * z, Color(23, 27, 29));
+                r.Line(a, joint, width * z, ink);
+                r.Line(joint, b, std::max(1.f, width - 1) * z, ink);
+                r.Ellipse(joint, width * .5f * z, width * .5f * z, ink);
+            };
+            if (npc.monsterForm == 1)
             {
-                r.Triangle(at(side * 6.f, -50), at(side * 16.f, -62), at(side * 11.f, -42), bone);
-                limb(at(side * 13.f, -35),
-                     at(side * 24.f, -26 - progress * 5),
-                     at(side * 25.f, -10),
-                     5,
-                     hide);
-                for (int finger = 0; finger < 3; ++finger)
+                Ink fur = Color(105, 48, 38);
+                for (int leg = 0; leg < 4; ++leg)
                 {
-                    r.Line(at(side * (22.f + finger * 3), -12),
-                           at(side * (23.f + finger * 4), -3 + finger * 2.f),
-                           1.5f * z,
-                           bone);
+                    float x = leg < 2 ? -16.f : 15.f;
+                    float cycle = npc.gaitPhase + (leg == 0 || leg == 3 ? 0.f : 3.14159f);
+                    float stride = std::sin(cycle) * 7 * walk;
+                    float lift = std::max(0.f, std::cos(cycle)) * 5 * walk;
+                    limb(at(x, -22),
+                         at(x - stride * .5f, -12),
+                         at(x + stride, -2 - lift),
+                         4,
+                         leg % 2 ? fur : Color(59, 35, 32));
+                    r.Ellipse(at(x + stride + 2, -2 - lift), 5 * z, 2.4f * z, bone);
                 }
-                r.Line(at(side * 2.f, -46),
-                       at(side * 7.f, -48),
-                       2 * z,
-                       Emissive(Color(255, 81, 136), 2));
+                r.Ellipse(at(0, -24), 25 * z, 13 * z, Color(43, 29, 28));
+                r.Ellipse(at(0, -25), 23 * z, 11 * z, fur);
+                r.Ellipse(at(-5, -29), 15 * z, 5 * z, Color(133, 68, 49));
+                float facing = direction.x >= origin.x ? 1.f : -1.f;
+                r.Ellipse(at(facing * 23, -28), 13 * z, 10 * z, fur);
+                r.Ellipse(at(facing * 31, -26), 9 * z, 5 * z, Color(161, 120, 83));
+                r.Ellipse(at(facing * 38, -27), 3 * z, 3 * z, Color(27, 27, 28));
+                r.Triangle(at(facing * 16, -33), at(facing * 19, -48), at(facing * 26, -34), bone);
+                r.Line(at(facing * 23, -24),
+                       at(facing * 38, -24 + std::abs(progress) * 5),
+                       4 * z,
+                       bone);
+                r.Ellipse(at(facing * 26, -31), 3 * z, 2 * z, Emissive(Color(255, 170, 51), 2));
+                limb(at(-facing * 20, -24),
+                     at(-facing * 29, -29),
+                     at(-facing * 37, -32 + std::sin(time_ * 3) * 3),
+                     4,
+                     fur);
             }
-            r.Line(at(-4, -39), at(4, -39), 2 * z, Color(191, 75, 110));
-            r.Quad(at(0, -34),
-                   at(4, -28),
-                   at(0, -20),
-                   at(-4, -28),
-                   Emissive(Color(238, 75, 158), 1.8f));
-        }
-        if (npc.attackTime >= 0)
-        {
-            Ink warning =
-                npc.attackTime < windup ? Color(240, 163, 62, .7f) : Color(255, 88, 57, .8f);
-            r.Ellipse(p, (npc.monsterForm == 2 ? 37 : 25) * z, 10 * z, Color(210, 83, 41, .15f));
-            if (npc.attackTime < windup)
+            else if (npc.monsterForm == 2)
             {
-                r.Text(p.x - 10 * z, p.y - 80 * z, "!", warning, 1.2f * z);
+                Ink stone = Color(83, 102, 89);
+                r.Quad(at(-23, -47), at(21, -49), at(18, -13), at(-18, -13), stone);
+                r.Quad(at(-23, -47), at(-8, -52), at(4, -28), at(-18, -13), Color(104, 122, 102));
+                r.Quad(at(4, -47), at(21, -49), at(18, -13), at(4, -20), Color(51, 71, 64));
+                r.Ellipse(at(0, -56), 12 * z, 11 * z, Color(48, 64, 57));
+                r.Quad(at(-9, -65), at(8, -65), at(11, -51), at(-10, -48), Color(121, 135, 109));
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    float stride = std::sin(npc.gaitPhase + (side < 0 ? 3.14159f : 0)) * 5 * walk;
+                    limb(at(side * 12.f, -18),
+                         at(side * 14.f + stride * .5f, -10),
+                         at(side * 16.f + stride, -1),
+                         10,
+                         stone);
+                    r.Ellipse(at(side * 16.f + stride, -1), 8 * z, 4 * z, Color(110, 120, 101));
+                    float lift = npc.attackTime < 0 ? -stride
+                                 : phase < .65f     ? -22 * ease(phase / .65f)
+                                 : phase < 1        ? -22 + 34 * ease((phase - .65f) / .35f)
+                                                    : 12 * progress;
+                    limb(at(side * 22.f, -43),
+                         at(side * 29.f, -34 + lift * .5f),
+                         at(side * 32.f, -24 + lift),
+                         11,
+                         stone);
+                    r.Ellipse(at(side * 32.f, -24 + lift), 9 * z, 10 * z, Color(130, 133, 106));
+                }
+                r.Line(at(-7, -55), at(7, -55), 3 * z, Emissive(Color(147, 233, 92), 2));
+                r.Line(at(0, -45), at(-7, -28), 2 * z, Color(34, 49, 42));
             }
             else
             {
-                r.Line(at(-22, -29), at(26, npc.monsterForm == 2 ? 0.f : -16.f), 3 * z, warning);
-                r.Line(at(-15, -34), at(30, npc.monsterForm == 2 ? 2.f : -21.f), 2 * z, warning);
+                r.Glow(at(0, -25), 25 * z, Color(163, 43, 110, .3f));
+                r.Quad(at(-15, -39), at(13, -42), at(10, -17), at(-12, -15), hide);
+                r.Quad(at(-15, -39), at(-4, -44), at(0, -18), at(-12, -15), Color(93, 48, 83));
+                r.Quad(at(3, -40), at(13, -42), at(10, -17), at(2, -22), Color(38, 26, 45));
+                for (int i = 0; i < 4; ++i)
+                {
+                    float x = -13 + i * 7.f;
+                    r.Triangle(at(x, -23), at(x + 8, -23), at(x + 3, -5 - (i % 2) * 5.f), hide);
+                }
+                r.Ellipse(at(0, -45), 10 * z, 11 * z, Color(39, 23, 42));
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    r.Triangle(
+                        at(side * 6.f, -50), at(side * 16.f, -62), at(side * 11.f, -42), bone);
+                    limb(at(side * 13.f, -35),
+                         at(side * 24.f, -26 - progress * 5),
+                         at(side * 25.f, -10),
+                         5,
+                         hide);
+                    for (int finger = 0; finger < 3; ++finger)
+                    {
+                        r.Line(at(side * (22.f + finger * 3), -12),
+                               at(side * (23.f + finger * 4), -3 + finger * 2.f),
+                               1.5f * z,
+                               bone);
+                    }
+                    r.Line(at(side * 2.f, -46),
+                           at(side * 7.f, -48),
+                           2 * z,
+                           Emissive(Color(255, 81, 136), 2));
+                }
+                r.Line(at(-4, -39), at(4, -39), 2 * z, Color(191, 75, 110));
+                r.Quad(at(0, -34),
+                       at(4, -28),
+                       at(0, -20),
+                       at(-4, -28),
+                       Emissive(Color(238, 75, 158), 1.8f));
             }
-        }
-    }
-    else
-    {
-        float gait = std::sin(npc.gaitPhase) * 3 * z * npc.moveBlend;
-        r.Line({p.x - 4 * z, p.y - 12 * z}, {p.x - 6 * z + gait, p.y}, 4 * z, Color(27, 34, 43));
-        r.Line({p.x + 4 * z, p.y - 12 * z}, {p.x + 6 * z - gait, p.y}, 4 * z, Color(27, 34, 43));
-        r.Quad({p.x - 9 * z, p.y - 34 * z},
-               {p.x + 9 * z, p.y - 34 * z},
-               {p.x + 11 * z, p.y - 10 * z},
-               {p.x - 11 * z, p.y - 10 * z},
-               color);
-        r.Quad({p.x + 3 * z, p.y - 34 * z},
-               {p.x + 9 * z, p.y - 34 * z},
-               {p.x + 11 * z, p.y - 10 * z},
-               {p.x + 4 * z, p.y - 12 * z},
-               Color(29, 40, 48, .42f));
-        r.Triangle({p.x - 6 * z, p.y - 35 * z},
-                   {p.x, p.y - 25 * z},
-                   {p.x + 6 * z, p.y - 35 * z},
-                   Color(201, 200, 180));
-        r.Ellipse({p.x - 6 * z + gait, p.y}, 4.5f * z, 2.5f * z, Color(20, 27, 32));
-        r.Ellipse({p.x + 6 * z - gait, p.y}, 4.5f * z, 2.5f * z, Color(20, 27, 32));
-        r.Ellipse({p.x, p.y - 42 * z},
-                  7 * z,
-                  9 * z,
-                  npc.job == NpcJob::Wraith ? Color(69, 29, 59) : Color(211, 184, 165));
-        r.Rect(p.x - 8 * z, p.y - 50 * z, 16 * z, 5 * z, Color(26, 29, 38));
-        r.Ellipse({p.x - 1 * z, p.y - 48 * z}, 7 * z, 4.5f * z, Color(31, 35, 43));
-        r.Line({p.x + 5 * z, p.y - 43 * z},
-               {p.x + 3 * z, p.y - 36 * z},
-               1.5f * z,
-               Color(169, 137, 118));
-        if (npc.job == NpcJob::Hunter || npc.job == NpcJob::Guard || npc.job == NpcJob::Raider)
-        {
-            r.Line({p.x + 11 * z, p.y - 30 * z},
-                   {p.x + 22 * z, p.y - 48 * z},
-                   3 * z,
-                   Emissive(color, 1.5f));
-        }
-        if (npc.job == NpcJob::Merchant)
-        {
-            r.Rect(p.x - 16 * z, p.y - 23 * z, 9 * z, 12 * z, Color(128, 91, 52));
-        }
-        // Human faces, sleeves, belts and occupation-specific equipment remain non-emissive.
-        r.Line({p.x - 10 * z, p.y - 31 * z}, {p.x - 13 * z, p.y - 18 * z}, 4 * z, color);
-        r.Line({p.x + 10 * z, p.y - 31 * z}, {p.x + 13 * z, p.y - 18 * z}, 4 * z, color);
-        r.Ellipse({p.x - 13 * z, p.y - 17 * z}, 2.5f * z, 3 * z, Color(211, 184, 165));
-        r.Ellipse({p.x + 13 * z, p.y - 17 * z}, 2.5f * z, 3 * z, Color(211, 184, 165));
-        r.Rect(p.x - 9 * z, p.y - 16 * z, 18 * z, 3 * z, Color(49, 39, 35));
-        r.Rect(p.x - 2 * z, p.y - 16 * z, 4 * z, 3 * z, Color(199, 171, 113));
-        r.Line({p.x, p.y - 32 * z}, {p.x, p.y - 18 * z}, 1 * z, Color(44, 51, 58));
-        r.Rect(p.x - 4 * z, p.y - 44 * z, 2 * z, 2 * z, Color(39, 32, 36));
-        r.Rect(p.x + 2 * z, p.y - 44 * z, 2 * z, 2 * z, Color(39, 32, 36));
-        if (npc.job == NpcJob::Hunter)
-        {
-            r.Line({p.x - 7 * z, p.y - 33 * z},
-                   {p.x + 7 * z, p.y - 17 * z},
-                   3 * z,
-                   Color(106, 75, 48));
-            r.Rect(p.x - 15 * z, p.y - 35 * z, 6 * z, 16 * z, Color(58, 78, 63));
-        }
-        else if (npc.job == NpcJob::Guard)
-        {
-            r.Rect(p.x - 9 * z, p.y - 52 * z, 18 * z, 6 * z, Color(53, 77, 102));
-            r.Quad({p.x - 17 * z, p.y - 30 * z},
-                   {p.x - 8 * z, p.y - 29 * z},
-                   {p.x - 8 * z, p.y - 15 * z},
-                   {p.x - 15 * z, p.y - 11 * z},
-                   Color(91, 114, 137));
-        }
-        else if (npc.job == NpcJob::Raider)
-        {
-            r.Rect(p.x - 7 * z, p.y - 41 * z, 14 * z, 6 * z, Color(66, 29, 36));
-            r.Line(
-                {p.x - 8 * z, p.y - 35 * z}, {p.x + 7 * z, p.y - 17 * z}, 3 * z, Color(43, 29, 33));
-        }
-        else if (npc.job == NpcJob::Merchant)
-        {
-            r.Rect(p.x - 11 * z, p.y - 49 * z, 22 * z, 3 * z, Color(113, 79, 48));
-            r.Rect(p.x - 5 * z, p.y - 28 * z, 10 * z, 14 * z, Color(220, 206, 169));
+            if (npc.attackTime >= 0)
+            {
+                Ink warning =
+                    npc.attackTime < windup ? Color(240, 163, 62, .7f) : Color(255, 88, 57, .8f);
+                r.Ellipse(
+                    p, (npc.monsterForm == 2 ? 37 : 25) * z, 10 * z, Color(210, 83, 41, .15f));
+                if (npc.attackTime < windup)
+                {
+                    r.Text(p.x - 10 * z, p.y - 80 * z, "!", warning, 1.2f * z);
+                }
+                else
+                {
+                    r.Line(
+                        at(-22, -29), at(26, npc.monsterForm == 2 ? 0.f : -16.f), 3 * z, warning);
+                    r.Line(
+                        at(-15, -34), at(30, npc.monsterForm == 2 ? 2.f : -21.f), 2 * z, warning);
+                }
+            }
         }
         else
         {
-            r.Line({p.x - 6 * z, p.y - 34 * z},
-                   {p.x - 6 * z, p.y - 14 * z},
-                   4 * z,
-                   Color(213, 208, 185));
-            r.Rect(p.x + 9 * z, p.y - 25 * z, 8 * z, 11 * z, Color(78, 57, 84));
-            r.Rect(p.x + 11 * z, p.y - 23 * z, 4 * z, 7 * z, Color(213, 208, 185));
+            float gait = std::sin(npc.gaitPhase) * 3 * z * npc.moveBlend;
+            r.Line(
+                {p.x - 4 * z, p.y - 12 * z}, {p.x - 6 * z + gait, p.y}, 4 * z, Color(27, 34, 43));
+            r.Line(
+                {p.x + 4 * z, p.y - 12 * z}, {p.x + 6 * z - gait, p.y}, 4 * z, Color(27, 34, 43));
+            r.Quad({p.x - 9 * z, p.y - 34 * z},
+                   {p.x + 9 * z, p.y - 34 * z},
+                   {p.x + 11 * z, p.y - 10 * z},
+                   {p.x - 11 * z, p.y - 10 * z},
+                   color);
+            r.Quad({p.x + 3 * z, p.y - 34 * z},
+                   {p.x + 9 * z, p.y - 34 * z},
+                   {p.x + 11 * z, p.y - 10 * z},
+                   {p.x + 4 * z, p.y - 12 * z},
+                   Color(29, 40, 48, .42f));
+            r.Triangle({p.x - 6 * z, p.y - 35 * z},
+                       {p.x, p.y - 25 * z},
+                       {p.x + 6 * z, p.y - 35 * z},
+                       Color(201, 200, 180));
+            r.Ellipse({p.x - 6 * z + gait, p.y}, 4.5f * z, 2.5f * z, Color(20, 27, 32));
+            r.Ellipse({p.x + 6 * z - gait, p.y}, 4.5f * z, 2.5f * z, Color(20, 27, 32));
+            r.Ellipse({p.x, p.y - 42 * z},
+                      7 * z,
+                      9 * z,
+                      npc.job == NpcJob::Wraith ? Color(69, 29, 59) : Color(211, 184, 165));
+            r.Rect(p.x - 8 * z, p.y - 50 * z, 16 * z, 5 * z, Color(26, 29, 38));
+            r.Ellipse({p.x - 1 * z, p.y - 48 * z}, 7 * z, 4.5f * z, Color(31, 35, 43));
+            r.Line({p.x + 5 * z, p.y - 43 * z},
+                   {p.x + 3 * z, p.y - 36 * z},
+                   1.5f * z,
+                   Color(169, 137, 118));
+            if (npc.job == NpcJob::Hunter || npc.job == NpcJob::Guard || npc.job == NpcJob::Raider)
+            {
+                r.Line({p.x + 11 * z, p.y - 30 * z},
+                       {p.x + 22 * z, p.y - 48 * z},
+                       3 * z,
+                       Emissive(color, 1.5f));
+            }
+            if (npc.job == NpcJob::Merchant)
+            {
+                r.Rect(p.x - 16 * z, p.y - 23 * z, 9 * z, 12 * z, Color(128, 91, 52));
+            }
+            // Human faces, sleeves, belts and occupation-specific equipment remain non-emissive.
+            r.Line({p.x - 10 * z, p.y - 31 * z}, {p.x - 13 * z, p.y - 18 * z}, 4 * z, color);
+            r.Line({p.x + 10 * z, p.y - 31 * z}, {p.x + 13 * z, p.y - 18 * z}, 4 * z, color);
+            r.Ellipse({p.x - 13 * z, p.y - 17 * z}, 2.5f * z, 3 * z, Color(211, 184, 165));
+            r.Ellipse({p.x + 13 * z, p.y - 17 * z}, 2.5f * z, 3 * z, Color(211, 184, 165));
+            r.Rect(p.x - 9 * z, p.y - 16 * z, 18 * z, 3 * z, Color(49, 39, 35));
+            r.Rect(p.x - 2 * z, p.y - 16 * z, 4 * z, 3 * z, Color(199, 171, 113));
+            r.Line({p.x, p.y - 32 * z}, {p.x, p.y - 18 * z}, 1 * z, Color(44, 51, 58));
+            r.Rect(p.x - 4 * z, p.y - 44 * z, 2 * z, 2 * z, Color(39, 32, 36));
+            r.Rect(p.x + 2 * z, p.y - 44 * z, 2 * z, 2 * z, Color(39, 32, 36));
+            if (npc.job == NpcJob::Hunter)
+            {
+                r.Line({p.x - 7 * z, p.y - 33 * z},
+                       {p.x + 7 * z, p.y - 17 * z},
+                       3 * z,
+                       Color(106, 75, 48));
+                r.Rect(p.x - 15 * z, p.y - 35 * z, 6 * z, 16 * z, Color(58, 78, 63));
+            }
+            else if (npc.job == NpcJob::Guard)
+            {
+                r.Rect(p.x - 9 * z, p.y - 52 * z, 18 * z, 6 * z, Color(53, 77, 102));
+                r.Quad({p.x - 17 * z, p.y - 30 * z},
+                       {p.x - 8 * z, p.y - 29 * z},
+                       {p.x - 8 * z, p.y - 15 * z},
+                       {p.x - 15 * z, p.y - 11 * z},
+                       Color(91, 114, 137));
+            }
+            else if (npc.job == NpcJob::Raider)
+            {
+                r.Rect(p.x - 7 * z, p.y - 41 * z, 14 * z, 6 * z, Color(66, 29, 36));
+                r.Line({p.x - 8 * z, p.y - 35 * z},
+                       {p.x + 7 * z, p.y - 17 * z},
+                       3 * z,
+                       Color(43, 29, 33));
+            }
+            else if (npc.job == NpcJob::Merchant)
+            {
+                r.Rect(p.x - 11 * z, p.y - 49 * z, 22 * z, 3 * z, Color(113, 79, 48));
+                r.Rect(p.x - 5 * z, p.y - 28 * z, 10 * z, 14 * z, Color(220, 206, 169));
+            }
+            else
+            {
+                r.Line({p.x - 6 * z, p.y - 34 * z},
+                       {p.x - 6 * z, p.y - 14 * z},
+                       4 * z,
+                       Color(213, 208, 185));
+                r.Rect(p.x + 9 * z, p.y - 25 * z, 8 * z, 11 * z, Color(78, 57, 84));
+                r.Rect(p.x + 11 * z, p.y - 23 * z, 4 * z, 7 * z, Color(213, 208, 185));
+            }
         }
     }
     r.Text(p.x - 25 * z,

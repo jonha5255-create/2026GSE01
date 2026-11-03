@@ -174,6 +174,7 @@
     <ClInclude Include="AssetModel.h" />
     <ClInclude Include="AssetLibrary.h" />
     <ClInclude Include="AssetPreview.h" />
+    <ClInclude Include="WorldArt.h" />
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
     <ClInclude Include="LevelOne.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="FrameProfiler.h" />
+    <ClInclude Include="FramePacer.h" />
     <ClInclude Include="MeshDiskCache.h" />
     <ClInclude Include="RenderDiagnostics.h" />
     <ClInclude Include="WorldMonitor.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="AssetModel.cpp" />
     <ClCompile Include="AssetLibrary.cpp" />
     <ClCompile Include="AssetPreview.cpp" />
+    <ClCompile Include="WorldArt.cpp" />
     <ClCompile Include="AssetTests.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
     <ClCompile Include="CityGenerator.cpp" />
@@ -225,6 +228,7 @@
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="FrameProfiler.cpp" />
+    <ClCompile Include="FramePacer.cpp" />
     <ClCompile Include="MeshDiskCache.cpp" />
     <ClCompile Include="RenderDiagnostics.cpp" />
     <ClCompile Include="WorldMonitor.cpp" />
@@ -242,6 +246,8 @@
     <None Include="Renderer.cpp" />
     <None Include="Shaders\Scene.vs" />
     <None Include="Shaders\Scene.fs" />
+    <None Include="Shaders\ArtModel.vs" />
+    <None Include="Shaders\ArtModel.fs" />
     <None Include="Shaders\Fullscreen.vs" />
     <None Include="Shaders\Blur.fs" />
     <None Include="Shaders\Composite.fs" />

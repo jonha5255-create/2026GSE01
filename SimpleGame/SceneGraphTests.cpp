@@ -107,6 +107,7 @@ bool SceneGraph::SelfTest()
     ActorUpdateContext context;
     TestRenderer renderer;
     auto& root = graph.Spawn<Probe>(NoActor);
+    check(graph.Query<Probe>().size() == 1, "typed query cache initializes");
     root.local = {10, 20};
     auto& child = graph.Spawn<Probe>(root.Id());
     child.local = {3, 4};
@@ -123,6 +124,8 @@ bool SceneGraph::SelfTest()
           "scene graph rejects cycles");
     graph.Reparent(child.Id(), root.Id());
     root.enabled = false;
+    check(graph.Query<Probe>().size() == 1 && graph.Query<Probe>(true).size() == 4,
+          "typed query cache refreshes after spawn and filters current ancestor state");
     graph.Update(.01f, context);
     check(root.updates == 0 && child.updates == 0 && leaf.updates == 0,
           "disabled ancestor suppresses subtree updates");
@@ -138,9 +141,11 @@ bool SceneGraph::SelfTest()
           "origin rebasing transforms roots only");
     ActorId rootId = root.Id(), childId = child.Id(), leafId = leaf.Id();
     graph.Destroy(rootId);
+    check(graph.Query<Probe>().size() == 1, "typed query cache excludes pending subtrees");
     check(!graph.Get(childId) && !graph.Get(leafId),
           "destroyed ancestor immediately hides children from queries");
     graph.CollectDestroyed();
+    check(graph.Query<Probe>().size() == 1, "typed query cache invalidates freed actor pointers");
     check(graph.Size() == 1, "deferred destruction collects the entire subtree");
     auto& fresh = graph.Spawn<Probe>(NoActor);
     check(fresh.Id() > leafId && !graph.Get(rootId), "actor handles are never reused");

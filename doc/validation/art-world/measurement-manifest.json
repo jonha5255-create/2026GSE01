@@ -1,0 +1,50 @@
+[
+  {
+    "file": "after-debug-default.csv",
+    "original_log": "render-2026-1103-101521-27720.csv",
+    "sha256": "f9cec31d0021f0138c253426d63f184f3d3023b918db52b9421631c39a601c97",
+    "frames": 180,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=0; fps_limit=60"
+  },
+  {
+    "file": "after-release-default.csv",
+    "original_log": "render-2026-1103-101726-5036.csv",
+    "sha256": "828a906f6b069d28f813afa3a57c59d2b01d41a56330970e8703c265776d3fd6",
+    "frames": 600,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=0; fps_limit=60"
+  },
+  {
+    "file": "after-release-uncapped.csv",
+    "original_log": "render-2026-1103-101859-13292.csv",
+    "sha256": "f21da5da06de77cff38f5a29e64a760974e2ce495bb406ea76226bb7806dab73",
+    "frames": 1800,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=0; fps_limit=0"
+  },
+  {
+    "file": "after-release-vsync.csv",
+    "original_log": "render-2026-1103-100658-21920.csv",
+    "sha256": "c4f6608964c30a49128a279499a627e47c3ac75261171720139a9d377d74c247",
+    "frames": 600,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=1"
+  },
+  {
+    "file": "before-debug-vsync.csv",
+    "original_log": "render-2026-1103-092439-37616.csv",
+    "sha256": "8d72164a7ef7eb7ae3ee5e02e9798e88a25bafbd62945933777b6443f9c4129e",
+    "frames": 180,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=1"
+  },
+  {
+    "file": "before-release-vsync.csv",
+    "original_log": "render-2026-1103-092429-8856.csv",
+    "sha256": "853a0dc2f394517a267bdef3c11dd405f7eb9b90a8ffda4a70dc487f771a335c",
+    "frames": 180,
+    "excluded_warmup_frames": 30,
+    "environment": "seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; framework=GLFW 3.4.0 Win32 WGL Null EGL OSMesa VisualC; swap_interval=1"
+  }
+]

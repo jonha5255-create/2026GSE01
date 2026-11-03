@@ -40,7 +40,10 @@ bool PrototypeRenderer::Initialize()
     linearUniform_ = glGetUniformLocation(program_, "linearScene");
     GLint maxTexels = 0;
     glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE, &maxTexels);
-    atlasVertexLimit_ = std::min(size_t(maxTexels / 3), MaxCachedBytes / (12 * sizeof(float)));
+    // Static cache (32 MiB) and the bounded animated stream share a page so painter
+    // ordering does not force a texture/page switch for every character.
+    atlasVertexLimit_ =
+        std::min(size_t(maxTexels / 3), size_t(128 * 1024 * 1024 / (12 * sizeof(float))));
     atlasVertexLimit_ -= atlasVertexLimit_ % 3;
     descriptorLimit_ = std::min(size_t(maxTexels / 5), MaxTriangleInstances);
     if (atlasVertexLimit_ < 144 || !descriptorLimit_)
@@ -162,11 +165,23 @@ bool PrototypeRenderer::Initialize()
                                    "GL_MAX_TEXTURE_BUFFER_SIZE=" + std::to_string(maxTexels)
                                        + "; max_triangle_instances="
                                        + std::to_string(MaxTriangleInstances));
-    return post_.Initialize() && glGetError() == GL_NO_ERROR;
+    modelProgram_ = LoadShaderProgram(L"ArtModel.vs", L"ArtModel.fs");
+    return modelProgram_ && post_.Initialize() && glGetError() == GL_NO_ERROR;
 }
 
 void PrototypeRenderer::Shutdown()
 {
+    for (auto& entry : gpuModels_)
+    {
+        glDeleteBuffers(1, &entry.second.buffer);
+        glDeleteVertexArrays(1, &entry.second.vao);
+    }
+    gpuModels_.clear();
+    modelBytes_ = 0;
+    glDeleteProgram(modelProgram_);
+    glDeleteRenderbuffers(1, &modelDepth_);
+    modelProgram_ = modelDepth_ = 0;
+    depthWidth_ = depthHeight_ = 0;
     commands_.clear();
     ClearCache();
     glDeleteBuffers(1, &descriptorBuffer_);
@@ -195,6 +210,8 @@ void PrototypeRenderer::Shutdown()
 bool PrototypeRenderer::Begin(int width, int height)
 {
     FrameProfiler::Get().BeginFrame();
+    FrameProfiler::Get().Counters().gpuModelBytes = modelBytes_;
+    FrameProfiler::Get().Counters().gpuModelEntries = gpuModels_.size();
     width_ = std::max(width, 1);
     height_ = std::max(height, 1);
     vertices_.clear();
@@ -207,6 +224,24 @@ bool PrototypeRenderer::Begin(int width, int height)
     if (!post_.Begin(width_, height_))
     {
         return false;
+    }
+    GLint framebuffer = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+    if (framebuffer)
+    {
+        if (!modelDepth_)
+        {
+            glGenRenderbuffers(1, &modelDepth_);
+        }
+        glBindRenderbuffer(GL_RENDERBUFFER, modelDepth_);
+        if (depthWidth_ != width_ || depthHeight_ != height_)
+        {
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width_, height_);
+            depthWidth_ = width_;
+            depthHeight_ = height_;
+        }
+        glFramebufferRenderbuffer(
+            GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, modelDepth_);
     }
     glClearColor(.002f, .0033f, .0047f, 1);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -581,6 +616,155 @@ void PrototypeRenderer::ReleasePages()
     pages_.clear();
 }
 
+void PrototypeRenderer::PackedMesh(const std::vector<float>& data,
+                                   Point origin,
+                                   float scale,
+                                   float opacity)
+{
+    if (data.size() % 36 != 0)
+    {
+        throw std::invalid_argument("Incomplete packed triangles");
+    }
+    if (data.empty())
+    {
+        return;
+    }
+    if (recording_)
+    {
+        for (size_t i = 0; i < data.size(); i += 12)
+        {
+            Push({origin.x + data[i] * scale, origin.y + data[i + 1] * scale},
+                 {data[i + 4], data[i + 5], data[i + 6], data[i + 7] * opacity, data[i + 8]},
+                 data[i + 2],
+                 data[i + 3]);
+        }
+        return;
+    }
+    streamedMeshes_.emplace_back();
+    auto& mesh = streamedMeshes_.back();
+    mesh.data = data;
+    mesh.count = GLsizei(data.size() / 12);
+    Submit(mesh, origin, {scale, 0}, {0, scale}, Color(255, 255, 255, opacity));
+}
+
+void PrototypeRenderer::ModelMesh(const std::string& key,
+                                  const std::vector<ModelVertex>& vertices,
+                                  const std::vector<std::array<float, 16>>& bones,
+                                  Point origin,
+                                  float scale,
+                                  float yaw,
+                                  std::array<float, 3> stretch,
+                                  std::array<float, 3> offset,
+                                  float opacity)
+{
+    if (vertices.empty())
+    {
+        return;
+    }
+    if (bones.empty() || bones.size() > 56 || vertices.size() % 3)
+    {
+        throw std::invalid_argument("Invalid GPU model/palette");
+    }
+    Flush();
+    auto found = gpuModels_.find(key);
+    if (found == gpuModels_.end())
+    {
+        const size_t bytes = vertices.size() * sizeof(ModelVertex);
+        if (bytes > 64 * 1024 * 1024)
+        {
+            throw std::runtime_error("GPU model exceeds cache budget");
+        }
+        while (!gpuModels_.empty()
+               && (gpuModels_.size() >= 128 || modelBytes_ + bytes > 64 * 1024 * 1024))
+        {
+            auto oldest = std::min_element(gpuModels_.begin(),
+                                           gpuModels_.end(),
+                                           [](const auto& a, const auto& b)
+                                           {
+                                               return a.second.used < b.second.used;
+                                           });
+            modelBytes_ -= size_t(oldest->second.count) * sizeof(ModelVertex);
+            glDeleteBuffers(1, &oldest->second.buffer);
+            glDeleteVertexArrays(1, &oldest->second.vao);
+            gpuModels_.erase(oldest);
+            ++FrameProfiler::Get().Counters().evictions;
+        }
+        GpuModel mesh;
+        mesh.count = GLsizei(vertices.size());
+        glGenVertexArrays(1, &mesh.vao);
+        glBindVertexArray(mesh.vao);
+        glGenBuffers(1, &mesh.buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.buffer);
+        glBufferData(GL_ARRAY_BUFFER, bytes, vertices.data(), GL_STATIC_DRAW);
+        const int components[] = {3, 3, 4, 3, 4, 4};
+        const size_t offsets[] = {offsetof(ModelVertex, position),
+                                  offsetof(ModelVertex, normal),
+                                  offsetof(ModelVertex, color),
+                                  offsetof(ModelVertex, emission),
+                                  offsetof(ModelVertex, joints),
+                                  offsetof(ModelVertex, weights)};
+        for (GLuint i = 0; i < 6; ++i)
+        {
+            glEnableVertexAttribArray(i);
+            if (i == 4)
+            {
+                glVertexAttribIPointer(i,
+                                       components[i],
+                                       GL_UNSIGNED_INT,
+                                       sizeof(ModelVertex),
+                                       reinterpret_cast<void*>(offsets[i]));
+            }
+            else
+            {
+                glVertexAttribPointer(i,
+                                      components[i],
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(ModelVertex),
+                                      reinterpret_cast<void*>(offsets[i]));
+            }
+        }
+        found = gpuModels_.emplace(key, mesh).first;
+        modelBytes_ += bytes;
+        ++FrameProfiler::Get().Counters().gpuModelUploads;
+        FrameProfiler::Get().Counters().meshBytes += bytes;
+        RenderDiagnostics::Get().Event("gpu_model_upload",
+                                       key + "; bytes=" + std::to_string(bytes)
+                                           + "; resident=" + std::to_string(modelBytes_));
+    }
+    auto& mesh = found->second;
+    mesh.used = frame_;
+    glUseProgram(modelProgram_);
+    auto uniform = [&](const char* name)
+    {
+        return glGetUniformLocation(modelProgram_, name);
+    };
+    glUniformMatrix4fv(uniform("bones"), GLsizei(bones.size()), GL_FALSE, bones[0].data());
+    glUniform2f(uniform("viewport"), float(width_), float(height_));
+    glUniform2f(uniform("origin"), origin.x, origin.y);
+    glUniform1f(uniform("scale"), scale);
+    glUniform1f(uniform("yaw"), yaw);
+    glUniform1f(uniform("opacity"), opacity);
+    glUniform3fv(uniform("stretch"), 1, stretch.data());
+    glUniform3fv(uniform("offset"), 1, offset.data());
+    glUniform1i(uniform("linearScene"), linearScene_);
+    // The scene graph controls inter-actor painter order; depth resolves only
+    // surfaces within this model, removing per-frame CPU triangle sorting.
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LEQUAL);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glBindVertexArray(mesh.vao);
+    glDrawArrays(GL_TRIANGLES, 0, mesh.count);
+    glDisable(GL_DEPTH_TEST);
+    FrameProfiler::Get().RecordDrawCall(linearScene_ ? DrawStage::Scene : DrawStage::UI);
+    auto& counters = FrameProfiler::Get().Counters();
+    counters.triangles += mesh.count / 3;
+    counters.instanceBytes += bones.size() * sizeof(bones[0]);
+    counters.gpuModelBytes = modelBytes_;
+    counters.gpuModelEntries = gpuModels_.size();
+}
+
 void PrototypeRenderer::RebuildAtlas()
 {
     if (!atlasDirty_)
@@ -598,7 +782,13 @@ void PrototypeRenderer::RebuildAtlas()
         AtlasPage page;
         glGenBuffers(1, &page.buffer);
         glBindBuffer(GL_TEXTURE_BUFFER, page.buffer);
-        glBufferData(GL_TEXTURE_BUFFER, data.size() * sizeof(float), data.data(), GL_STATIC_DRAW);
+        page.usedVertices = data.size() / 12;
+        const size_t reserve = streamedMeshes_.empty() ? 0 : 1572864;
+        page.capacity =
+            page.usedVertices + std::min<size_t>(reserve, atlasVertexLimit_ - page.usedVertices);
+        glBufferData(
+            GL_TEXTURE_BUFFER, page.capacity * 12 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+        glBufferSubData(GL_TEXTURE_BUFFER, 0, data.size() * sizeof(float), data.data());
         glGenTextures(1, &page.texture);
         glBindTexture(GL_TEXTURE_BUFFER, page.texture);
         glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, page.buffer);
@@ -635,6 +825,53 @@ void PrototypeRenderer::Flush()
         return;
     }
     RebuildAtlas();
+    // Reuse spare tails in the static atlas. Animated poses never rebuild the atlas
+    // or create a GL buffer per actor/frame. Painter ordering is preserved.
+    std::vector<std::vector<float>> streams(pages_.size());
+    for (auto& mesh : streamedMeshes_)
+    {
+        if (size_t(mesh.count) > atlasVertexLimit_)
+        {
+            throw std::runtime_error("Stream mesh exceeds atlas limit");
+        }
+        size_t page = 0;
+        while (page < pages_.size()
+               && pages_[page].usedVertices + streams[page].size() / 12 + size_t(mesh.count)
+                      > pages_[page].capacity)
+        {
+            ++page;
+        }
+        if (page == pages_.size())
+        {
+            AtlasPage extra;
+            extra.capacity = std::min(atlasVertexLimit_, std::max<size_t>(262144, mesh.count));
+            glGenBuffers(1, &extra.buffer);
+            glBindBuffer(GL_TEXTURE_BUFFER, extra.buffer);
+            glBufferData(
+                GL_TEXTURE_BUFFER, extra.capacity * 12 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+            glGenTextures(1, &extra.texture);
+            glBindTexture(GL_TEXTURE_BUFFER, extra.texture);
+            glTexBuffer(GL_TEXTURE_BUFFER, GL_RGBA32F, extra.buffer);
+            pages_.push_back(extra);
+            streams.emplace_back();
+        }
+        mesh.page = page;
+        mesh.first = GLint(pages_[page].usedVertices + streams[page].size() / 12);
+        streams[page].insert(streams[page].end(), mesh.data.begin(), mesh.data.end());
+    }
+    for (size_t i = 0; i < streams.size(); ++i)
+    {
+        if (streams[i].empty())
+        {
+            continue;
+        }
+        glBindBuffer(GL_TEXTURE_BUFFER, pages_[i].buffer);
+        glBufferSubData(GL_TEXTURE_BUFFER,
+                        pages_[i].usedVertices * 12 * sizeof(float),
+                        streams[i].size() * sizeof(float),
+                        streams[i].data());
+        FrameProfiler::Get().Counters().meshBytes += streams[i].size() * sizeof(float);
+    }
     glUseProgram(program_);
     glUniform2f(viewport_, float(width_), float(height_));
     glUniform1i(linearUniform_, linearScene_);
@@ -708,6 +945,7 @@ void PrototypeRenderer::Flush()
     draw();
     glActiveTexture(GL_TEXTURE0);
     commands_.clear();
+    streamedMeshes_.clear();
 }
 
 void PrototypeRenderer::TrimCache()
@@ -816,6 +1054,87 @@ bool PrototypeRenderer::VerifyMeshCache()
     check(FrameProfiler::Get().DrawCalls() == 3 && referenceCalls > 3,
           "heterogeneous transparent meshes merge into one scene and one UI draw");
     check(disk_.SelfTest(), "persistent mesh cache validation");
+    std::vector<ModelVertex> model(3);
+    const float positions[3][3] = {{0, 0, 0}, {40, 0, 0}, {0, 40, 0}};
+    for (size_t i = 0; i < model.size(); ++i)
+    {
+        std::copy(std::begin(positions[i]), std::end(positions[i]), model[i].position);
+        model[i].normal[1] = 1;
+        const float color[] = {.8f, .4f, .2f, 1};
+        std::copy(std::begin(color), std::end(color), model[i].color);
+        model[i].weights[0] = 1;
+    }
+    auto gpuReference = [&](int mode, float translation, float opacity)
+    {
+        Begin(width_, height_);
+        Rect(200, 150, 200, 200, Color(50, 80, 110));
+        auto project = [&](float x, float y)
+        {
+            return Point{250 + (x + translation) * .85f * 2,
+                         250 + ((x + translation) * .425f - y) * 2};
+        };
+        if (mode == 1)
+        {
+            std::array<float, 16> bone{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, translation, 0, 0, 1};
+            ModelMesh("test:gpu-skin", model, {bone}, {250, 250}, 2, 0, {1, 1, 1}, {}, opacity);
+        }
+        else if (mode == 2)
+        {
+            std::vector<float> packed;
+            float light = .48f + .52f * .85f;
+            for (auto p : {project(0, 0), project(40, 0), project(0, 40)})
+            {
+                const float vertex[] = {p.x,
+                                        p.y,
+                                        .5f / 3072,
+                                        .5f / 2304,
+                                        .8f * light,
+                                        .4f * light,
+                                        .2f * light,
+                                        opacity,
+                                        1,
+                                        0,
+                                        0,
+                                        0};
+                packed.insert(packed.end(), std::begin(vertex), std::end(vertex));
+            }
+            PackedMesh(packed, {0, 0}, 1);
+        }
+        else
+        {
+            float light = .48f + .52f * .85f;
+            Triangle(project(0, 0),
+                     project(40, 0),
+                     project(0, 40),
+                     {.8f * light, .4f * light, .2f * light, opacity});
+        }
+        Rect(270, 230, 12, 18, Color(170, 20, 130, .4f));
+        CompositeScene();
+        Rect(8, 8, 20, 20, Color(80, 160, 220));
+        Flush();
+        std::vector<unsigned char> pixels(size_t(width_) * height_ * 3);
+        glReadBuffer(GL_BACK);
+        glPixelStorei(GL_PACK_ALIGNMENT, 1);
+        glReadPixels(0, 0, width_, height_, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        return pixels;
+    };
+    for (int i = 0; i < 3; ++i)
+    {
+        auto cpu = gpuReference(false, float(i) * 17, i == 2 ? .4f : 1);
+        auto gpu = gpuReference(true, float(i) * 17, i == 2 ? .4f : 1);
+        auto packed = gpuReference(2, float(i) * 17, i == 2 ? .4f : 1);
+        check(cpu == packed,
+              "packed model stream preserves pixels and cached/static painter order");
+        size_t differences = 0;
+        for (size_t k = 0; k < cpu.size(); ++k)
+        {
+            differences += std::abs(int(cpu[k]) - int(gpu[k])) > 2;
+        }
+        check(differences < 100,
+              "GPU skinning matches CPU projection, bone translation, opacity and painter order");
+    }
+    check(gpuModels_.count("test:gpu-skin") == 1, "bone animation reuses immutable GPU geometry");
     Begin(width_, height_);
     // Force multiple descriptor batches without changing draw order or positions.
     size_t savedLimit = descriptorLimit_;

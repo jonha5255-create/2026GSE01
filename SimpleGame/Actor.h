@@ -61,6 +61,7 @@ class Actor
     void SetPosition(ActorPosition world);
     ActorPosition local;
     bool enabled = true, visible = true, screenSpace = false;
+    bool tickEnabled = true;
     RenderLayer layer = RenderLayer::World;
     float depthBias = 0;
 
@@ -83,6 +84,7 @@ class Actor
   private:
     friend class SceneGraph;
     ActorId id_ = NoActor, parent_ = NoActor;
+    Actor* parentNode_ = nullptr;
     SceneGraph* scene_ = nullptr;
     std::string name_;
     bool destroyed_ = false;

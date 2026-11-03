@@ -562,6 +562,10 @@ namespace Art
                 Vec3 p{};
                 for (size_t j = 0; j < 4; ++j)
                 {
+                    if (vertex.weights[j] == 0)
+                    {
+                        continue;
+                    }
                     auto v = palette[vertex.joints[j]].Point(vertex.position);
                     p.x += v.x * vertex.weights[j];
                     p.y += v.y * vertex.weights[j];

@@ -6,24 +6,27 @@
 
 namespace Art
 {
-    void ModelRenderer::Draw(PrototypeRenderer& renderer,
-                             const Model& model,
-                             const Pose& pose,
-                             const std::vector<size_t>& selected,
-                             Point origin,
-                             float scale,
-                             float yaw)
+    std::vector<float> ModelRenderer::Bake(const Model& model,
+                                           const Pose& pose,
+                                           const std::vector<size_t>& selected,
+                                           float yaw,
+                                           Vec3 stretch,
+                                           Vec3 offset)
     {
         faces_.clear();
         float cosine = std::cos(yaw), sine = std::sin(yaw);
         auto rotate = [&](Vec3 v)
         {
-            return Vec3{v.x * cosine + v.z * sine, v.y, -v.x * sine + v.z * cosine};
+            v.x += offset.x;
+            v.y += offset.y;
+            v.z += offset.z;
+            return Vec3{(v.x * cosine + v.z * sine) * stretch.x,
+                        v.y * stretch.y,
+                        (-v.x * sine + v.z * cosine) * stretch.z};
         };
         auto project = [&](Vec3 v)
         {
-            return Point{origin.x + (v.x - v.z) * .85f * scale,
-                         origin.y + ((v.x + v.z) * .425f - v.y) * scale};
+            return Point{(v.x - v.z) * .85f, (v.x + v.z) * .425f - v.y};
         };
         for (size_t pi = 0; pi < model.primitives.size(); ++pi)
         {
@@ -34,6 +37,7 @@ namespace Art
             }
             const auto& primitive = model.primitives[pi];
             pose.SkinVertices(model, primitive, positions_);
+            const auto& positions = positions_;
             Material material;
             if (primitive.material >= 0)
             {
@@ -41,9 +45,9 @@ namespace Art
             }
             for (size_t i = 0; i < primitive.indices.size(); i += 3)
             {
-                Vec3 a = rotate(positions_[primitive.indices[i]]),
-                     b = rotate(positions_[primitive.indices[i + 1]]),
-                     c = rotate(positions_[primitive.indices[i + 2]]);
+                Vec3 a = rotate(positions[primitive.indices[i]]),
+                     b = rotate(positions[primitive.indices[i + 1]]),
+                     c = rotate(positions[primitive.indices[i + 2]]);
                 Vec3 u{b.x - a.x, b.y - a.y, b.z - a.z}, v{c.x - a.x, c.y - a.y, c.z - a.z};
                 Vec3 n{u.y * v.z - u.z * v.y, u.z * v.x - u.x * v.z, u.x * v.y - u.y * v.x};
                 float length = std::sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
@@ -75,12 +79,31 @@ namespace Art
                          {
                              return a.depth < b.depth;
                          });
-        // Existing renderer batches the immutable triangle primitive: skinning does not
-        // allocate a new GL mesh or issue one draw call per material/triangle.
+        std::vector<float> packed;
+        packed.reserve(faces_.size() * 36);
         for (const auto& face : faces_)
         {
-            renderer.Triangle(face.a, face.b, face.c, face.color);
+            for (auto p : {face.a, face.b, face.c})
+            {
+                const auto& c = face.color;
+                const float vertex[] = {
+                    p.x, p.y, .5f / 3072, .5f / 2304, c.r, c.g, c.b, c.a, c.energy, 0, 0, 0};
+                packed.insert(packed.end(), std::begin(vertex), std::end(vertex));
+            }
         }
+        return packed;
+    }
+
+    void ModelRenderer::Draw(PrototypeRenderer& renderer,
+                             const Model& model,
+                             const Pose& pose,
+                             const std::vector<size_t>& selected,
+                             Point origin,
+                             float scale,
+                             float yaw)
+    {
+        auto mesh = Bake(model, pose, selected, yaw);
+        renderer.PackedMesh(mesh, origin, scale);
     }
 
     void AssetPreview::Draw(PrototypeRenderer& renderer, float seconds)

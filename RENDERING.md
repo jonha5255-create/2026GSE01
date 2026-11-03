@@ -30,14 +30,14 @@ FrameProfiler는 실제 GL draw 호출 지점을 계수합니다. glClear/업로
 실행 파일 옆 Logs에 세션별 CSV(매 프레임)와 JSONL(이벤트)을 저장합니다. 파일명은 UTC입니다. 1초마다 및 정상 종료 시 flush합니다. 자동 로그 삭제 정책은 없으므로 장시간 측정 후 보관/정리하세요. 로그 파일 열기 실패 시 콘솔 경고를 출력합니다.
 
 ```powershell
-.\x64\Release\SimpleGame.exe --profile-test --seed=2026 --rebuild-mesh-cache
-.\x64\Release\SimpleGame.exe --profile-test --seed=2026
+.\x64\Release\SimpleGame.exe --profile-test --seed=2026 --fps-limit=0 --rebuild-mesh-cache
+.\x64\Release\SimpleGame.exe --profile-test --seed=2026 --fps-limit=0
 .\tools\Analyze-RenderLog.ps1 -Csv .\x64\Release\Logs\render-실제파일명.csv
 ```
 
---profile-test는 일반 루프 180프레임 후 종료합니다. 분석 스크립트는 기본 첫 프레임을 정상 상태 통계에서 제외하되 전체 합계와 첫 프레임 비용도 출력합니다. --smoke-test는 회귀 검사이며 FPS 벤치마크가 아닙니다.
+--profile-test는 일반 루프 180프레임 후 종료합니다. `--profile-frames=600`으로 길이를 바꿀 수 있습니다. 기본 실행은 VSync 해제 + 60FPS 제한이며, 순수 처리 성능 측정에는 `--fps-limit=0`을 사용합니다. 분석 스크립트는 기본 첫 프레임을 정상 상태 통계에서 제외하되 전체 합계와 첫 프레임 비용도 출력합니다. `-SkipWarmupFrames 30`으로 예열을 더 제외할 수 있습니다. --smoke-test는 회귀 검사이며 FPS 벤치마크가 아닙니다.
 
-FPS/FrameMs는 타이머와 Swap 대기를 포함한 표시 간격입니다. RenderCPU는 Swap 이전 CPU 구간으로 GPU 시간이 아니며 드라이버 대기가 섞일 수 있습니다. 16ms 타이머/드라이버 기본 동기화 환경에서 drawcall 감소가 FPS 증가를 보장하지 않습니다.
+FPS/FrameMs는 타이머와 Swap 대기를 포함한 표시 간격입니다. RenderCPU는 Swap 이전 CPU 구간으로 GPU 시간이 아니며 드라이버 대기가 섞일 수 있습니다. `update_cpu_ms`, `present_ms`, `pacing_ms`로 시뮬레이션·Swap·의도적인 FPS 제한 대기를 구분합니다. GLB 모델은 `gpu_model_uploads`, `gpu_model_resident_bytes`, `gpu_model_entries`, 자세 캐시는 `pose_builds`, `pose_hits`, `art_pose_ms`에 기록합니다. `mesh_generations`는 기존 2D 메시 캐시 지표입니다. drawcall 감소만으로 FPS 증가를 판단하지 않습니다. [GPU 스키닝 적용과 측정](doc/LowPolyKit_월드적용과_FPS_개선.md).
 
 ## 독립 셰이더와 배포
 

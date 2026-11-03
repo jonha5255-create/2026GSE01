@@ -11,6 +11,7 @@ Prototype scene extensions, 2026.
 #include "PrototypeRenderer.h"
 #include "PrototypeWorld.h"
 #include "FrameProfiler.h"
+#include "FramePacer.h"
 #include "RenderDiagnostics.h"
 #include "WorldMonitor.h"
 #include "AssetPreview.h"
@@ -20,6 +21,7 @@ Prototype scene extensions, 2026.
 #include <iostream>
 #include <memory>
 #include <string>
+#include <thread>
 
 namespace
 {
@@ -34,6 +36,9 @@ namespace
     bool initialized = false;
     bool profileTest = false;
     int profileFrames = 0;
+    int profileFrameLimit = 180;
+    int fpsLimit = 60;
+    FramePacer framePacer;
     bool effectKeys[256] = {};
     auto lastTick = std::chrono::steady_clock::now();
 
@@ -94,9 +99,14 @@ namespace
         DrawContents();
         renderer.Flush();
         FrameProfiler::Get().EndRender();
+        auto presentStart = std::chrono::steady_clock::now();
         platform.Swap();
+        FrameProfiler::Get().RecordPresent(std::chrono::duration<double, std::milli>(
+                                               std::chrono::steady_clock::now() - presentStart)
+                                               .count());
+        FrameProfiler::Get().RecordPacing(framePacer.Wait(fpsLimit));
         FrameProfiler::Get().EndFrame();
-        if (profileTest && ++profileFrames >= 180)
+        if (profileTest && ++profileFrames >= profileFrameLimit)
         {
             platform.RequestClose();
         }
@@ -358,7 +368,7 @@ int main(int argc, char** argv)
     bool monitorTest = false;
     bool monitorEnabled = true;
     bool platformTest = false;
-    int swapInterval = 1;
+    int swapInterval = 0;
     bool assetTest = false, assetSmoke = false, assetPreview = false;
     std::filesystem::path assetRoot;
     unsigned short monitorPort = 8765;
@@ -376,6 +386,42 @@ int main(int argc, char** argv)
         assetSmoke |= std::string(argv[i]) == "--asset-smoke-test";
         assetPreview |= std::string(argv[i]) == "--asset-preview";
         std::string argument = argv[i];
+        if (argument.find("--fps-limit=") == 0)
+        {
+            try
+            {
+                size_t consumed = 0;
+                auto value = argument.substr(12);
+                fpsLimit = std::stoi(value, &consumed);
+                if (consumed != value.size() || fpsLimit < 0 || fpsLimit > 1000)
+                {
+                    throw std::invalid_argument("fps limit");
+                }
+            }
+            catch (...)
+            {
+                std::cerr << "--fps-limit must be between 0 and 1000 (0 = uncapped)\n";
+                return 8;
+            }
+        }
+        if (argument.find("--profile-frames=") == 0)
+        {
+            try
+            {
+                size_t consumed = 0;
+                auto value = argument.substr(17);
+                profileFrameLimit = std::stoi(value, &consumed);
+                if (consumed != value.size() || profileFrameLimit < 1 || profileFrameLimit > 36000)
+                {
+                    throw std::invalid_argument("frame count");
+                }
+            }
+            catch (...)
+            {
+                std::cerr << "--profile-frames must be between 1 and 36000\n";
+                return 8;
+            }
+        }
         if (argument.find("--vsync=") == 0)
         {
             auto value = argument.substr(8);
@@ -567,13 +613,18 @@ int main(int argc, char** argv)
     {
         WorldMonitor::Get().Start(monitorPort);
     }
+    if (!assetGallery)
+    {
+        world->PrepareArt();
+    }
     RenderDiagnostics::Get().Event(
         "environment",
         std::string("seed=") + std::to_string(seed) + "; resolution=" + std::to_string(width) + "x"
             + std::to_string(height)
             + "; OpenGL=" + reinterpret_cast<const char*>(glGetString(GL_VERSION)) + "; GPU="
             + reinterpret_cast<const char*>(glGetString(GL_RENDERER)) + "; framework=GLFW "
-            + glfwGetVersionString() + "; swap_interval=" + std::to_string(swapInterval));
+            + glfwGetVersionString() + "; swap_interval=" + std::to_string(swapInterval)
+            + "; fps_limit=" + std::to_string(fpsLimit));
     std::cout << "OpenGL " << glGetString(GL_VERSION) << " / " << glGetString(GL_RENDERER) << '\n';
     if (platformTest)
     {
@@ -765,6 +816,7 @@ int main(int argc, char** argv)
         return ok ? 0 : 6;
     }
     lastTick = std::chrono::steady_clock::now();
+    framePacer.Reset();
     FrameProfiler::Get().StartLogging();
     std::cout << "[PERF] Logging every 1s: FPS and actual GL draw calls (scene + post + UI).\n";
     while (!platform.ShouldClose())

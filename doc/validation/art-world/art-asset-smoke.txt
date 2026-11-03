@@ -1,0 +1,123 @@
+PASS LowPolyKit catalogs retain stable slots and all authored families
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_00_House.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_01_Market.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_02_Clinic.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_03_Archive.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_04_Station.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_05_Bureau.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_06_ElevatedPlatform.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_07_SignalTower.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_08_DataCenter.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_09_Checkpoint.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_10_HospitalWard.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_11_MedicalStorage.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_12_FusionTemple.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_13_CultGate.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_14_RitualPagoda.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_15_BrokenBuilding.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_16_FloatingBuilding.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_17_TwistedShop.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_18_MemoryTower.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_19_FloatingPlatform.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Building_20_OriginGate.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Foliage_00_Grass.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Foliage_01_DryGrass.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Foliage_02_Reeds.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Foliage_03_Shrub.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Rock_00_Small.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Rock_01_Boulder.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Rock_02_Slab.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Rock_03_MemorySplit.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_00_Wall.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_01_Gate.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_02_BrokenWall.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_03_Rubble.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_04_MemoryShrine.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Structure_05_StreetLamp.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Tree_00_Broadleaf.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Tree_01_Pine.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Tree_02_Dead.glb
+PASS shared immutable GLB cache: meshes/SM_ENV_Tree_03_Distorted.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Accessory_00_Scarf.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Accessory_01_Satchel.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Accessory_02_Quiver.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Accessory_03_BureauBadge.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Accessory_04_PilgrimBeads.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Body_00_Male.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Body_01_Female.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Feet_00_Boots.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Feet_01_Shoes.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Hair_00_Short.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Hair_01_Long.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Hair_02_Crop.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Hair_03_Ponytail.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Legs_00_Trousers.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Legs_01_Guard.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Legs_02_Wrapped.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Prop_00_Bow.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Prop_01_Spear.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Prop_02_Ledger.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Top_00_Citizen.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Top_01_Armor.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Top_02_Archer.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Top_03_Recorder.glb
+PASS shared immutable GLB cache: meshes/SM_NPC_Top_04_Pilgrim.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_000.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_001.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_002.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_003.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_004.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_005.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_006.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_007.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_008.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_009.glb
+PASS shared immutable GLB cache: rigged/NPC_LOOK_010.glb
+PASS shared immutable GLB cache: rigged/NPC_ModularParts_Library.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_00_PaperBoxYokai.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_01_StationWarden.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_02_RedHornOni.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_03_SecurityConstruct.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_04_IronHound.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_05_FusionBeast.glb
+PASS shared immutable GLB cache: rigged/SK_MOB_06_VoidStalker.glb
+PASS inverse-bind skinning matches mesh-node world transform without double transforms
+PASS all static and rigged GLBs produce finite animated poses
+PASS named NPC presets select only their own modular parts from one shared skeleton
+PASS manifest clip names and seconds match actual GLB animations
+PASS skeletal animation changes actual weighted vertex positions
+PASS root-motion displacement is exposed separately from in-place skinning
+PASS large animation steps emit crossed events exactly once across multiple loops
+PASS one-shot attack events do not repeat after completion
+PASS truncated GLB fails without publishing a partial model
+PASS asset references cannot escape the selected kit folder
+PASS unknown part indices fail instead of silently changing appearance
+PASS STEP interpolation holds the preceding key
+PASS CUBICSPLINE uses timed Hermite tangents
+PASS LINEAR quaternion channels interpolate rotations along the shortest arc
+[ASSET] files=82 vertices=238007 GLB_clips=330 disk_loads=82
+[PERF] Persistent logs: Logs/render-*.csv and *.jsonl (next to executable)
+OpenGL 3.3.0 Core Profile Context 24.10.20.01.240627 / AMD Radeon(TM) Graphics
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+PASS real GLB skeletal animation changes rendered pixels
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4
+Snapshot: 1 GL error: 0
+DrawCalls/frame: 4

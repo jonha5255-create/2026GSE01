@@ -7,6 +7,8 @@
 #include <map>
 #include <functional>
 #include <cstdint>
+#include <deque>
+#include <array>
 
 struct Point
 {
@@ -58,6 +60,29 @@ class PrototypeRenderer
                     float opacity,
                     const std::function<void()>& build);
     bool VerifyMeshCache();
+    // Packed 12-float vertices, one ordered submission per model, not per triangle.
+    void PackedMesh(const std::vector<float>& vertices,
+                    Point origin,
+                    float scale,
+                    float opacity = 1);
+
+    struct ModelVertex
+    {
+        float position[3], normal[3], color[4], emission[3];
+        uint32_t joints[4];
+        float weights[4];
+    };
+
+    // Immutable geometry stays on the GPU. Only a small bone palette changes.
+    void ModelMesh(const std::string& key,
+                   const std::vector<ModelVertex>& vertices,
+                   const std::vector<std::array<float, 16>>& bones,
+                   Point origin,
+                   float scale,
+                   float yaw,
+                   std::array<float, 3> stretch = {1, 1, 1},
+                   std::array<float, 3> offset = {},
+                   float opacity = 1);
 
     void RebuildDiskCache(bool rebuild)
     {
@@ -101,6 +126,18 @@ class PrototypeRenderer
     }
 
   private:
+    struct GpuModel
+    {
+        GLuint vao = 0, buffer = 0;
+        GLsizei count = 0;
+        uint64_t used = 0;
+    };
+
+    std::map<std::string, GpuModel> gpuModels_;
+    GLuint modelProgram_ = 0, modelDepth_ = 0;
+    int depthWidth_ = 0, depthHeight_ = 0;
+    size_t modelBytes_ = 0;
+
     struct Vertex
     {
         float x, y, r, g, b, a, u, v, energy;
@@ -129,6 +166,7 @@ class PrototypeRenderer
     struct AtlasPage
     {
         GLuint buffer = 0, texture = 0;
+        size_t usedVertices = 0, capacity = 0;
     };
 
     struct TriangleInstance
@@ -155,6 +193,7 @@ class PrototypeRenderer
     static constexpr size_t MaxCachedMeshes = 256, MaxCachedBytes = 32 * 1024 * 1024;
     std::map<std::string, Mesh> meshes_;
     std::vector<DrawCommand> commands_;
+    std::deque<Mesh> streamedMeshes_;
     std::vector<AtlasPage> pages_;
     std::vector<InstanceData> descriptors_;
     std::vector<TriangleInstance> triangles_;

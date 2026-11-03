@@ -1,0 +1,52 @@
+{
+  "source": "before-release-vsync.csv",
+  "frames": 180,
+  "excluded_warmup_frames": 30,
+  "fps_all": 20.4724837705238,
+  "first_frame_ms": 369.0714,
+  "first_render_cpu_ms": 230.7124,
+  "warm_frame_ms": {
+    "mean": 46.814774666666686,
+    "min": 44.143,
+    "p50": 46.4286,
+    "p95": 48.0799,
+    "max": 61.2121
+  },
+  "warm_render_cpu_ms": {
+    "mean": 5.591222000000001,
+    "min": 4.6516,
+    "p50": 5.4529,
+    "p95": 6.6135,
+    "max": 7.2321
+  },
+  "warm_update_cpu_ms": {
+    "mean": 6.3263760000000016,
+    "min": 4.7108,
+    "p50": 6.1216,
+    "p95": 8.2531,
+    "max": 12.0266
+  },
+  "warm_fps": 21.360777812565775,
+  "draw_calls": {
+    "mean": 11.0,
+    "min": 11.0,
+    "p50": 11.0,
+    "p95": 11.0,
+    "max": 11.0
+  },
+  "mesh_generations_all": 62.0,
+  "disk_loads_all": 0.0,
+  "disk_rejects_all": 0.0,
+  "mesh_upload_bytes_all": 2032560.0,
+  "warm_mesh_generations": 0.0,
+  "warm_mesh_upload_bytes": 0.0,
+  "warm_instance_upload_bytes": {
+    "mean": 448914.88,
+    "min": 430696.0,
+    "p50": 444056.0,
+    "p95": 468184.0,
+    "max": 468472.0
+  },
+  "batch_splits_all": 0.0,
+  "warm_upload_bytes_per_frame": 448914.88
+}

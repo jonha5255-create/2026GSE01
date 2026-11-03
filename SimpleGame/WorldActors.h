@@ -8,6 +8,7 @@ class ChunkActor : public Actor
   public:
     explicit ChunkActor(const CityChunk& chunk) : Actor("Chunk"), data(chunk)
     {
+        tickEnabled = false;
     }
 
     CityChunk data;
@@ -20,6 +21,7 @@ class FloorActor : public Actor
   public:
     explicit FloorActor(const CityChunk& chunk) : Actor("Floor"), data(chunk)
     {
+        tickEnabled = false;
         layer = RenderLayer::Ground;
     }
 
@@ -38,6 +40,7 @@ class BuildingActor : public Actor
         : Actor("Building"), width(width), depth(depth), height(height), seed(seed)
     {
         depthBias = width + depth;
+        tickEnabled = false;
     }
 
     void Render(ActorRenderContext& r) const override
@@ -56,6 +59,7 @@ class LampActor : public Actor
   public:
     LampActor() : Actor("Lamp")
     {
+        tickEnabled = false;
     }
 
     void Render(ActorRenderContext& r) const override
@@ -64,11 +68,29 @@ class LampActor : public Actor
     }
 };
 
+class NatureActor : public Actor
+{
+  public:
+    NatureActor(std::string slot, int index) : Actor("Nature"), slot(std::move(slot)), index(index)
+    {
+        tickEnabled = false;
+    }
+
+    void Render(ActorRenderContext& r) const override
+    {
+        r.Draw(*this);
+    }
+
+    std::string slot;
+    int index;
+};
+
 class RainActor : public Actor
 {
   public:
     RainActor() : Actor("Rain")
     {
+        tickEnabled = false;
         layer = RenderLayer::Weather;
         screenSpace = true;
     }
@@ -84,6 +106,7 @@ class HudActor : public Actor
   public:
     HudActor() : Actor("HUD")
     {
+        tickEnabled = false;
         layer = RenderLayer::UI;
         screenSpace = true;
     }
