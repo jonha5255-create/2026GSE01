@@ -7,14 +7,14 @@ but WITHOUT ANY WARRANTY.
 Prototype scene extensions, 2026.
 */
 #include "stdafx.h"
+#include <windows.h>
 #include "PrototypeRenderer.h"
 #include "PrototypeWorld.h"
 #include "FrameProfiler.h"
 #include "RenderDiagnostics.h"
 #include "WorldMonitor.h"
 #include "AssetPreview.h"
-#include "Dependencies/freeglut.h"
-#include <windows.h>
+#include "GlfwPlatform.h"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -24,6 +24,7 @@ Prototype scene extensions, 2026.
 namespace
 {
     PrototypeRenderer renderer;
+    GlfwPlatform platform;
     std::unique_ptr<PrototypeWorld> world;
     std::unique_ptr<Art::AssetPreview> assetGallery;
     float assetTime = 0;
@@ -87,17 +88,17 @@ namespace
         }
         if (!renderer.Begin(width, height))
         {
-            glutLeaveMainLoop();
+            platform.RequestClose();
             return;
         }
         DrawContents();
         renderer.Flush();
         FrameProfiler::Get().EndRender();
-        glutSwapBuffers();
+        platform.Swap();
         FrameProfiler::Get().EndFrame();
         if (profileTest && ++profileFrames >= 180)
         {
-            glutLeaveMainLoop();
+            platform.RequestClose();
         }
     }
 
@@ -106,14 +107,13 @@ namespace
         RenderDiagnostics::Get().Event("resize", std::to_string(w) + "x" + std::to_string(h));
         width = std::max(w, 1);
         height = std::max(h, 1);
-        glutPostRedisplay();
     }
 
     void KeyDown(unsigned char key, int, int)
     {
         if (key == 27)
         {
-            glutLeaveMainLoop();
+            platform.RequestClose();
             return;
         }
         if (key >= 'A' && key <= 'Z')
@@ -202,22 +202,20 @@ namespace
         {
             return;
         }
-        if (initialized && world && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+        if (initialized && world && button == GLFW_MOUSE_BUTTON_LEFT && state == GLFW_PRESS)
         {
             RenderDiagnostics::Get().Event("mouse_attack",
                                            std::to_string(x) + "," + std::to_string(y));
             world->MouseAttack(x, y, width, height);
-            glutPostRedisplay();
         }
-        else if (initialized && world && button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+        else if (initialized && world && button == GLFW_MOUSE_BUTTON_RIGHT && state == GLFW_PRESS)
         {
             RenderDiagnostics::Get().Event("mouse_skill", "right_button_down");
             world->MouseSkill();
-            glutPostRedisplay();
         }
     }
 
-    void Timer(int)
+    void UpdateGame()
     {
         if (!initialized)
         {
@@ -241,8 +239,6 @@ namespace
         FrameProfiler::Get().RecordUpdate(std::chrono::duration<double, std::milli>(
                                               std::chrono::steady_clock::now() - updateStart)
                                               .count());
-        glutPostRedisplay();
-        glutTimerFunc(16, Timer, 0);
     }
 
     std::wstring ExecutableDirectory()
@@ -361,6 +357,8 @@ int main(int argc, char** argv)
     bool smoke = false, selfTest = false, rebuildCache = false, legacy = false;
     bool monitorTest = false;
     bool monitorEnabled = true;
+    bool platformTest = false;
+    int swapInterval = 1;
     bool assetTest = false, assetSmoke = false, assetPreview = false;
     std::filesystem::path assetRoot;
     unsigned short monitorPort = 8765;
@@ -373,10 +371,21 @@ int main(int argc, char** argv)
         legacy |= std::string(argv[i]) == "--level-one";
         monitorEnabled &= std::string(argv[i]) != "--no-monitor";
         monitorTest |= std::string(argv[i]) == "--monitor-test";
+        platformTest |= std::string(argv[i]) == "--platform-test";
         assetTest |= std::string(argv[i]) == "--asset-test";
         assetSmoke |= std::string(argv[i]) == "--asset-smoke-test";
         assetPreview |= std::string(argv[i]) == "--asset-preview";
         std::string argument = argv[i];
+        if (argument.find("--vsync=") == 0)
+        {
+            auto value = argument.substr(8);
+            if (value != "0" && value != "1")
+            {
+                std::cerr << "--vsync must be 0 or 1\n";
+                return 8;
+            }
+            swapInterval = value == "1" ? 1 : 0;
+        }
         if (argument.find("--asset-root=") == 0)
         {
             assetRoot = std::filesystem::path(argument.substr(13));
@@ -423,7 +432,8 @@ int main(int argc, char** argv)
             return 0;
         }
     }
-    if ((selfTest || smoke) && (!PrototypeWorld::SelfTest() || !WorldMonitor::SelfTest()))
+    if ((selfTest || smoke)
+        && (!GlfwPlatform::SelfTest() || !PrototypeWorld::SelfTest() || !WorldMonitor::SelfTest()))
     {
         return 2;
     }
@@ -471,23 +481,32 @@ int main(int argc, char** argv)
         std::cout << "[MONITOR] Headless integration test finished\n";
         return 0;
     }
-    glutInit(&argc, argv);
-    glutInitContextVersion(3, 3);
-    glutInitContextProfile(GLUT_CORE_PROFILE);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(80, 60);
-    glutInitWindowSize(width, height);
-    int window = glutCreateWindow("2026 GSE | Nameless District - Rendering Prototype");
-    if (!window)
+    platform.framebuffer = Resize;
+    platform.key = [](unsigned char key, bool down)
+    {
+        if (down)
+        {
+            KeyDown(key, 0, 0);
+        }
+        else
+        {
+            KeyUp(key, 0, 0);
+        }
+    };
+    platform.mouse = [](int button, bool down, int x, int y)
+    {
+        MouseButton(button, down ? GLFW_PRESS : GLFW_RELEASE, x, y);
+    };
+    if (!platform.Open("2026 GSE | Nameless District - GLFW", width, height))
     {
         return 3;
     }
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+    platform.SetSwapInterval(swapInterval);
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK || !GLEW_VERSION_3_3)
     {
         std::cerr << "OpenGL 3.3 required\n";
-        glutDestroyWindow(window);
+        platform.Close();
         return 4;
     }
     while (glGetError() != GL_NO_ERROR)
@@ -501,7 +520,7 @@ int main(int argc, char** argv)
     {
         std::cerr << "Renderer initialization failed\n";
         renderer.Shutdown();
-        glutDestroyWindow(window);
+        platform.Close();
         return 5;
     }
     initialized = true;
@@ -521,7 +540,7 @@ int main(int argc, char** argv)
             {
                 std::cerr << "Invalid seed\n";
                 Close();
-                glutDestroyWindow(window);
+                platform.Close();
                 return 7;
             }
         }
@@ -540,7 +559,7 @@ int main(int argc, char** argv)
         {
             std::cerr << "[ASSET] " << error.what() << '\n';
             Close();
-            glutDestroyWindow(window);
+            platform.Close();
             return 10;
         }
     }
@@ -552,17 +571,33 @@ int main(int argc, char** argv)
         "environment",
         std::string("seed=") + std::to_string(seed) + "; resolution=" + std::to_string(width) + "x"
             + std::to_string(height)
-            + "; OpenGL=" + reinterpret_cast<const char*>(glGetString(GL_VERSION))
-            + "; GPU=" + reinterpret_cast<const char*>(glGetString(GL_RENDERER))
-            + "; timer_interval_ms=16; swap_interval=driver_default");
+            + "; OpenGL=" + reinterpret_cast<const char*>(glGetString(GL_VERSION)) + "; GPU="
+            + reinterpret_cast<const char*>(glGetString(GL_RENDERER)) + "; framework=GLFW "
+            + glfwGetVersionString() + "; swap_interval=" + std::to_string(swapInterval));
     std::cout << "OpenGL " << glGetString(GL_VERSION) << " / " << glGetString(GL_RENDERER) << '\n';
-    glutDisplayFunc(Display);
-    glutReshapeFunc(Resize);
-    glutKeyboardFunc(KeyDown);
-    glutKeyboardUpFunc(KeyUp);
-    glutMouseFunc(MouseButton);
-    glutCloseFunc(Close);
-    glutIgnoreKeyRepeat(1);
+    if (platformTest)
+    {
+        bool ok = GlfwPlatform::SelfTest();
+        ok = ok && glfwGetCurrentContext() == platform.Window()
+             && glfwGetWindowAttrib(platform.Window(), GLFW_OPENGL_PROFILE)
+                    == GLFW_OPENGL_CORE_PROFILE;
+        for (auto size : {std::pair<int, int>{960, 600}, {961, 601}, {1280, 800}})
+        {
+            platform.Resize(size.first, size.second);
+            int fbWidth, fbHeight;
+            glfwGetFramebufferSize(platform.Window(), &fbWidth, &fbHeight);
+            ok = ok && width == fbWidth && height == fbHeight;
+            ok = Snapshot(L"glfw-platform-resize.bmp") && ok;
+        }
+        platform.RequestClose();
+        ok = platform.ShouldClose() && ok;
+        Close();
+        platform.Close();
+        ok = platform.Window() == nullptr && platform.ShouldClose() && ok;
+        std::cout << (ok ? "PASS " : "FAIL ")
+                  << "GLFW core context, framebuffer resize and clean shutdown\n";
+        return ok ? 0 : 12;
+    }
     if (assetSmoke)
     {
         assetTime = .05f;
@@ -588,7 +623,7 @@ int main(int argc, char** argv)
             ok = Snapshot(file.c_str()) && assetError.empty() && ok;
         }
         Close();
-        glutDestroyWindow(window);
+        platform.Close();
         return ok ? 0 : 11;
     }
     if (smoke)
@@ -715,35 +750,42 @@ int main(int argc, char** argv)
         ok = Snapshot(L"level1-boss.bmp") && ok;
         KeyDown('v', 0, 0);
         KeyUp('v', 0, 0);
-        glutReshapeWindow(960, 600);
-        glutMainLoopEvent();
-        Resize(960, 600);
+        platform.Resize(960, 600);
         ok = Snapshot(L"prototype-resized.bmp") && ok;
         // Exercise odd half-resolution sizes, then restore the original targets.
-        glutReshapeWindow(961, 601);
-        glutMainLoopEvent();
-        Resize(961, 601);
+        platform.Resize(961, 601);
         ok = Snapshot(L"prototype-resized-odd.bmp") && ok;
-        glutReshapeWindow(1280, 800);
-        glutMainLoopEvent();
-        Resize(1280, 800);
+        platform.Resize(1280, 800);
         ok = Snapshot(L"prototype-restored.bmp") && ok;
         const auto& cache = renderer.MeshStats();
         std::cout << "Mesh cache: " << cache.hits << " hits, " << cache.uploads << " admissions, "
                   << cache.evictions << " evictions, " << cache.bytes << " resident bytes\n";
         Close();
-        glutDestroyWindow(window);
+        platform.Close();
         return ok ? 0 : 6;
     }
     lastTick = std::chrono::steady_clock::now();
     FrameProfiler::Get().StartLogging();
     std::cout << "[PERF] Logging every 1s: FPS and actual GL draw calls (scene + post + UI).\n";
-    glutTimerFunc(16, Timer, 0);
-    glutMainLoop();
+    while (!platform.ShouldClose())
+    {
+        platform.Poll();
+        if (platform.ShouldClose())
+        {
+            break;
+        }
+        UpdateGame();
+        if (platform.Minimized())
+        {
+            platform.Wait(1.0 / 60.0);
+            continue;
+        }
+        Display();
+    }
     if (initialized)
     {
         Close();
-        glutDestroyWindow(window);
+        platform.Close();
     }
     world.reset();
     return 0;

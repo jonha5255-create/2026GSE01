@@ -1,8 +1,11 @@
 /.vs/
+/SimpleGame/Dependencies/GLFW/build/
 /Debug/
 /Release/
 /x64/
 /SimpleGame/x64/
+/SimpleGame/Debug/
+/SimpleGame/Release/
 /simplegame/x64/
 *.user
 *.exe 

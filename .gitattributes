@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Preserve official GLFW source bytes and the upstream whitespace conventions.
+SimpleGame/Dependencies/GLFW/glfw-3.4/** -text whitespace=-blank-at-eof,-blank-at-eol

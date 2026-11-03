@@ -1,5 +1,13 @@
 # 2026GSE01
 
+## 2026-11-03 GLFW 프레임워크
+
+창·입력·OpenGL 문맥·렌더 루프를 GLFW 3.4로 전환했습니다. `SimpleGame.sln`을 빌드하면 `SimpleGame/Dependencies/GLFW`의 포함된 소스에서 정적 라이브러리를 함께 만듭니다. 별도 GLFW 설치나 다운로드는 필요하지 않습니다. Windows / Visual Studio 2022 C++ / Windows SDK 기준으로 x86·x64, Debug·Release를 지원합니다.
+
+기본 VSync는 켜져 있으며 `--vsync=0`으로 해제할 수 있습니다. `tools/build_glfw_matrix.ps1 -RuntimeChecks`로 네 가지 구성을 독립 빌드·검사합니다.
+
+[전환 내용·성능 비교·검증 결과](doc/GLFW_전환과_성능검증.md)
+
 ## 2026-10-12 외곽 몬스터와 여러 마을
 
 - 외곽 청크마다 시드 기반 랜덤 위치에 잔향귀 3~5마리를 생성합니다. 건물 내부와 마을 청크는 제외하며, 야생 몬스터는 자기 청크 밖으로 추격하지 않습니다. 처치 후 22초에 재출현합니다.

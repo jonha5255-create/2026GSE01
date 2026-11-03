@@ -1,0 +1,660 @@
+{"tick_ms":1460248062,"event":"session","detail":"schema=1; renderer=ordered-triangle-instancing-v1; mode=profile-test; build=Release"}
+{"tick_ms":1460248062,"event":"cache_policy","detail":"load_valid_files"}
+{"tick_ms":1460248781,"event":"renderer_limits","detail":"GL_MAX_TEXTURE_BUFFER_SIZE=268435455; max_triangle_instances=65536"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-2; y=-2; buildings=5; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-2; y=-1; buildings=5; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-2; y=0; buildings=1; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-2; y=1; buildings=5; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-2; y=2; buildings=5; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-1; y=-2; buildings=3; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-1; y=-1; buildings=8; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-1; y=0; buildings=6; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-1; y=1; buildings=8; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=-1; y=2; buildings=4; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=0; y=-2; buildings=4; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=0; y=-1; buildings=6; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=0; y=0; buildings=4; roads=6; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=0; y=1; buildings=6; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=0; y=2; buildings=1; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=1; y=-2; buildings=4; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=1; y=-1; buildings=8; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=1; y=0; buildings=6; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=1; y=1; buildings=8; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=1; y=2; buildings=3; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=2; y=-2; buildings=6; roads=4; district=1"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=2; y=-1; buildings=6; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=2; y=0; buildings=0; roads=4; district=2"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=2; y=1; buildings=6; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"city_chunk","detail":"x=2; y=2; buildings=4; roads=4; district=0"}
+{"tick_ms":1460248828,"event":"world_start","detail":"simulation_s=0.000000; 7개 마을 / 주민 210명: 전령이 편지와 소식을 전달합니다."}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-2,-2; count=3"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-2,-1; count=5"}
+{"tick_ms":1460248828,"event":"quest_boss_spawn","detail":"region=2; actor=437"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-2,0; count=4"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-2,1; count=5"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-2,2; count=3"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-1,-2; count=4"}
+{"tick_ms":1460248828,"event":"field_boss_spawn","detail":"actor=454"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=-1,2; count=3"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=0,-2; count=5"}
+{"tick_ms":1460248828,"event":"quest_boss_spawn","detail":"region=1; actor=462"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=0,2; count=5"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=1,-2; count=4"}
+{"tick_ms":1460248828,"event":"field_boss_spawn","detail":"actor=472"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=1,2; count=5"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=2,-2; count=5"}
+{"tick_ms":1460248828,"event":"field_boss_spawn","detail":"actor=482"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=2,-1; count=3"}
+{"tick_ms":1460248828,"event":"quest_boss_spawn","detail":"region=0; actor=485"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=2,0; count=3"}
+{"tick_ms":1460248828,"event":"field_boss_spawn","detail":"actor=489"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=2,1; count=5"}
+{"tick_ms":1460248828,"event":"field_boss_spawn","detail":"actor=494"}
+{"tick_ms":1460248828,"event":"wild_spawn","detail":"chunk=2,2; count=4"}
+{"tick_ms":1460248828,"event":"environment","detail":"seed=2026; resolution=1280x800; OpenGL=3.3.0 Core Profile Context 24.10.20.01.240627; GPU=AMD Radeon(TM) Graphics; timer_interval_ms=16; swap_interval=driver_default"}
+{"tick_ms":1460248828,"event":"resize","detail":"1280x800"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:3936562276:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2983471676:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:1131641326:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:2:3435462376:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:3265983033:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:3913226564:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:4165824950:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2575099438:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:979519077:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:621570869:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:1441117784:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:651311515:90.000000:90.000000:0"}
+{"tick_ms":1460248828,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:3558811836:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:3439369451:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:645936265:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2098829373:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2232973217:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2989494586:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:984030009:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:1:3304447008:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:1611486522:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:0:3898502102:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2300954445:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:1718543262:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:floor:city-v11:-1:2337736911:90.000000:90.000000:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:2"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:0"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:1"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:primitive:3"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3265983033:78.000000:68.000000:42.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:979519081:33.000000:10.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:2575099442:10.000000:41.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3265983034:78.000000:68.000000:59.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3265983035:78.000000:68.000000:46.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:1:3435462376:56.500000:102.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3265983036:78.000000:68.000000:42.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2575099438:78.000000:68.000000:43.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:979519077:78.000000:68.000000:51.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:2575099443:10.000000:501.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:979519082:493.000000:10.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2575099439:78.000000:68.000000:59.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2575099440:78.000000:68.000000:59.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:979519078:78.000000:68.000000:59.000000"}
+{"tick_ms":1460248843,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:979519079:78.000000:68.000000:58.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2575099441:78.000000:68.000000:44.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:979519080:78.000000:68.000000:49.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3558811836:78.000000:68.000000:47.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3558811837:78.000000:68.000000:47.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3558811838:78.000000:68.000000:54.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3439369453:78.000000:68.000000:43.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:3558811839:78.000000:68.000000:56.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2232973217:78.000000:68.000000:51.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2989494586:78.000000:68.000000:46.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2232973218:78.000000:68.000000:46.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2232973219:78.000000:68.000000:59.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2989494587:78.000000:68.000000:49.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2989494588:78.000000:68.000000:50.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2232973220:78.000000:68.000000:55.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:2989494589:78.000000:68.000000:42.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:building:city-v3:1:1611486522:78.000000:68.000000:52.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:2232973222:493.000000:10.000000"}
+{"tick_ms":1460248859,"event":"mesh_loaded","detail":"geometry-v2-layout12-font-16594808668345810354:fort-ruin-v3:2:2989494591:10.000000:501.000000"}
+{"tick_ms":1460248859,"event":"atlas_rebuilt","detail":"pages=1; resident_bytes=2032560"}
+{"tick_ms":1460248890,"event":"slow_frame","detail":"frame=1; frame_ms=68.221600; generations=0"}
+{"tick_ms":1460248890,"event":"npc_decision","detail":"id=198; name=도윤; action=사냥; raid_weight=0.100000; hp=115.000000; gold=50"}
+{"tick_ms":1460248906,"event":"npc_decision","detail":"id=212; name=잔명 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=62"}
+{"tick_ms":1460248906,"event":"npc_decision","detail":"id=213; name=잔명 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=73"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=214; name=잔명 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=215; name=잔명 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=42"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=216; name=잔명 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=87"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=217; name=잔명 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=52"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=218; name=잔명 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=93"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=219; name=잔명 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=220; name=잔명 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=221; name=잔명 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=80"}
+{"tick_ms":1460248921,"event":"npc_decision","detail":"id=222; name=잔명 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=54"}
+{"tick_ms":1460248937,"event":"npc_decision","detail":"id=223; name=잔명 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=97"}
+{"tick_ms":1460248937,"event":"npc_decision","detail":"id=224; name=잔명 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=82"}
+{"tick_ms":1460248937,"event":"npc_decision","detail":"id=225; name=잔명 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=89"}
+{"tick_ms":1460248937,"event":"npc_decision","detail":"id=226; name=잔명 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=227; name=잔명 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=104"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=228; name=잔명 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=43"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=229; name=잔명 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=70"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=230; name=잔명 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=41"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=234; name=황혼 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=97"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=235; name=황혼 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=236; name=황혼 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=60"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=237; name=황혼 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=95"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=238; name=황혼 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=103"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=239; name=황혼 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=63"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=240; name=황혼 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=64"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=241; name=황혼 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=242; name=황혼 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=44"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=243; name=황혼 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=64"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=244; name=황혼 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=88"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=245; name=황혼 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=77"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=246; name=황혼 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=92"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=247; name=황혼 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=248; name=황혼 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=44"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=249; name=황혼 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=67"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=250; name=황혼 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=84"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=251; name=황혼 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=55"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=252; name=황혼 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=43"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=253; name=황혼 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=254; name=황혼 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=72"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=255; name=황혼 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=50"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=256; name=황혼 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=40"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=257; name=황혼 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=44"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=258; name=황혼 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=96"}
+{"tick_ms":1460248953,"event":"npc_decision","detail":"id=259; name=황혼 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=260; name=황혼 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=92"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=261; name=황혼 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=65"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=262; name=황혼 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=66"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=263; name=황혼 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=85"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=267; name=안개 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=93"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=268; name=안개 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=269; name=안개 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=43"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=270; name=안개 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=93"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=271; name=안개 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=90"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=272; name=안개 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=48"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=273; name=안개 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=55"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=274; name=안개 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=275; name=안개 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=53"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=276; name=안개 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=277; name=안개 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=54"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=278; name=안개 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=40"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=279; name=안개 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=96"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=280; name=안개 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=281; name=안개 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=82"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=282; name=안개 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=86"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=283; name=안개 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=82"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=284; name=안개 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=63"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=285; name=안개 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=98"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=286; name=안개 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=287; name=안개 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=49"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=288; name=안개 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=59"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=289; name=안개 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=90"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=290; name=안개 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=74"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=291; name=안개 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=292; name=안개 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=293; name=안개 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=98"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=294; name=안개 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=81"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=295; name=안개 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=59"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=296; name=안개 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=104"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=300; name=청명 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=97"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=301; name=청명 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=302; name=청명 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=89"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=303; name=청명 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=83"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=304; name=청명 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=61"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=305; name=청명 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=76"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=306; name=청명 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=95"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=307; name=청명 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=308; name=청명 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=57"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=309; name=청명 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=102"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=310; name=청명 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=67"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=311; name=청명 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=78"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=312; name=청명 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=60"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=313; name=청명 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=314; name=청명 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=77"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=315; name=청명 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=51"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=316; name=청명 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=68"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=317; name=청명 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=96"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=318; name=청명 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=43"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=319; name=청명 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=320; name=청명 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=47"}
+{"tick_ms":1460248968,"event":"npc_decision","detail":"id=321; name=청명 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=102"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=322; name=청명 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=94"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=323; name=청명 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=48"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=324; name=청명 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=325; name=청명 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=326; name=청명 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=93"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=327; name=청명 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=79"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=328; name=청명 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=90"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=329; name=청명 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=59"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=333; name=달그늘 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=72"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=334; name=달그늘 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=335; name=달그늘 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=47"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=336; name=달그늘 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=79"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=337; name=달그늘 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=94"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=338; name=달그늘 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=69"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=339; name=달그늘 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=52"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=340; name=달그늘 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=341; name=달그늘 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=52"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=342; name=달그늘 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=343; name=달그늘 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=82"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=344; name=달그늘 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=68"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=345; name=달그늘 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=59"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=346; name=달그늘 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=347; name=달그늘 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=86"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=348; name=달그늘 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=55"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=349; name=달그늘 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=57"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=350; name=달그늘 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=58"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=351; name=달그늘 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=76"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=352; name=달그늘 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=353; name=달그늘 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=73"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=354; name=달그늘 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=104"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=355; name=달그늘 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=61"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=356; name=달그늘 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=75"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=357; name=달그늘 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=44"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=358; name=달그늘 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=359; name=달그늘 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=99"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=360; name=달그늘 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=76"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=361; name=달그늘 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=45"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=362; name=달그늘 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=104"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=366; name=잿빛 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=104"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=367; name=잿빛 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=368; name=잿빛 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=88"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=369; name=잿빛 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=52"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=370; name=잿빛 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=68"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=371; name=잿빛 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=99"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=372; name=잿빛 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=54"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=373; name=잿빛 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=374; name=잿빛 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=103"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=375; name=잿빛 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=79"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=376; name=잿빛 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=63"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=377; name=잿빛 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=94"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=378; name=잿빛 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=84"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=379; name=잿빛 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=380; name=잿빛 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=50"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=381; name=잿빛 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=45"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=382; name=잿빛 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=91"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=383; name=잿빛 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=42"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=384; name=잿빛 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=45"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=385; name=잿빛 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=386; name=잿빛 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=102"}
+{"tick_ms":1460248984,"event":"npc_decision","detail":"id=387; name=잿빛 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=50"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=388; name=잿빛 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=65"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=389; name=잿빛 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=82"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=390; name=잿빛 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=54"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=391; name=잿빛 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=392; name=잿빛 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=87"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=393; name=잿빛 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=103"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=394; name=잿빛 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=44"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=395; name=잿빛 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=55"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=399; name=새벽 마을 주민 1; action=거래; raid_weight=0.050000; hp=100.000000; gold=102"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=400; name=새벽 마을 주민 2; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=401; name=새벽 마을 주민 3; action=거래; raid_weight=0.050000; hp=100.000000; gold=57"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=402; name=새벽 마을 주민 4; action=순찰; raid_weight=0.050000; hp=100.000000; gold=60"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=403; name=새벽 마을 주민 5; action=거래; raid_weight=0.050000; hp=100.000000; gold=65"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=404; name=새벽 마을 주민 6; action=거래; raid_weight=0.900000; hp=100.000000; gold=86"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=405; name=새벽 마을 주민 7; action=거래; raid_weight=0.050000; hp=100.000000; gold=89"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=406; name=새벽 마을 주민 8; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=407; name=새벽 마을 주민 9; action=거래; raid_weight=0.050000; hp=100.000000; gold=73"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=408; name=새벽 마을 주민 10; action=순찰; raid_weight=0.050000; hp=100.000000; gold=73"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=409; name=새벽 마을 주민 11; action=거래; raid_weight=0.050000; hp=100.000000; gold=98"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=410; name=새벽 마을 주민 12; action=거래; raid_weight=0.900000; hp=100.000000; gold=69"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=411; name=새벽 마을 주민 13; action=거래; raid_weight=0.050000; hp=100.000000; gold=76"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=412; name=새벽 마을 주민 14; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=413; name=새벽 마을 주민 15; action=거래; raid_weight=0.050000; hp=100.000000; gold=101"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=414; name=새벽 마을 주민 16; action=순찰; raid_weight=0.050000; hp=100.000000; gold=63"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=415; name=새벽 마을 주민 17; action=거래; raid_weight=0.050000; hp=100.000000; gold=76"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=416; name=새벽 마을 주민 18; action=거래; raid_weight=0.900000; hp=100.000000; gold=102"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=417; name=새벽 마을 주민 19; action=거래; raid_weight=0.050000; hp=100.000000; gold=87"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=418; name=새벽 마을 주민 20; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=419; name=새벽 마을 주민 21; action=거래; raid_weight=0.050000; hp=100.000000; gold=74"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=420; name=새벽 마을 주민 22; action=순찰; raid_weight=0.050000; hp=100.000000; gold=58"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=421; name=새벽 마을 주민 23; action=거래; raid_weight=0.050000; hp=100.000000; gold=97"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=422; name=새벽 마을 주민 24; action=거래; raid_weight=0.900000; hp=100.000000; gold=97"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=423; name=새벽 마을 주민 25; action=거래; raid_weight=0.050000; hp=100.000000; gold=46"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=424; name=새벽 마을 주민 26; action=거래; raid_weight=0.050000; hp=100.000000; gold=200"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=425; name=새벽 마을 주민 27; action=거래; raid_weight=0.050000; hp=100.000000; gold=59"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=426; name=새벽 마을 주민 28; action=순찰; raid_weight=0.050000; hp=100.000000; gold=98"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=427; name=새벽 마을 주민 29; action=거래; raid_weight=0.050000; hp=100.000000; gold=54"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=428; name=새벽 마을 주민 30; action=거래; raid_weight=0.900000; hp=100.000000; gold=44"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=429; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=430; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=431; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460249000,"event":"npc_decision","detail":"id=432; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=433; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=88.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=434; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=85.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=435; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=436; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=437; name=붕괴 석정의 거신; action=거래; raid_weight=0.100000; hp=600.000000; gold=85"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=438; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=439; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=87.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=440; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=441; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=442; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=443; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=102.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=444; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=445; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=78.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=446; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=447; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=79.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=448; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=449; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=450; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=451; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=97.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=452; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=453; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=454; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=455; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=93.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=456; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=457; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=84.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=458; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=459; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=94.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=460; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=461; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=462; name=독안개 포식견; action=거래; raid_weight=0.100000; hp=510.000000; gold=85"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=463; name=뿔 잔향귀 1; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=464; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=465; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=466; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=467; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=468; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=469; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=470; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=471; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=472; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=473; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=474; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=475; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=476; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=477; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=478; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=479; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=82.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=480; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=481; name=폐허 석괴 5; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=482; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=483; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=484; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=485; name=핏빛 제단의 뿔왕; action=거래; raid_weight=0.100000; hp=420.000000; gold=85"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=486; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=487; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=488; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=489; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=490; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=491; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=492; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=493; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=95.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=494; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=495; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=76.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=496; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249015,"event":"npc_decision","detail":"id=497; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460249031,"event":"slow_frame","detail":"frame=2; frame_ms=135.348700; generations=0"}
+{"tick_ms":1460249046,"event":"npc_decision","detail":"id=199; name=유리; action=사냥; raid_weight=0.100000; hp=115.000000; gold=64"}
+{"tick_ms":1460249109,"event":"npc_decision","detail":"id=200; name=건우; action=사냥; raid_weight=0.100000; hp=115.000000; gold=45"}
+{"tick_ms":1460249187,"event":"npc_decision","detail":"id=201; name=갈치; action=약탈; raid_weight=0.990000; hp=125.000000; gold=81"}
+{"tick_ms":1460249281,"event":"npc_decision","detail":"id=202; name=붉은 눈; action=약탈; raid_weight=0.960000; hp=125.000000; gold=46"}
+{"tick_ms":1460249359,"event":"npc_decision","detail":"id=203; name=미령; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":1460249421,"event":"npc_decision","detail":"id=204; name=덕수; action=거래; raid_weight=0.100000; hp=100.000000; gold=250"}
+{"tick_ms":1460249500,"event":"npc_decision","detail":"id=205; name=이안; action=명상; raid_weight=0.100000; hp=100.000000; gold=77"}
+{"tick_ms":1460249593,"event":"npc_decision","detail":"id=206; name=무명 순례자; action=명상; raid_weight=0.100000; hp=100.000000; gold=60"}
+{"tick_ms":1460249671,"event":"npc_decision","detail":"id=207; name=초소장; action=순찰; raid_weight=0.100000; hp=180.000000; gold=92"}
+{"tick_ms":1460249750,"event":"npc_decision","detail":"id=208; name=백연; action=명상; raid_weight=0.100000; hp=100.000000; gold=46"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=430; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=435; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=440; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=445; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=78.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=450; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=455; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=93.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=460; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=465; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=470; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=475; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=480; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=485; name=핏빛 제단의 뿔왕; action=거래; raid_weight=0.100000; hp=420.000000; gold=85"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=490; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249812,"event":"npc_decision","detail":"id=495; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=76.000000; gold=12"}
+{"tick_ms":1460249828,"event":"npc_decision","detail":"id=209; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=431; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=436; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=441; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=446; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=451; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=97.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=456; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=461; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=466; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=471; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=476; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=481; name=폐허 석괴 5; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=486; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=491; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460249875,"event":"npc_decision","detail":"id=496; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460249921,"event":"npc_decision","detail":"id=210; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=432; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=437; name=붕괴 석정의 거신; action=거래; raid_weight=0.100000; hp=600.000000; gold=85"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=442; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=447; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=79.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=452; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=457; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=84.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=462; name=독안개 포식견; action=거래; raid_weight=0.100000; hp=510.000000; gold=85"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=467; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=472; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=477; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=482; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=487; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=492; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460249953,"event":"npc_decision","detail":"id=497; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460249984,"event":"npc_decision","detail":"id=211; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=433; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=88.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=438; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=443; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=102.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=448; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=453; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=458; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=463; name=뿔 잔향귀 1; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=468; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=473; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=478; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=483; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=488; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460250015,"event":"npc_decision","detail":"id=493; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=95.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=429; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=434; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=85.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=439; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=87.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=444; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=449; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=454; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=459; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=94.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=464; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=469; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460250078,"event":"npc_decision","detail":"id=474; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460250093,"event":"npc_decision","detail":"id=479; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=82.000000; gold=12"}
+{"tick_ms":1460250093,"event":"npc_decision","detail":"id=484; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460250093,"event":"npc_decision","detail":"id=489; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460250093,"event":"npc_decision","detail":"id=494; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=430; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=435; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=440; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=445; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=78.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=450; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=455; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=93.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=460; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=465; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=470; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=475; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=480; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=485; name=핏빛 제단의 뿔왕; action=거래; raid_weight=0.100000; hp=420.000000; gold=85"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=490; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460250625,"event":"npc_decision","detail":"id=495; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=76.000000; gold=12"}
+{"tick_ms":1460250734,"event":"npc_decision","detail":"id=210; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=431; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=436; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=441; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=446; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=451; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=97.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=456; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=461; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=466; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=471; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=476; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=481; name=폐허 석괴 5; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=486; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=491; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460250765,"event":"npc_decision","detail":"id=496; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460250875,"event":"npc_decision","detail":"id=211; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=432; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=437; name=붕괴 석정의 거신; action=거래; raid_weight=0.100000; hp=600.000000; gold=85"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=442; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=447; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=79.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=452; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=457; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=84.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=462; name=독안개 포식견; action=거래; raid_weight=0.100000; hp=510.000000; gold=85"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=467; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=472; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=477; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=482; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=487; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=492; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460250890,"event":"npc_decision","detail":"id=497; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460250921,"event":"npc_decision","detail":"id=209; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=433; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=88.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=438; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=443; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=102.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=448; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=453; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=458; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=463; name=뿔 잔향귀 1; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=468; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=473; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=478; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=483; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=488; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460251031,"event":"npc_decision","detail":"id=493; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=95.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=429; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=434; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=85.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=439; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=87.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=444; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=449; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=454; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=459; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=94.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=464; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=469; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=474; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=479; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=82.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=484; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=489; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460251171,"event":"npc_decision","detail":"id=494; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=430; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=435; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=440; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=445; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=78.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=450; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=455; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=93.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=460; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=465; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=470; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=475; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=480; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=485; name=핏빛 제단의 뿔왕; action=거래; raid_weight=0.100000; hp=420.000000; gold=85"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=490; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460251421,"event":"npc_decision","detail":"id=495; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=76.000000; gold=12"}
+{"tick_ms":1460251531,"event":"npc_decision","detail":"id=210; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=431; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=436; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=441; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=446; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=451; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=97.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=456; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=461; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=466; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=471; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=476; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=481; name=폐허 석괴 5; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=486; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=491; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460251656,"event":"npc_decision","detail":"id=496; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460251765,"event":"npc_decision","detail":"id=211; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=432; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=437; name=붕괴 석정의 거신; action=거래; raid_weight=0.100000; hp=600.000000; gold=85"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=442; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=447; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=79.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=452; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=457; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=84.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=462; name=독안개 포식견; action=거래; raid_weight=0.100000; hp=510.000000; gold=85"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=467; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=472; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=477; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=482; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=487; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=492; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460251859,"event":"npc_decision","detail":"id=497; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460252000,"event":"npc_decision","detail":"id=209; name=잔향귀 하나; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=433; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=88.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=438; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=443; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=102.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=448; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=453; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=458; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=463; name=뿔 잔향귀 1; action=거래; raid_weight=0.100000; hp=75.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=468; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=473; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=478; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=483; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=488; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460252046,"event":"npc_decision","detail":"id=493; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=95.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=430; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=435; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=440; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=445; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=78.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=450; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=455; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=93.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=460; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=465; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=470; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=475; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=480; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=485; name=핏빛 제단의 뿔왕; action=거래; raid_weight=0.100000; hp=420.000000; gold=85"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=490; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460252234,"event":"npc_decision","detail":"id=495; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=76.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=429; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=66.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=434; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=85.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=439; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=87.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=444; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=65.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=449; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=454; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=459; name=시체 사냥개 3; action=거래; raid_weight=0.100000; hp=94.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=464; name=시체 사냥개 2; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=469; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=474; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=109.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=479; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=82.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=484; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=489; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460252250,"event":"npc_decision","detail":"id=494; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460252359,"event":"npc_decision","detail":"id=210; name=잔향귀 둘; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=431; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=90.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=436; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=100.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=441; name=시체 사냥개 4; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=446; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=92.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=451; name=폐허 석괴 2; action=거래; raid_weight=0.100000; hp=97.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=456; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=461; name=뿔 잔향귀 5; action=거래; raid_weight=0.100000; hp=77.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=466; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=72.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=471; name=폐허 석괴 4; action=거래; raid_weight=0.100000; hp=80.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=476; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=481; name=폐허 석괴 5; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=486; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=74.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=491; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=106.000000; gold=12"}
+{"tick_ms":1460252531,"event":"npc_decision","detail":"id=496; name=폐허 석괴 3; action=거래; raid_weight=0.100000; hp=71.000000; gold=12"}
+{"tick_ms":1460252656,"event":"npc_decision","detail":"id=211; name=잔향귀 셋; action=거래; raid_weight=0.100000; hp=48.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=432; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=99.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=437; name=붕괴 석정의 거신; action=거래; raid_weight=0.100000; hp=600.000000; gold=85"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=442; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=89.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=447; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=79.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=452; name=뿔 잔향귀 3; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=457; name=폐허 석괴 1; action=거래; raid_weight=0.100000; hp=84.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=462; name=독안개 포식견; action=거래; raid_weight=0.100000; hp=510.000000; gold=85"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=467; name=시체 사냥개 5; action=거래; raid_weight=0.100000; hp=69.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=472; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=477; name=시체 사냥개 1; action=거래; raid_weight=0.100000; hp=110.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=482; name=폐허의 포식자; action=거래; raid_weight=0.100000; hp=360.000000; gold=65"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=487; name=뿔 잔향귀 2; action=거래; raid_weight=0.100000; hp=86.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=492; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=70.000000; gold=12"}
+{"tick_ms":1460252812,"event":"npc_decision","detail":"id=497; name=뿔 잔향귀 4; action=거래; raid_weight=0.100000; hp=67.000000; gold=12"}
+{"tick_ms":1460252953,"event":"session_end","detail":"renderer shutdown"}
