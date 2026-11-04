@@ -78,6 +78,8 @@ class PlayerActor : public Actor
     float health = 100, invulnerable = 0, magnetTime = 0;
     bool weapon = false, showRange = true;
     FarmPoint moveInput;
+    FarmPoint moveFacing{1, 0};
+    float animationClock = 0, locomotionTime = 0, movementBlend = 0;
     void ApplyShotRecoil(FarmPoint direction, bool powerful = false);
     float firingHold = 0;
     FarmPoint recoilVelocity;
@@ -235,6 +237,13 @@ class WeaponActor : public Actor
     int swingSide = 1;
     FarmPoint aim{1, 0};
     float shotTimer_ = 0, muzzleFlash = 0;
+    // Visual playback has its own clock; firingHold only controls movement/recoil.
+    void BeginAttackAnimation(YokaiForm form, float duration);
+    float animationTime = -1, animationDuration = .5f;
+    YokaiForm animationForm = YokaiForm::Sword;
+    FarmPoint animationAim{1, 0};
+    uint64_t animationSerial = 0;
+    int animationStroke = -1;
 
     WeaponActor() : Actor("YokaiWeapon")
     {

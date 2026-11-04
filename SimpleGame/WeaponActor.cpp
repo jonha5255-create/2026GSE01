@@ -83,6 +83,7 @@ void WeaponActor::UpdateSkill(float dt, GameplayContext& context)
             }
             muzzleFlash = .3f;
             owner->ApplyShotRecoil(aim, true);
+            BeginAttackAnimation(YokaiForm::Ranged, .20f);
         }
         else
         {
@@ -134,6 +135,17 @@ void WeaponActor::StartSwing(FarmPoint target)
     swingSide = -swingSide;
     swingDuration = owner->yokai == YokaiForm::Claw ? .18f : .42f;
     swingTime = swingDuration;
+    BeginAttackAnimation(owner->yokai, owner->yokai == YokaiForm::Claw ? .24f : .50f);
+}
+
+void WeaponActor::BeginAttackAnimation(YokaiForm form, float duration)
+{
+    animationForm = form;
+    animationTime = 0;
+    animationDuration = duration;
+    animationAim = aim;
+    animationStroke = swingSide;
+    ++animationSerial;
 }
 
 float WeaponActor::SwingProgress() const
@@ -149,10 +161,22 @@ float WeaponActor::SwingLunge() const
 void WeaponActor::Update(float dt, ActorUpdateContext& services)
 {
     auto& context = dynamic_cast<GameplayContext&>(services);
+    if (animationTime >= 0)
+    {
+        animationTime += dt;
+        if (animationTime >= animationDuration)
+        {
+            animationTime = -1;
+        }
+    }
     UpdateSkill(dt, context);
     shotTimer_ = std::max(0.f, shotTimer_ - dt);
     muzzleFlash = std::max(0.f, muzzleFlash - dt);
     auto* owner = Scene().Get<PlayerActor>(Parent());
+    if (!owner || !owner->weapon || owner->health <= 0 || owner->yokai != animationForm)
+    {
+        animationTime = -1;
+    }
     swingTime = std::max(0.f, swingTime - dt);
     if (!owner || !owner->weapon || owner->yokai == YokaiForm::Ranged)
     {
@@ -233,5 +257,6 @@ bool WeaponActor::ShootAt(Actor& target, GameplayContext& context)
     shotTimer_ = owner->Cooldown();
     muzzleFlash = .12f;
     owner->ApplyShotRecoil(aim);
+    BeginAttackAnimation(YokaiForm::Ranged, .20f);
     return true;
 }

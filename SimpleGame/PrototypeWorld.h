@@ -28,6 +28,7 @@ class PrototypeWorld : private ActorRenderContext
     void PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill = true);
     void PreviewExpedition();
     void PreviewRoadJunction();
+    void PreviewRuins();
 
   private:
     using Coord = std::pair<int64_t, int64_t>;

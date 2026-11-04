@@ -1,0 +1,444 @@
+{
+  "version": 1,
+  "units": "meters",
+  "local_plane_blender": "XY",
+  "plane_normal_blender": "+Z",
+  "local_plane_glb": "XZ",
+  "plane_normal_glb": "+Y",
+  "effects": [
+    {
+      "index": 0,
+      "id": "Muk_Slash",
+      "family_index": 0,
+      "kind": "basic",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/Muk_Slash.glb",
+      "nodes": [
+        "Muk_Slash_Blade",
+        "Muk_Slash_Core",
+        "Muk_Slash_Spark00",
+        "Muk_Slash_Spark01",
+        "Muk_Slash_Spark02",
+        "Muk_Slash_Spark03",
+        "Muk_Slash_Spark04"
+      ],
+      "color": "blue",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Muk_Slash_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "id": "Muk_MoonSweep",
+      "family_index": 0,
+      "kind": "skill",
+      "frames": 24,
+      "fps": 30,
+      "duration_s": 0.8,
+      "glb": "vfx/Muk_MoonSweep.glb",
+      "nodes": [
+        "Muk_MoonSweep_Blade",
+        "Muk_MoonSweep_Core",
+        "Muk_MoonSweep_Moon0",
+        "Muk_MoonSweep_Moon1",
+        "Muk_MoonSweep_Moon2",
+        "Muk_MoonSweep_Spark00",
+        "Muk_MoonSweep_Spark01",
+        "Muk_MoonSweep_Spark02",
+        "Muk_MoonSweep_Spark03",
+        "Muk_MoonSweep_Spark04",
+        "Muk_MoonSweep_Spark05",
+        "Muk_MoonSweep_Spark06",
+        "Muk_MoonSweep_Spark07"
+      ],
+      "color": "blue",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Muk_MoonSweep_atlas.png",
+      "columns": 4,
+      "rows": 6,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "id": "SoulRifle_Fire",
+      "family_index": 1,
+      "kind": "basic",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/SoulRifle_Fire.glb",
+      "nodes": [
+        "SoulRifle_Fire_Muzzle0",
+        "SoulRifle_Fire_HotCore0",
+        "SoulRifle_Fire_Tracer0_0",
+        "SoulRifle_Fire_Spark00",
+        "SoulRifle_Fire_Spark01",
+        "SoulRifle_Fire_Spark02",
+        "SoulRifle_Fire_Spark03",
+        "SoulRifle_Fire_Spark04"
+      ],
+      "color": "gold",
+      "anchor": "muzzle_socket",
+      "sprite_sheet": "vfx/SoulRifle_Fire_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "id": "SoulRifle_Scatter",
+      "family_index": 1,
+      "kind": "skill",
+      "frames": 24,
+      "fps": 30,
+      "duration_s": 0.8,
+      "glb": "vfx/SoulRifle_Scatter.glb",
+      "nodes": [
+        "SoulRifle_Scatter_Muzzle0",
+        "SoulRifle_Scatter_HotCore0",
+        "SoulRifle_Scatter_Tracer0_0",
+        "SoulRifle_Scatter_Tracer0_1",
+        "SoulRifle_Scatter_Tracer0_2",
+        "SoulRifle_Scatter_Tracer0_3",
+        "SoulRifle_Scatter_Tracer0_4",
+        "SoulRifle_Scatter_Shock0",
+        "SoulRifle_Scatter_Spark00",
+        "SoulRifle_Scatter_Spark01",
+        "SoulRifle_Scatter_Spark02",
+        "SoulRifle_Scatter_Spark03",
+        "SoulRifle_Scatter_Spark04",
+        "SoulRifle_Scatter_Spark05",
+        "SoulRifle_Scatter_Spark06",
+        "SoulRifle_Scatter_Spark07"
+      ],
+      "color": "gold",
+      "anchor": "muzzle_socket",
+      "sprite_sheet": "vfx/SoulRifle_Scatter_atlas.png",
+      "columns": 4,
+      "rows": 6,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "id": "Claw_Rake",
+      "family_index": 2,
+      "kind": "basic",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/Claw_Rake.glb",
+      "nodes": [
+        "Claw_Rake_Claw0_0",
+        "Claw_Rake_Claw0_1",
+        "Claw_Rake_Claw0_2",
+        "Claw_Rake_Spark00",
+        "Claw_Rake_Spark01",
+        "Claw_Rake_Spark02",
+        "Claw_Rake_Spark03",
+        "Claw_Rake_Spark04"
+      ],
+      "color": "violet",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Claw_Rake_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "id": "Claw_TripleRake",
+      "family_index": 2,
+      "kind": "skill",
+      "frames": 24,
+      "fps": 30,
+      "duration_s": 0.8,
+      "glb": "vfx/Claw_TripleRake.glb",
+      "nodes": [
+        "Claw_TripleRake_Claw0_0",
+        "Claw_TripleRake_Claw0_1",
+        "Claw_TripleRake_Claw0_2",
+        "Claw_TripleRake_Claw1_0",
+        "Claw_TripleRake_Claw1_1",
+        "Claw_TripleRake_Claw1_2",
+        "Claw_TripleRake_Claw2_0",
+        "Claw_TripleRake_Claw2_1",
+        "Claw_TripleRake_Claw2_2",
+        "Claw_TripleRake_Spark00",
+        "Claw_TripleRake_Spark01",
+        "Claw_TripleRake_Spark02",
+        "Claw_TripleRake_Spark03",
+        "Claw_TripleRake_Spark04",
+        "Claw_TripleRake_Spark05",
+        "Claw_TripleRake_Spark06",
+        "Claw_TripleRake_Spark07"
+      ],
+      "color": "violet",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Claw_TripleRake_atlas.png",
+      "columns": 4,
+      "rows": 6,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        },
+        {
+          "frame": 6,
+          "event": "second_rake"
+        },
+        {
+          "frame": 10,
+          "event": "third_rake"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "id": "Soryeong_DualShot",
+      "family_index": 3,
+      "kind": "basic",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/Soryeong_DualShot.glb",
+      "nodes": [
+        "Soryeong_DualShot_Muzzle0",
+        "Soryeong_DualShot_HotCore0",
+        "Soryeong_DualShot_Tracer0_0",
+        "Soryeong_DualShot_Muzzle1",
+        "Soryeong_DualShot_HotCore1",
+        "Soryeong_DualShot_Tracer1_0",
+        "Soryeong_DualShot_Spark00",
+        "Soryeong_DualShot_Spark01",
+        "Soryeong_DualShot_Spark02",
+        "Soryeong_DualShot_Spark03",
+        "Soryeong_DualShot_Spark04"
+      ],
+      "color": "gold",
+      "anchor": "muzzle_socket",
+      "sprite_sheet": "vfx/Soryeong_DualShot_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "id": "Soryeong_RailBurst",
+      "family_index": 3,
+      "kind": "skill",
+      "frames": 24,
+      "fps": 30,
+      "duration_s": 0.8,
+      "glb": "vfx/Soryeong_RailBurst.glb",
+      "nodes": [
+        "Soryeong_RailBurst_Muzzle0",
+        "Soryeong_RailBurst_HotCore0",
+        "Soryeong_RailBurst_Tracer0_0",
+        "Soryeong_RailBurst_Tracer0_1",
+        "Soryeong_RailBurst_Tracer0_2",
+        "Soryeong_RailBurst_Tracer0_3",
+        "Soryeong_RailBurst_Tracer0_4",
+        "Soryeong_RailBurst_Shock0",
+        "Soryeong_RailBurst_Muzzle1",
+        "Soryeong_RailBurst_HotCore1",
+        "Soryeong_RailBurst_Tracer1_0",
+        "Soryeong_RailBurst_Tracer1_1",
+        "Soryeong_RailBurst_Tracer1_2",
+        "Soryeong_RailBurst_Tracer1_3",
+        "Soryeong_RailBurst_Tracer1_4",
+        "Soryeong_RailBurst_Shock1",
+        "Soryeong_RailBurst_Spark00",
+        "Soryeong_RailBurst_Spark01",
+        "Soryeong_RailBurst_Spark02",
+        "Soryeong_RailBurst_Spark03",
+        "Soryeong_RailBurst_Spark04",
+        "Soryeong_RailBurst_Spark05",
+        "Soryeong_RailBurst_Spark06",
+        "Soryeong_RailBurst_Spark07"
+      ],
+      "color": "gold",
+      "anchor": "muzzle_socket",
+      "sprite_sheet": "vfx/Soryeong_RailBurst_atlas.png",
+      "columns": 4,
+      "rows": 6,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "id": "Mes_CrossCut",
+      "family_index": 4,
+      "kind": "basic",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/Mes_CrossCut.glb",
+      "nodes": [
+        "Mes_CrossCut_CrossA",
+        "Mes_CrossCut_CrossB",
+        "Mes_CrossCut_Blade-1",
+        "Mes_CrossCut_Blade1",
+        "Mes_CrossCut_Spark00",
+        "Mes_CrossCut_Spark01",
+        "Mes_CrossCut_Spark02",
+        "Mes_CrossCut_Spark03",
+        "Mes_CrossCut_Spark04"
+      ],
+      "color": "jade",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Mes_CrossCut_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "id": "Mes_ScissorSnap",
+      "family_index": 4,
+      "kind": "skill",
+      "frames": 24,
+      "fps": 30,
+      "duration_s": 0.8,
+      "glb": "vfx/Mes_ScissorSnap.glb",
+      "nodes": [
+        "Mes_ScissorSnap_CrossA",
+        "Mes_ScissorSnap_CrossB",
+        "Mes_ScissorSnap_Blade-1",
+        "Mes_ScissorSnap_Blade1",
+        "Mes_ScissorSnap_Pivot",
+        "Mes_ScissorSnap_SnapRing",
+        "Mes_ScissorSnap_Spark00",
+        "Mes_ScissorSnap_Spark01",
+        "Mes_ScissorSnap_Spark02",
+        "Mes_ScissorSnap_Spark03",
+        "Mes_ScissorSnap_Spark04",
+        "Mes_ScissorSnap_Spark05",
+        "Mes_ScissorSnap_Spark06",
+        "Mes_ScissorSnap_Spark07"
+      ],
+      "color": "jade",
+      "anchor": "attack_plane",
+      "sprite_sheet": "vfx/Mes_ScissorSnap_atlas.png",
+      "columns": 4,
+      "rows": 6,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "id": "Shared_Hit",
+      "family_index": -1,
+      "kind": "impact",
+      "frames": 16,
+      "fps": 30,
+      "duration_s": 0.5333333333333333,
+      "glb": "vfx/Shared_Hit.glb",
+      "nodes": [
+        "Shared_Hit_Core",
+        "Shared_Hit_Spark00",
+        "Shared_Hit_Spark01",
+        "Shared_Hit_Spark02",
+        "Shared_Hit_Spark03",
+        "Shared_Hit_Spark04"
+      ],
+      "color": "white",
+      "anchor": "hit_position",
+      "sprite_sheet": "vfx/Shared_Hit_atlas.png",
+      "columns": 4,
+      "rows": 4,
+      "cell_px": 256,
+      "frame_order": "left-to-right then top-to-bottom",
+      "blend": "additive recommended; straight alpha fallback",
+      "events": [
+        {
+          "frame": 2,
+          "event": "visual_onset"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "No game code, damage timing, collision or runtime spawning implemented.",
+    "GLB clips animate node transforms; shader emission is static.",
+    "RGBA flipbooks contain the rendered timing including disappearance.",
+    "Rotate the local effect plane to the swing/shot plane when spawning.",
+    "Basic and skill durations are visual lifetimes, not gameplay attack cooldowns."
+  ]
+}

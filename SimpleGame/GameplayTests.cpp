@@ -20,6 +20,27 @@ bool LevelOne::SelfTest()
     };
     LevelOne a;
     {
+        LevelOne motion;
+        auto services = motion.Context(open);
+        auto& hero = motion.Player();
+        auto& item = motion.Weapon();
+        hero.weapon = true;
+        hero.yokai = YokaiForm::Ranged;
+        services.movePlayer = [](float, float)
+        {
+        };
+        auto& target = motion.SpawnEnemy({100, 0});
+        check(item.ShootAt(target, services) && item.animationTime == 0,
+              "a real projectile starts the visual attack clock");
+        hero.Update(.17f, services);
+        item.Update(.17f, services);
+        check(hero.firingHold == 0 && item.animationTime > .16f,
+              "gun animation recovery continues after the movement hold ends");
+        hero.SelectYokai(YokaiForm::Claw);
+        item.Update(.01f, services);
+        check(item.animationTime < 0, "weapon switching cancels an old visual attack");
+    }
+    {
         LevelOne relics;
         auto services = relics.Context(open);
         for (int region = 0; region < 3; ++region)

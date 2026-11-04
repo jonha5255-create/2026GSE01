@@ -1,0 +1,1419 @@
+{
+  "version": 1,
+  "units": "meters",
+  "blender_front": "-Y",
+  "glb_up": "Y",
+  "companion_front_glb": "+Z",
+  "weapon_forward_blender": "+Z",
+  "weapon_forward_glb": "+Y",
+  "evolution_levels": [
+    1,
+    3,
+    6,
+    9
+  ],
+  "selection_schema": {
+    "family_index": "0..4",
+    "form_index": "0 companion / 1 weapon",
+    "evolution": "0..3; include parts 0 through evolution"
+  },
+  "families": [
+    {
+      "index": 0,
+      "id": "Muk",
+      "name": "묵",
+      "weapon_type": "Sword",
+      "color": "blue",
+      "forms": {
+        "Companion": {
+          "parts": [
+            "SM_YK_00_Muk_Companion_P00",
+            "SM_YK_00_Muk_Companion_P01",
+            "SM_YK_00_Muk_Companion_P02",
+            "SM_YK_00_Muk_Companion_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_00_Muk_Companion_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Companion_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_00_Muk_Companion_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Companion_P00",
+                "SM_YK_00_Muk_Companion_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_00_Muk_Companion_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Companion_P00",
+                "SM_YK_00_Muk_Companion_P01",
+                "SM_YK_00_Muk_Companion_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_00_Muk_Companion_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Companion_P00",
+                "SM_YK_00_Muk_Companion_P01",
+                "SM_YK_00_Muk_Companion_P02",
+                "SM_YK_00_Muk_Companion_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "root": [
+              0,
+              0,
+              0
+            ],
+            "soul_core": [
+              0,
+              -0.19,
+              0.69
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_00_Muk_Companion_P00": [
+              "SM_YK_00_Muk_Companion_P00"
+            ],
+            "SM_YK_00_Muk_Companion_P01": [
+              "SM_YK_00_Muk_Companion_P01"
+            ],
+            "SM_YK_00_Muk_Companion_P02": [
+              "SM_YK_00_Muk_Companion_P02"
+            ],
+            "SM_YK_00_Muk_Companion_P03": [
+              "SM_YK_00_Muk_Companion_P03"
+            ]
+          }
+        },
+        "Weapon": {
+          "parts": [
+            "SM_YK_00_Muk_Weapon_P00",
+            "SM_YK_00_Muk_Weapon_P01",
+            "SM_YK_00_Muk_Weapon_P02",
+            "SM_YK_00_Muk_Weapon_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_00_Muk_Weapon_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Weapon_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_00_Muk_Weapon_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Weapon_P00",
+                "SM_YK_00_Muk_Weapon_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_00_Muk_Weapon_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Weapon_P00",
+                "SM_YK_00_Muk_Weapon_P01",
+                "SM_YK_00_Muk_Weapon_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_00_Muk_Weapon_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_00_Muk_Weapon_P00",
+                "SM_YK_00_Muk_Weapon_P01",
+                "SM_YK_00_Muk_Weapon_P02",
+                "SM_YK_00_Muk_Weapon_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "grip": [
+              0,
+              0,
+              0
+            ],
+            "forward": [
+              0,
+              0,
+              1
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_00_Muk_Weapon_P00": [
+              "SM_YK_00_Muk_Weapon_P00"
+            ],
+            "SM_YK_00_Muk_Weapon_P01": [
+              "SM_YK_00_Muk_Weapon_P01"
+            ],
+            "SM_YK_00_Muk_Weapon_P02": [
+              "SM_YK_00_Muk_Weapon_P02"
+            ],
+            "SM_YK_00_Muk_Weapon_P03": [
+              "SM_YK_00_Muk_Weapon_P03"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 1,
+      "id": "SoulRifle",
+      "name": "영혼총 요괴",
+      "weapon_type": "SoulRifle",
+      "color": "gold",
+      "forms": {
+        "Companion": {
+          "parts": [
+            "SM_YK_01_SoulRifle_Companion_P00",
+            "SM_YK_01_SoulRifle_Companion_P01",
+            "SM_YK_01_SoulRifle_Companion_P02",
+            "SM_YK_01_SoulRifle_Companion_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_01_SoulRifle_Companion_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Companion_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_01_SoulRifle_Companion_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Companion_P00",
+                "SM_YK_01_SoulRifle_Companion_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_01_SoulRifle_Companion_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Companion_P00",
+                "SM_YK_01_SoulRifle_Companion_P01",
+                "SM_YK_01_SoulRifle_Companion_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_01_SoulRifle_Companion_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Companion_P00",
+                "SM_YK_01_SoulRifle_Companion_P01",
+                "SM_YK_01_SoulRifle_Companion_P02",
+                "SM_YK_01_SoulRifle_Companion_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "root": [
+              0,
+              0,
+              0
+            ],
+            "soul_core": [
+              0,
+              -0.33,
+              0.74
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_01_SoulRifle_Companion_P00": [
+              "SM_YK_01_SoulRifle_Companion_P00"
+            ],
+            "SM_YK_01_SoulRifle_Companion_P01": [
+              "SM_YK_01_SoulRifle_Companion_P01"
+            ],
+            "SM_YK_01_SoulRifle_Companion_P02": [
+              "SM_YK_01_SoulRifle_Companion_P02"
+            ],
+            "SM_YK_01_SoulRifle_Companion_P03": [
+              "SM_YK_01_SoulRifle_Companion_P03"
+            ]
+          }
+        },
+        "Weapon": {
+          "parts": [
+            "SM_YK_01_SoulRifle_Weapon_P00",
+            "SM_YK_01_SoulRifle_Weapon_P01",
+            "SM_YK_01_SoulRifle_Weapon_P02",
+            "SM_YK_01_SoulRifle_Weapon_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_01_SoulRifle_Weapon_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Weapon_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_01_SoulRifle_Weapon_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Weapon_P00",
+                "SM_YK_01_SoulRifle_Weapon_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_01_SoulRifle_Weapon_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Weapon_P00",
+                "SM_YK_01_SoulRifle_Weapon_P01",
+                "SM_YK_01_SoulRifle_Weapon_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_01_SoulRifle_Weapon_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_01_SoulRifle_Weapon_P00",
+                "SM_YK_01_SoulRifle_Weapon_P01",
+                "SM_YK_01_SoulRifle_Weapon_P02",
+                "SM_YK_01_SoulRifle_Weapon_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "grip": [
+              0,
+              0,
+              0
+            ],
+            "forward": [
+              0,
+              0,
+              1
+            ],
+            "support_hand": [
+              0,
+              -0.09,
+              0.45
+            ],
+            "muzzle": [
+              0,
+              0.08,
+              1.06
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_01_SoulRifle_Weapon_P00": [
+              "SM_YK_01_SoulRifle_Weapon_P00"
+            ],
+            "SM_YK_01_SoulRifle_Weapon_P01": [
+              "SM_YK_01_SoulRifle_Weapon_P01"
+            ],
+            "SM_YK_01_SoulRifle_Weapon_P02": [
+              "SM_YK_01_SoulRifle_Weapon_P02"
+            ],
+            "SM_YK_01_SoulRifle_Weapon_P03": [
+              "SM_YK_01_SoulRifle_Weapon_P03"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 2,
+      "id": "Claw",
+      "name": "클로 요괴",
+      "weapon_type": "Claw",
+      "color": "violet",
+      "forms": {
+        "Companion": {
+          "parts": [
+            "SM_YK_02_Claw_Companion_P00",
+            "SM_YK_02_Claw_Companion_P01",
+            "SM_YK_02_Claw_Companion_P02",
+            "SM_YK_02_Claw_Companion_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_02_Claw_Companion_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Companion_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_02_Claw_Companion_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Companion_P00",
+                "SM_YK_02_Claw_Companion_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_02_Claw_Companion_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Companion_P00",
+                "SM_YK_02_Claw_Companion_P01",
+                "SM_YK_02_Claw_Companion_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_02_Claw_Companion_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Companion_P00",
+                "SM_YK_02_Claw_Companion_P01",
+                "SM_YK_02_Claw_Companion_P02",
+                "SM_YK_02_Claw_Companion_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "root": [
+              0,
+              0,
+              0
+            ],
+            "soul_core": [
+              0,
+              -0.438,
+              0.7
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_02_Claw_Companion_P00": [
+              "SM_YK_02_Claw_Companion_P00"
+            ],
+            "SM_YK_02_Claw_Companion_P01": [
+              "SM_YK_02_Claw_Companion_P01"
+            ],
+            "SM_YK_02_Claw_Companion_P02": [
+              "SM_YK_02_Claw_Companion_P02"
+            ],
+            "SM_YK_02_Claw_Companion_P03": [
+              "SM_YK_02_Claw_Companion_P03"
+            ]
+          }
+        },
+        "Weapon": {
+          "parts": [
+            "SM_YK_02_Claw_Weapon_P00",
+            "SM_YK_02_Claw_Weapon_P01",
+            "SM_YK_02_Claw_Weapon_P02",
+            "SM_YK_02_Claw_Weapon_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_02_Claw_Weapon_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Weapon_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_02_Claw_Weapon_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Weapon_P00",
+                "SM_YK_02_Claw_Weapon_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_02_Claw_Weapon_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Weapon_P00",
+                "SM_YK_02_Claw_Weapon_P01",
+                "SM_YK_02_Claw_Weapon_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_02_Claw_Weapon_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_02_Claw_Weapon_P00",
+                "SM_YK_02_Claw_Weapon_P01",
+                "SM_YK_02_Claw_Weapon_P02",
+                "SM_YK_02_Claw_Weapon_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "grip": [
+              0,
+              0,
+              0
+            ],
+            "forward": [
+              0,
+              0,
+              1
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_02_Claw_Weapon_P00": [
+              "SM_YK_02_Claw_Weapon_P00"
+            ],
+            "SM_YK_02_Claw_Weapon_P01": [
+              "SM_YK_02_Claw_Weapon_P01"
+            ],
+            "SM_YK_02_Claw_Weapon_P02": [
+              "SM_YK_02_Claw_Weapon_P02"
+            ],
+            "SM_YK_02_Claw_Weapon_P03": [
+              "SM_YK_02_Claw_Weapon_P03"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 3,
+      "id": "Soryeong",
+      "name": "소령",
+      "weapon_type": "DualGun",
+      "color": "gold",
+      "forms": {
+        "Companion": {
+          "parts": [
+            "SM_YK_03_Soryeong_Companion_P00",
+            "SM_YK_03_Soryeong_Companion_P01",
+            "SM_YK_03_Soryeong_Companion_P02",
+            "SM_YK_03_Soryeong_Companion_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_03_Soryeong_Companion_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Companion_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_03_Soryeong_Companion_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Companion_P00",
+                "SM_YK_03_Soryeong_Companion_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_03_Soryeong_Companion_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Companion_P00",
+                "SM_YK_03_Soryeong_Companion_P01",
+                "SM_YK_03_Soryeong_Companion_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_03_Soryeong_Companion_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Companion_P00",
+                "SM_YK_03_Soryeong_Companion_P01",
+                "SM_YK_03_Soryeong_Companion_P02",
+                "SM_YK_03_Soryeong_Companion_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "root": [
+              0,
+              0,
+              0
+            ],
+            "soul_core": [
+              0,
+              -0.195,
+              0.84
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_03_Soryeong_Companion_P00": [
+              "SM_YK_03_Soryeong_Companion_P00"
+            ],
+            "SM_YK_03_Soryeong_Companion_P01": [
+              "SM_YK_03_Soryeong_Companion_P01"
+            ],
+            "SM_YK_03_Soryeong_Companion_P02": [
+              "SM_YK_03_Soryeong_Companion_P02"
+            ],
+            "SM_YK_03_Soryeong_Companion_P03": [
+              "SM_YK_03_Soryeong_Companion_P03"
+            ]
+          }
+        },
+        "Weapon": {
+          "parts": [
+            "SM_YK_03_Soryeong_Weapon_P00",
+            "SM_YK_03_Soryeong_Weapon_P01",
+            "SM_YK_03_Soryeong_Weapon_P02",
+            "SM_YK_03_Soryeong_Weapon_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_03_Soryeong_Weapon_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Weapon_P00_L",
+                "SM_YK_03_Soryeong_Weapon_P00_R"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_03_Soryeong_Weapon_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Weapon_P00_L",
+                "SM_YK_03_Soryeong_Weapon_P00_R",
+                "SM_YK_03_Soryeong_Weapon_P01_L",
+                "SM_YK_03_Soryeong_Weapon_P01_R"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_03_Soryeong_Weapon_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Weapon_P00_L",
+                "SM_YK_03_Soryeong_Weapon_P00_R",
+                "SM_YK_03_Soryeong_Weapon_P01_L",
+                "SM_YK_03_Soryeong_Weapon_P01_R",
+                "SM_YK_03_Soryeong_Weapon_P02_L",
+                "SM_YK_03_Soryeong_Weapon_P02_R"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_03_Soryeong_Weapon_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_03_Soryeong_Weapon_P00_L",
+                "SM_YK_03_Soryeong_Weapon_P00_R",
+                "SM_YK_03_Soryeong_Weapon_P01_L",
+                "SM_YK_03_Soryeong_Weapon_P01_R",
+                "SM_YK_03_Soryeong_Weapon_P02_L",
+                "SM_YK_03_Soryeong_Weapon_P02_R",
+                "SM_YK_03_Soryeong_Weapon_P03_L",
+                "SM_YK_03_Soryeong_Weapon_P03_R"
+              ]
+            }
+          ],
+          "sockets": {
+            "grip": [
+              0,
+              0,
+              0
+            ],
+            "forward": [
+              0,
+              0,
+              1
+            ],
+            "grip_L": [
+              -0.22,
+              0,
+              0
+            ],
+            "grip_R": [
+              0.22,
+              0,
+              0
+            ],
+            "muzzle_L": [
+              -0.22,
+              0.03,
+              0.59
+            ],
+            "muzzle_R": [
+              0.22,
+              0.03,
+              0.59
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_03_Soryeong_Weapon_P00": [
+              "SM_YK_03_Soryeong_Weapon_P00_L",
+              "SM_YK_03_Soryeong_Weapon_P00_R"
+            ],
+            "SM_YK_03_Soryeong_Weapon_P01": [
+              "SM_YK_03_Soryeong_Weapon_P01_L",
+              "SM_YK_03_Soryeong_Weapon_P01_R"
+            ],
+            "SM_YK_03_Soryeong_Weapon_P02": [
+              "SM_YK_03_Soryeong_Weapon_P02_L",
+              "SM_YK_03_Soryeong_Weapon_P02_R"
+            ],
+            "SM_YK_03_Soryeong_Weapon_P03": [
+              "SM_YK_03_Soryeong_Weapon_P03_L",
+              "SM_YK_03_Soryeong_Weapon_P03_R"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 4,
+      "id": "Mes",
+      "name": "메스",
+      "weapon_type": "ScissorDualBlade",
+      "color": "jade",
+      "forms": {
+        "Companion": {
+          "parts": [
+            "SM_YK_04_Mes_Companion_P00",
+            "SM_YK_04_Mes_Companion_P01",
+            "SM_YK_04_Mes_Companion_P02",
+            "SM_YK_04_Mes_Companion_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_04_Mes_Companion_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Companion_P00"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_04_Mes_Companion_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Companion_P00",
+                "SM_YK_04_Mes_Companion_P01"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_04_Mes_Companion_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Companion_P00",
+                "SM_YK_04_Mes_Companion_P01",
+                "SM_YK_04_Mes_Companion_P02"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_04_Mes_Companion_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Companion_P00",
+                "SM_YK_04_Mes_Companion_P01",
+                "SM_YK_04_Mes_Companion_P02",
+                "SM_YK_04_Mes_Companion_P03"
+              ]
+            }
+          ],
+          "sockets": {
+            "root": [
+              0,
+              0,
+              0
+            ],
+            "soul_core": [
+              0,
+              -0.155,
+              1.0
+            ]
+          },
+          "export_nodes": {
+            "SM_YK_04_Mes_Companion_P00": [
+              "SM_YK_04_Mes_Companion_P00"
+            ],
+            "SM_YK_04_Mes_Companion_P01": [
+              "SM_YK_04_Mes_Companion_P01"
+            ],
+            "SM_YK_04_Mes_Companion_P02": [
+              "SM_YK_04_Mes_Companion_P02"
+            ],
+            "SM_YK_04_Mes_Companion_P03": [
+              "SM_YK_04_Mes_Companion_P03"
+            ]
+          }
+        },
+        "Weapon": {
+          "parts": [
+            "SM_YK_04_Mes_Weapon_P00",
+            "SM_YK_04_Mes_Weapon_P01",
+            "SM_YK_04_Mes_Weapon_P02",
+            "SM_YK_04_Mes_Weapon_P03"
+          ],
+          "variants": [
+            {
+              "evolution": 0,
+              "level": 1,
+              "file": "yokai/YK_04_Mes_Weapon_E00.glb",
+              "part_indices": [
+                0
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Weapon_P00_L",
+                "SM_YK_04_Mes_Weapon_P00_R"
+              ]
+            },
+            {
+              "evolution": 1,
+              "level": 3,
+              "file": "yokai/YK_04_Mes_Weapon_E01.glb",
+              "part_indices": [
+                0,
+                1
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Weapon_P00_L",
+                "SM_YK_04_Mes_Weapon_P00_R",
+                "SM_YK_04_Mes_Weapon_P01_L",
+                "SM_YK_04_Mes_Weapon_P01_R"
+              ]
+            },
+            {
+              "evolution": 2,
+              "level": 6,
+              "file": "yokai/YK_04_Mes_Weapon_E02.glb",
+              "part_indices": [
+                0,
+                1,
+                2
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Weapon_P00_L",
+                "SM_YK_04_Mes_Weapon_P00_R",
+                "SM_YK_04_Mes_Weapon_P01_L",
+                "SM_YK_04_Mes_Weapon_P01_R",
+                "SM_YK_04_Mes_Weapon_P02_L",
+                "SM_YK_04_Mes_Weapon_P02_R"
+              ]
+            },
+            {
+              "evolution": 3,
+              "level": 9,
+              "file": "yokai/YK_04_Mes_Weapon_E03.glb",
+              "part_indices": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "nodes": [
+                "SM_YK_04_Mes_Weapon_P00_L",
+                "SM_YK_04_Mes_Weapon_P00_R",
+                "SM_YK_04_Mes_Weapon_P01_L",
+                "SM_YK_04_Mes_Weapon_P01_R",
+                "SM_YK_04_Mes_Weapon_P02_L",
+                "SM_YK_04_Mes_Weapon_P02_R",
+                "SM_YK_04_Mes_Weapon_P03_L",
+                "SM_YK_04_Mes_Weapon_P03_R"
+              ]
+            }
+          ],
+          "sockets": {
+            "grip": [
+              0,
+              0,
+              0
+            ],
+            "forward": [
+              0,
+              0,
+              1
+            ],
+            "pivot": [
+              0,
+              0,
+              0.25
+            ],
+            "split_blades": true
+          },
+          "export_nodes": {
+            "SM_YK_04_Mes_Weapon_P00": [
+              "SM_YK_04_Mes_Weapon_P00_L",
+              "SM_YK_04_Mes_Weapon_P00_R"
+            ],
+            "SM_YK_04_Mes_Weapon_P01": [
+              "SM_YK_04_Mes_Weapon_P01_L",
+              "SM_YK_04_Mes_Weapon_P01_R"
+            ],
+            "SM_YK_04_Mes_Weapon_P02": [
+              "SM_YK_04_Mes_Weapon_P02_L",
+              "SM_YK_04_Mes_Weapon_P02_R"
+            ],
+            "SM_YK_04_Mes_Weapon_P03": [
+              "SM_YK_04_Mes_Weapon_P03_L",
+              "SM_YK_04_Mes_Weapon_P03_R"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "mesh": "SM_YK_00_Muk_Companion_P00",
+      "index": 0,
+      "family_index": 0,
+      "form": "Companion",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 2972
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Companion_P01",
+      "index": 1,
+      "family_index": 0,
+      "form": "Companion",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 864
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Companion_P02",
+      "index": 2,
+      "family_index": 0,
+      "form": "Companion",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Companion_P03",
+      "index": 3,
+      "family_index": 0,
+      "form": "Companion",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 1040
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Weapon_P00",
+      "index": 4,
+      "family_index": 0,
+      "form": "Weapon",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 1796
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Weapon_P01",
+      "index": 5,
+      "family_index": 0,
+      "form": "Weapon",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 204
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Weapon_P02",
+      "index": 6,
+      "family_index": 0,
+      "form": "Weapon",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_00_Muk_Weapon_P03",
+      "index": 7,
+      "family_index": 0,
+      "form": "Weapon",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 316
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Companion_P00",
+      "index": 8,
+      "family_index": 1,
+      "form": "Companion",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 2144
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Companion_P01",
+      "index": 9,
+      "family_index": 1,
+      "form": "Companion",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 864
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Companion_P02",
+      "index": 10,
+      "family_index": 1,
+      "form": "Companion",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Companion_P03",
+      "index": 11,
+      "family_index": 1,
+      "form": "Companion",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 1040
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Weapon_P00",
+      "index": 12,
+      "family_index": 1,
+      "form": "Weapon",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 1984
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Weapon_P01",
+      "index": 13,
+      "family_index": 1,
+      "form": "Weapon",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 564
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Weapon_P02",
+      "index": 14,
+      "family_index": 1,
+      "form": "Weapon",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 176
+    },
+    {
+      "mesh": "SM_YK_01_SoulRifle_Weapon_P03",
+      "index": 15,
+      "family_index": 1,
+      "form": "Weapon",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 664
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Companion_P00",
+      "index": 16,
+      "family_index": 2,
+      "form": "Companion",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 4180
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Companion_P01",
+      "index": 17,
+      "family_index": 2,
+      "form": "Companion",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 864
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Companion_P02",
+      "index": 18,
+      "family_index": 2,
+      "form": "Companion",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Companion_P03",
+      "index": 19,
+      "family_index": 2,
+      "form": "Companion",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 1040
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Weapon_P00",
+      "index": 20,
+      "family_index": 2,
+      "form": "Weapon",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 944
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Weapon_P01",
+      "index": 21,
+      "family_index": 2,
+      "form": "Weapon",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 288
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Weapon_P02",
+      "index": 22,
+      "family_index": 2,
+      "form": "Weapon",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_02_Claw_Weapon_P03",
+      "index": 23,
+      "family_index": 2,
+      "form": "Weapon",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 372
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Companion_P00",
+      "index": 24,
+      "family_index": 3,
+      "form": "Companion",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 3276
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Companion_P01",
+      "index": 25,
+      "family_index": 3,
+      "form": "Companion",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 864
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Companion_P02",
+      "index": 26,
+      "family_index": 3,
+      "form": "Companion",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Companion_P03",
+      "index": 27,
+      "family_index": 3,
+      "form": "Companion",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 1040
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Weapon_P00",
+      "index": 28,
+      "family_index": 3,
+      "form": "Weapon",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 2752
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Weapon_P01",
+      "index": 29,
+      "family_index": 3,
+      "form": "Weapon",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 1128
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Weapon_P02",
+      "index": 30,
+      "family_index": 3,
+      "form": "Weapon",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 176
+    },
+    {
+      "mesh": "SM_YK_03_Soryeong_Weapon_P03",
+      "index": 31,
+      "family_index": 3,
+      "form": "Weapon",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 664
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Companion_P00",
+      "index": 32,
+      "family_index": 4,
+      "form": "Companion",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 3200
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Companion_P01",
+      "index": 33,
+      "family_index": 4,
+      "form": "Companion",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 864
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Companion_P02",
+      "index": 34,
+      "family_index": 4,
+      "form": "Companion",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Companion_P03",
+      "index": 35,
+      "family_index": 4,
+      "form": "Companion",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 1040
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Weapon_P00",
+      "index": 36,
+      "family_index": 4,
+      "form": "Weapon",
+      "part_index": 0,
+      "unlock_evolution": 0,
+      "triangles": 956
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Weapon_P01",
+      "index": 37,
+      "family_index": 4,
+      "form": "Weapon",
+      "part_index": 1,
+      "unlock_evolution": 1,
+      "triangles": 56
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Weapon_P02",
+      "index": 38,
+      "family_index": 4,
+      "form": "Weapon",
+      "part_index": 2,
+      "unlock_evolution": 2,
+      "triangles": 168
+    },
+    {
+      "mesh": "SM_YK_04_Mes_Weapon_P03",
+      "index": 39,
+      "family_index": 4,
+      "form": "Weapon",
+      "part_index": 3,
+      "unlock_evolution": 3,
+      "triangles": 316
+    }
+  ],
+  "notes": [
+    "Modeling assets only; no game integration or new animation clips.",
+    "Companion and weapon share material colors and visual motifs; not topology morph targets.",
+    "Evolution GLBs contain separate base/additive mesh nodes; shared source mesh data.",
+    "Soryeong paired guns and Mes scissor blades export as separate L/R nodes. Mes pivot stays at (0,0,0.25) in Blender space; no animation is baked."
+  ]
+}

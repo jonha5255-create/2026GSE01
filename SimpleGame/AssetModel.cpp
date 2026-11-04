@@ -456,10 +456,17 @@ namespace Art
                       const std::string& name,
                       float seconds,
                       bool loop,
-                      bool removeRootMotion)
+                      bool removeRootMotion,
+                      bool buildWorld)
     {
         Require(std::isfinite(seconds), "Non-finite animation time");
-        auto transforms = model.nodes;
+        local.resize(model.nodes.size());
+        for (size_t i = 0; i < local.size(); ++i)
+        {
+            const auto& node = model.nodes[i];
+            local[i] = {node.translation, node.scale, node.rotation};
+        }
+        auto& transforms = local;
         const auto* clip = name.empty() ? nullptr : model.FindClip(name);
         Require(name.empty() || clip, "Unknown animation clip");
         float t = std::max(0.f, seconds);
@@ -487,6 +494,86 @@ namespace Art
                 }
             }
         }
+        if (buildWorld)
+        {
+            Evaluate(model, removeRootMotion);
+        }
+        else
+        {
+            world.clear();
+            rootDisplacement = {};
+            for (size_t i = 0; i < local.size(); ++i)
+            {
+                if (model.nodes[i].name == "root")
+                {
+                    auto base = model.nodes[i].translation;
+                    auto& t = local[i].translation;
+                    rootDisplacement = {t.x - base.x, t.y - base.y, t.z - base.z};
+                    if (removeRootMotion)
+                    {
+                        t = base;
+                    }
+                }
+            }
+        }
+    }
+
+    void Pose::Mix(const Model& model,
+                   const Pose& a,
+                   const Pose& b,
+                   float weight,
+                   const std::vector<float>& mask,
+                   bool buildWorld)
+    {
+        Require(a.local.size() == model.nodes.size() && b.local.size() == model.nodes.size(),
+                "Blend pose/model mismatch");
+        Require(std::isfinite(weight) && (mask.empty() || mask.size() == model.nodes.size()),
+                "Invalid pose blend");
+        auto rootA = a.rootDisplacement, rootB = b.rootDisplacement;
+        auto blended = a.local;
+        for (size_t i = 0; i < blended.size(); ++i)
+        {
+            float t = std::clamp(weight * (mask.empty() ? 1.f : mask[i]), 0.f, 1.f);
+            if (t <= .00001f)
+            {
+                continue;
+            }
+            if (t >= .99999f)
+            {
+                blended[i] = b.local[i];
+                continue;
+            }
+            const auto& left = a.local[i];
+            const auto& right = b.local[i];
+            auto rotation = Blend(left.rotation, right.rotation, t, true);
+            Vec3 translation{left.translation.x + (right.translation.x - left.translation.x) * t,
+                             left.translation.y + (right.translation.y - left.translation.y) * t,
+                             left.translation.z + (right.translation.z - left.translation.z) * t};
+            Vec3 scale{left.scale.x + (right.scale.x - left.scale.x) * t,
+                       left.scale.y + (right.scale.y - left.scale.y) * t,
+                       left.scale.z + (right.scale.z - left.scale.z) * t};
+            blended[i].rotation = rotation;
+            blended[i].translation = translation;
+            blended[i].scale = scale;
+        }
+        local = std::move(blended);
+        if (buildWorld)
+        {
+            Evaluate(model, true);
+        }
+        else
+        {
+            world.clear();
+        }
+        rootDisplacement = {rootA.x + (rootB.x - rootA.x) * weight,
+                            rootA.y + (rootB.y - rootA.y) * weight,
+                            rootA.z + (rootB.z - rootA.z) * weight};
+    }
+
+    void Pose::Evaluate(const Model& model, bool removeRootMotion)
+    {
+        Require(local.size() == model.nodes.size(), "Local pose/model mismatch");
+        auto& transforms = local;
         rootDisplacement = {};
         world.resize(model.nodes.size());
         std::vector<uint8_t> visited(model.nodes.size(), 0);
@@ -499,7 +586,8 @@ namespace Art
             }
             visited[i] = 1;
             auto& node = transforms[i];
-            if (node.name == "root")
+            const auto& source = model.nodes[i];
+            if (source.name == "root")
             {
                 auto base = model.nodes[i].translation;
                 rootDisplacement = {node.translation.x - base.x,
@@ -510,14 +598,14 @@ namespace Art
                     node.translation = base;
                 }
             }
-            auto local = node.matrixTransform
-                             ? node.matrix
+            auto local = source.matrixTransform
+                             ? source.matrix
                              : Matrix::TRS(node.translation, node.rotation, node.scale);
-            if (node.parent >= 0)
+            if (source.parent >= 0)
             {
-                Require(size_t(node.parent) < model.nodes.size(), "Invalid parent node");
-                evaluate(size_t(node.parent));
-                world[i] = world[node.parent] * local;
+                Require(size_t(source.parent) < model.nodes.size(), "Invalid parent node");
+                evaluate(size_t(source.parent));
+                world[i] = world[source.parent] * local;
             }
             else
             {

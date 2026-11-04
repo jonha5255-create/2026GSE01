@@ -151,6 +151,7 @@ void PlayerActor::ApplyShotRecoil(FarmPoint direction, bool powerful)
 
 void PlayerActor::Update(float dt, ActorUpdateContext& services)
 {
+    animationClock += std::max(0.f, dt);
     for (auto& growth : yokaiGrowth)
     {
         growth.skillCooldown = std::max(0.f, growth.skillCooldown - dt);
@@ -161,11 +162,14 @@ void PlayerActor::Update(float dt, ActorUpdateContext& services)
     transformPhase = std::max(0.f, transformPhase - dt * 1.5f);
     if (context.state == RunState::Lost || context.state == RunState::Won)
     {
+        movementBlend = 0;
         firingHold = 0;
         recoilVelocity = {};
         return;
     }
     float movementTime = std::max(0.f, dt - firingHold);
+    bool moving = Length(moveInput) > .01f && movementTime > 0 && bool(context.movePlayer);
+    movementBlend += ((moving ? 1.f : 0.f) - movementBlend) * (1 - std::exp(-14.f * dt));
     firingHold = std::max(0.f, firingHold - dt);
     float decay = std::exp(-14.f * dt);
     if (context.movePlayer && Length(recoilVelocity) > .01f)
@@ -180,6 +184,8 @@ void PlayerActor::Update(float dt, ActorUpdateContext& services)
     {
         auto input = Unit(moveInput);
         auto direction = Unit({input.x + input.y * 2, -input.x + input.y * 2});
+        moveFacing = direction;
+        locomotionTime += movementTime * MoveSpeed() / 180.f;
         context.movePlayer(direction.x * MoveSpeed() * movementTime,
                            direction.y * MoveSpeed() * movementTime);
         walkPhase += movementTime * 11;

@@ -422,6 +422,7 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     if (key >= '1' && key <= '3' && level_.state != RunState::Lost)
     {
         level_.Player().SelectYokai(static_cast<YokaiForm>(key - '1'));
+        level_.Weapon().animationTime = -1;
         level_.Weapon().skillTime = -1;
         level_.Weapon().muzzleFlash = 0;
         level_.Weapon().swingTime = 0;
@@ -431,6 +432,7 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     if (key == 'q')
     {
         level_.Player().weapon = !level_.Player().weapon;
+        level_.Weapon().animationTime = -1;
         level_.Weapon().skillTime = -1;
         level_.Player().transformPhase = 1;
         level_.Weapon().swingTime = 0;
@@ -2432,6 +2434,16 @@ void PrototypeWorld::PreviewRoadJunction()
     cameraLag_ = {0, 0};
 }
 
+void PrototypeWorld::PreviewRuins()
+{
+    PreviewRoadJunction();
+    for (int step = 0; step < 64; ++step)
+    {
+        Move(0, 10);
+    }
+    cameraLag_ = {0, 0};
+}
+
 void PrototypeWorld::PreviewExpedition()
 {
     auto& story = level_.society.story;
@@ -2456,6 +2468,7 @@ void PrototypeWorld::PreviewAttack(YokaiForm form, float phase)
     weapon.StartSwing({80, 30});
     weapon.swingSide = 1;
     weapon.swingTime = weapon.swingDuration * (1 - std::max(0.f, std::min(.99f, phase)));
+    weapon.animationTime = weapon.animationDuration * std::clamp(phase, 0.f, .99f);
 }
 
 void PrototypeWorld::PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill)
@@ -2468,7 +2481,13 @@ void PrototypeWorld::PreviewYokai(YokaiForm form, int level, bool weaponForm, bo
     auto& weapon = level_.Weapon();
     weapon.skillForm = form;
     weapon.skillTime = weaponForm && skill ? .43f : -1.f;
+    weapon.animationTime = -1;
     weapon.aim = {1, 0};
+    if (weaponForm && skill)
+    {
+        weapon.BeginAttackAnimation(form, form == YokaiForm::Ranged ? .20f : .50f);
+        weapon.animationTime = weapon.animationDuration * .43f;
+    }
 }
 
 void PrototypeWorld::PreviewBoss()
@@ -2584,13 +2603,22 @@ void PrototypeWorld::Draw(const BuildingActor& actor)
         }
         else
         {
+            float opacity = 1;
+            float half = (actor.width + actor.depth) * .425f * zoom_;
+            if (std::abs(screen.x - center_.x) < half && screen.y > center_.y
+                && screen.y - 250 * zoom_ < center_.y)
+            {
+                opacity = .35f;
+            }
             art_->Static(*activeRenderer_,
                          "building",
-                         15 + int(actor.seed % 3),
+                         art_->RuinBuildingIndex(actor.seed),
                          screen,
                          actor.width,
                          actor.depth,
-                         zoom_);
+                         zoom_,
+                         opacity,
+                         ((actor.seed >> 1) & 1) != 0);
         }
         return;
     }

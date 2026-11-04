@@ -1,5 +1,7 @@
 # 이름 없는 도시 · 로우폴리 모델링 키트 v6
 
+추가 제작물: [계약 요괴·무기 5계열](YOKAI_WEAPONS_README.md), [무기 공격 VFX 11개](WEAPON_VFX_README.md). VFX 원본은 `Weapon_VFX.blend`, 전달용 메시/키프레임 GLB와 투명 플립북은 `vfx/`, 선택·타이밍 정보는 `data/weapon_vfx_catalog.json`에 있습니다.
+
 모델링 에셋 초안입니다. 게임 코드·빌드·렌더러·NPC 상태 구조에는 적용하지 않았습니다.
 
 v6에서 캐릭터/몬스터의 윤곽과 면 음영을 부드럽게 바꾸고 2족 걷기·달리기를 다시 제작했습니다. 4족에는 어깨뼈·앞발목·뒷발목을 추가한 27본 골격을 적용하고 모든 동작을 재베이크했습니다. 최신 외형은 `previews/characters_natural_v6.png`, 걷기·달리기는 `previews/*_v6.gif`를 확인하십시오. 적용용 GLB와 원본은 `rigged/`, `Characters_Rigged.blend`입니다. 건물/자연물 정적 세트는 유지했습니다.

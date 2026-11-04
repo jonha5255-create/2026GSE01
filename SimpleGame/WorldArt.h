@@ -2,6 +2,7 @@
 #include "AssetPreview.h"
 #include "LivingWorld.h"
 #include "GameplayActors.h"
+#include "PlayerAnimator.h"
 #include <unordered_map>
 
 namespace Art
@@ -29,6 +30,8 @@ namespace Art
                     float opacity = 1,
                     bool vertical = false);
         int BuildingIndex(int region, uint32_t variant) const;
+        int RuinBuildingIndex(uint32_t variant) const;
+        bool VerifyBuildingPlacement() const;
 
       private:
         struct Source
@@ -74,5 +77,6 @@ namespace Art
         std::map<std::string, std::map<int, std::string>> files_;
         std::vector<std::vector<int>> regions_;
         uint64_t access_ = 0;
+        PlayerAnimator playerAnimator_;
     };
 } // namespace Art

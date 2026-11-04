@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AssetLibrary.h"
+#include "PlayerAnimator.h"
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -90,6 +91,7 @@ namespace Art
             check(finite && totalVertices > 0 && totalClips >= 104,
                   "all static and rigged GLBs produce finite animated poses");
             auto npc = library.Load(library.ModularFile());
+            check(PlayerAnimator::SelfTest(*npc, library), "player animation integration");
             bool parts = true;
             for (const auto& appearance : library.Appearances())
             {

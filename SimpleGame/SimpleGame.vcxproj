@@ -175,6 +175,7 @@
     <ClInclude Include="AssetLibrary.h" />
     <ClInclude Include="AssetPreview.h" />
     <ClInclude Include="WorldArt.h" />
+    <ClInclude Include="PlayerAnimator.h" />
     <ClInclude Include="PrototypeRenderer.h" />
     <ClInclude Include="PrototypeWorld.h" />
     <ClInclude Include="LevelOne.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="AssetLibrary.cpp" />
     <ClCompile Include="AssetPreview.cpp" />
     <ClCompile Include="WorldArt.cpp" />
+    <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="AssetTests.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
     <ClCompile Include="CityGenerator.cpp" />

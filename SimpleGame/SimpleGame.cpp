@@ -16,6 +16,7 @@ Prototype scene extensions, 2026.
 #include "WorldMonitor.h"
 #include "AssetPreview.h"
 #include "GlfwPlatform.h"
+#include "WorldArt.h"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -275,6 +276,82 @@ namespace
         return ok && error == GL_NO_ERROR;
     }
 
+    bool VerifyPlayerMotion()
+    {
+        bool ok = true;
+        auto art = Art::WorldArt::Shared();
+        const auto saved = renderer.Effects();
+        renderer.Effects().bloom = false;
+        renderer.Effects().vignette = false;
+        renderer.Effects().edgeBlur = false;
+        for (auto form : {YokaiForm::Sword, YokaiForm::Ranged, YokaiForm::Claw})
+        {
+            LevelOne scene;
+            auto& actor = scene.Player();
+            auto& item = scene.Weapon();
+            actor.SelectYokai(form);
+            actor.weapon = true;
+            auto services = scene.Context(
+                [](float, float, float)
+                {
+                    return true;
+                });
+            services.movePlayer = [](float, float)
+            {
+            };
+            for (int frame = 0; frame < 120; ++frame)
+            {
+                actor.moveInput = frame < 12 || frame >= 96 ? FarmPoint{}
+                                  : frame < 48              ? FarmPoint{1, 0}
+                                                            : FarmPoint{0, -1};
+                actor.Update(1.f / 60, services);
+                item.Update(1.f / 60, services);
+                if (frame == 20 || frame == 66 || (form == YokaiForm::Claw && frame == 34))
+                {
+                    if (form == YokaiForm::Ranged)
+                    {
+                        item.aim = Unit({1, .3f});
+                        item.BeginAttackAnimation(form, .20f);
+                        actor.ApplyShotRecoil(item.aim);
+                    }
+                    else
+                    {
+                        item.StartSwing({80, 24});
+                    }
+                }
+                ok = renderer.Begin(640, 480) && ok;
+                renderer.Rect(0, 0, 640, 480, Color(22, 32, 39));
+                renderer.Ellipse({320, 380}, 60, 18, Color(0, 0, 0, .6f));
+                art->Player(renderer, actor, item, {320, 380}, 2.6f, actor.animationClock);
+                renderer.CompositeScene();
+                renderer.Text(20,
+                              20,
+                              std::string(actor.YokaiName()) + " / 이동 및 공격 전환 검증",
+                              Color(220, 235, 230),
+                              .7f);
+                renderer.Text(
+                    20, 448, "대기 / 이동 및 공격 / 방향 전환 / 정지", Color(144, 184, 181), .6f);
+                renderer.Flush();
+                if (frame % 3 == 0)
+                {
+                    auto file = ExecutableDirectory() + L"player-motion-"
+                                + std::to_wstring(int(form)) + L"-" + std::to_wstring(frame)
+                                + L".bmp";
+                    ok = renderer.Capture(file) && ok;
+                }
+                ok = glGetError() == GL_NO_ERROR && ok;
+                if (frame > 3)
+                {
+                    ok = FrameProfiler::Get().Counters().gpuModelUploads == 0 && ok;
+                }
+            }
+        }
+        renderer.Effects() = saved;
+        std::cout << (ok ? "PASS " : "FAIL ")
+                  << "player weapon motion captures and immutable GPU mesh reuse\n";
+        return ok;
+    }
+
     bool VerifyPostEffects()
     {
         const PostSettings saved = renderer.Effects();
@@ -368,6 +445,7 @@ int main(int argc, char** argv)
     bool monitorTest = false;
     bool monitorEnabled = true;
     bool platformTest = false;
+    bool playerMotionTest = false;
     int swapInterval = 0;
     bool assetTest = false, assetSmoke = false, assetPreview = false;
     std::filesystem::path assetRoot;
@@ -382,6 +460,7 @@ int main(int argc, char** argv)
         monitorEnabled &= std::string(argv[i]) != "--no-monitor";
         monitorTest |= std::string(argv[i]) == "--monitor-test";
         platformTest |= std::string(argv[i]) == "--platform-test";
+        playerMotionTest |= std::string(argv[i]) == "--player-motion-test";
         assetTest |= std::string(argv[i]) == "--asset-test";
         assetSmoke |= std::string(argv[i]) == "--asset-smoke-test";
         assetPreview |= std::string(argv[i]) == "--asset-preview";
@@ -649,6 +728,13 @@ int main(int argc, char** argv)
                   << "GLFW core context, framebuffer resize and clean shutdown\n";
         return ok ? 0 : 12;
     }
+    if (playerMotionTest)
+    {
+        bool ok = VerifyPlayerMotion();
+        Close();
+        platform.Close();
+        return ok ? 0 : 13;
+    }
     if (assetSmoke)
     {
         assetTime = .05f;
@@ -684,6 +770,7 @@ int main(int argc, char** argv)
             world->Update(1.f / 60);
         }
         bool ok = renderer.VerifyMeshCache();
+        ok = Art::WorldArt::Shared()->VerifyBuildingPlacement() && ok;
         ok = VerifyPostEffects() && ok;
         ok = Snapshot(L"prototype-companion.bmp") && ok;
         ok = Snapshot(L"living-world-town.bmp") && ok;
@@ -725,6 +812,9 @@ int main(int argc, char** argv)
             world = std::make_unique<PrototypeWorld>(2026);
             world->PreviewRoadJunction();
             ok = Snapshot(L"living-world-road-junction.bmp") && ok;
+            world = std::make_unique<PrototypeWorld>(2026);
+            world->PreviewRuins();
+            ok = Snapshot(L"living-world-grounded-ruins.bmp") && ok;
             world = std::move(savedWorld);
         }
         for (int form = 0; form < 3; ++form)

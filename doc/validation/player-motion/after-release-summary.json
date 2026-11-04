@@ -1,0 +1,108 @@
+{
+  "source": "after-release.csv",
+  "frames": 600,
+  "excluded_warmup_frames": 30,
+  "fps_all": 58.446037912892784,
+  "first_frame_ms": 166.056,
+  "first_render_cpu_ms": 86.5083,
+  "warm_frame_ms": {
+    "mean": 16.666707719298245,
+    "min": 5.7067,
+    "p50": 16.5662,
+    "p95": 17.0426,
+    "max": 26.7489
+  },
+  "warm_render_cpu_ms": {
+    "mean": 1.6864831578947368,
+    "min": 1.1175,
+    "p50": 1.664,
+    "p95": 2.2366,
+    "max": 2.7434
+  },
+  "warm_update_cpu_ms": {
+    "mean": 0.6161215789473677,
+    "min": 0.269,
+    "p50": 0.4842,
+    "p95": 1.2866,
+    "max": 5.0059
+  },
+  "warm_fps": 59.999852210890346,
+  "draw_calls": {
+    "mean": 176.35666666666665,
+    "min": 172.0,
+    "p50": 176.0,
+    "p95": 178.0,
+    "max": 180.0
+  },
+  "mesh_generations_all": 0.0,
+  "disk_loads_all": 29.0,
+  "disk_rejects_all": 0.0,
+  "mesh_upload_bytes_all": 38880360.0,
+  "warm_mesh_generations": 0.0,
+  "warm_mesh_upload_bytes": 0.0,
+  "warm_instance_upload_bytes": {
+    "mean": 342289.4035087719,
+    "min": 333784.0,
+    "p50": 342248.0,
+    "p95": 346904.0,
+    "max": 347288.0
+  },
+  "batch_splits_all": 0.0,
+  "warm_present_ms": {
+    "mean": 0.09166228070175442,
+    "min": 0.0529,
+    "p50": 0.0851,
+    "p95": 0.1354,
+    "max": 0.4143
+  },
+  "warm_pacing_ms": {
+    "mean": 14.18194473684211,
+    "min": 2.1256,
+    "p50": 14.2321,
+    "p95": 15.0773,
+    "max": 23.9033
+  },
+  "warm_pose_builds": {
+    "mean": 3.57719298245614,
+    "min": 1.0,
+    "p50": 4.0,
+    "p95": 8.0,
+    "max": 9.0
+  },
+  "warm_pose_hits": {
+    "mean": 28.582456140350878,
+    "min": 21.0,
+    "p50": 29.0,
+    "p95": 32.0,
+    "max": 33.0
+  },
+  "warm_art_pose_ms": {
+    "mean": 0.10006614035087726,
+    "min": 0.0213,
+    "p50": 0.0966,
+    "p95": 0.1932,
+    "max": 0.3599
+  },
+  "warm_gpu_model_uploads": {
+    "mean": 0.0,
+    "min": 0.0,
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "warm_gpu_model_resident_bytes": {
+    "mean": 32385528.0,
+    "min": 32385528.0,
+    "p50": 32385528.0,
+    "p95": 32385528.0,
+    "max": 32385528.0
+  },
+  "warm_gpu_model_entries": {
+    "mean": 22.0,
+    "min": 22.0,
+    "p50": 22.0,
+    "p95": 22.0,
+    "max": 22.0
+  },
+  "warm_upload_bytes_per_frame": 342289.4035087719
+}

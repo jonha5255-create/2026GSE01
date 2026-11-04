@@ -109,16 +109,40 @@ namespace Art
 
     struct Pose
     {
+        struct Transform
+        {
+            Vec3 translation, scale{1, 1, 1};
+            Vec4 rotation{0, 0, 0, 1};
+        };
+
         std::vector<Matrix> world;
+        std::vector<Transform> local;
         Vec3 rootDisplacement;
         void Sample(const Model& model,
                     const std::string& clip,
                     float seconds,
                     bool loop,
-                    bool removeRootMotion = true);
+                    bool removeRootMotion = true,
+                    bool buildWorld = true);
+        // Blend local TRS before evaluating parents; never lerp skin matrices.
+        void Mix(const Model& model,
+                 const Pose& a,
+                 const Pose& b,
+                 float weight,
+                 const std::vector<float>& mask = {},
+                 bool buildWorld = true);
+
+        void RebuildWorld(const Model& model)
+        {
+            Evaluate(model, true);
+        }
+
         void SkinVertices(const Model& model,
                           const Primitive& primitive,
                           std::vector<Vec3>& positions) const;
+
+      private:
+        void Evaluate(const Model& model, bool removeRootMotion);
     };
 
     struct AnimationEvent

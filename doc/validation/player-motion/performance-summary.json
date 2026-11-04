@@ -1,0 +1,22 @@
+[
+  {
+    "run": "before",
+    "configuration": "Debug x64",
+    "frames": 180,
+    "warmup_excluded": 30,
+    "fps": 21.59606961899048,
+    "render_cpu_ms": 21.878108666666666,
+    "update_cpu_ms": 23.907876666666667,
+    "art_pose_ms": 1.4710746666666668
+  },
+  {
+    "run": "after",
+    "configuration": "Debug x64",
+    "frames": 180,
+    "warmup_excluded": 30,
+    "fps": 22.080367473840504,
+    "render_cpu_ms": 21.366972,
+    "update_cpu_ms": 23.468201333333333,
+    "art_pose_ms": 1.5695673333333333
+  }
+]

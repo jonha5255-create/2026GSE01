@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include <numeric>
 #pragma warning(push, 0)
 #include "Dependencies/AssetImport/json.hpp"
@@ -38,12 +39,23 @@ namespace Art
             {
                 if (item.at("region") == name)
                 {
+                    const auto file = item.at("file").get<std::string>();
+                    // Floating concept assets belong to authored landmarks, not
+                    // ordinary homes or randomly scattered wilderness ruins.
+                    if (file.find("Floating") != std::string::npos)
+                    {
+                        RenderDiagnostics::Get().Event(
+                            "world_art_placement_excluded",
+                            file + "; random_building_requires_grounded_shell");
+                        continue;
+                    }
                     indices.push_back(item.at("index"));
                 }
             }
             if (indices.empty())
             {
-                throw std::runtime_error("Empty building region");
+                // A theme with only floating landmarks can still place grounded homes.
+                indices.push_back(0);
             }
             regions_.push_back(indices);
         }
@@ -249,6 +261,36 @@ namespace Art
         return options[variant % options.size()];
     }
 
+    int WorldArt::RuinBuildingIndex(uint32_t variant) const
+    {
+        // Stable LowPolyKit IDs: fractured apartment and grounded leaning shop.
+        // 16 is a deliberately separated upper floor and must never enter this pool.
+        const int grounded[] = {15, 17};
+        return grounded[variant % 2];
+    }
+
+    bool WorldArt::VerifyBuildingPlacement() const
+    {
+        bool ok = regions_.size() == 7;
+        for (size_t region = 0; region < regions_.size(); ++region)
+        {
+            for (uint32_t seed = 0; seed < 512; ++seed)
+            {
+                int index = BuildingIndex(int(region), seed);
+                ok &= files_.at("building").at(index).find("Floating") == std::string::npos;
+                int ruin = RuinBuildingIndex(seed);
+                const auto& file = files_.at("building").at(ruin);
+                ok &= file.find("Floating") == std::string::npos;
+                const auto& source = sources_.at(file);
+                ok &= std::isfinite(source.low.y) && source.high.y > source.low.y;
+            }
+        }
+        std::cout << (ok ? "PASS " : "FAIL ")
+                  << "random town and wilderness building pools exclude floating floors across "
+                     "seven regions\n";
+        return ok;
+    }
+
     void WorldArt::Static(PrototypeRenderer& r,
                           const std::string& slot,
                           int index,
@@ -408,37 +450,25 @@ namespace Art
                                                                            : 4)
                                       : -1;
         parts["accessory"] = 0;
-        const char* attack = player.yokai == YokaiForm::Sword  ? "NPC_Attack_Sword"
-                             : player.yokai == YokaiForm::Claw ? "NPC_Attack_Claw"
-                                                               : "NPC_Attack_DualPistol";
-        std::string action = player.health <= 0                                       ? "NPC_Death"
-                             : Length(player.moveInput) > 0 && player.firingHold <= 0 ? "NPC_Walk"
-                                                                                      : "NPC_Idle";
-        float seconds = player.health <= 0 ? 10.f : time;
-        if (player.weapon
-            && (weapon.swingTime > 0 || weapon.skillTime >= 0 || player.firingHold > 0))
-        {
-            action = attack;
-            float progress = weapon.skillTime >= 0  ? weapon.skillTime
-                             : weapon.swingTime > 0 ? weapon.SwingProgress()
-                                                    : (1 - player.firingHold / .16f);
-            seconds = std::clamp(progress, 0.f, 1.f) * library_.Animation(action).duration;
-        }
-        auto direction = weapon.aim;
-        if (!player.weapon && Length(player.moveInput) > 0)
-        {
-            direction = {player.moveInput.x + player.moveInput.y * 2,
-                         -player.moveInput.x + player.moveInput.y * 2};
-        }
-        Animated(r,
-                 p,
-                 36 * zoom,
-                 library_.ModularFile(),
-                 action,
-                 seconds,
-                 std::atan2(direction.x, direction.y),
-                 parts,
-                 player.invulnerable > 0 && int(time * 15) % 2 ? .5f : 1.f);
+        auto start = std::chrono::steady_clock::now();
+        auto& source = File(library_.ModularFile());
+        const auto& pose = playerAnimator_.Evaluate(*source.model, library_, player, weapon);
+        auto bones = Palette(*source.model, pose);
+        ++FrameProfiler::Get().Counters().poseBuilds;
+        FrameProfiler::Get().Counters().artPoseMs +=
+            std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start)
+                .count();
+        std::string key = "gpu-art-v1:" + library_.ModularFile();
+        const auto& geometry = Geometry(source, parts, key);
+        r.ModelMesh(key,
+                    geometry,
+                    bones,
+                    p,
+                    36 * zoom,
+                    playerAnimator_.Yaw(),
+                    {1, 1, 1},
+                    {},
+                    player.invulnerable > 0 && int(time * 15) % 2 ? .5f : 1.f);
     }
 
     void WorldArt::Enemy(

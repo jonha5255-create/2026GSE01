@@ -1,0 +1,3 @@
+[PERF] Persistent logs: Logs/render-*.csv and *.jsonl (next to executable)
+OpenGL 3.3.0 Core Profile Context 24.10.20.01.240627 / AMD Radeon(TM) Graphics
+PASS player weapon motion captures and immutable GPU mesh reuse

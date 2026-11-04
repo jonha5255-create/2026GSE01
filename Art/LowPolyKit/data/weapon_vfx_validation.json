@@ -1,0 +1,138 @@
+{
+  "effects": 11,
+  "files": [
+    {
+      "id": "Muk_Slash",
+      "frames": 16,
+      "nodes": 7,
+      "animations": [
+        "Muk_Slash"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "Muk_MoonSweep",
+      "frames": 24,
+      "nodes": 13,
+      "animations": [
+        "Muk_MoonSweep"
+      ],
+      "atlas_size": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "SoulRifle_Fire",
+      "frames": 16,
+      "nodes": 8,
+      "animations": [
+        "SoulRifle_Fire"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "SoulRifle_Scatter",
+      "frames": 24,
+      "nodes": 16,
+      "animations": [
+        "SoulRifle_Scatter"
+      ],
+      "atlas_size": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "Claw_Rake",
+      "frames": 16,
+      "nodes": 8,
+      "animations": [
+        "Claw_Rake"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "Claw_TripleRake",
+      "frames": 24,
+      "nodes": 17,
+      "animations": [
+        "Claw_TripleRake"
+      ],
+      "atlas_size": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "Soryeong_DualShot",
+      "frames": 16,
+      "nodes": 11,
+      "animations": [
+        "Soryeong_DualShot"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "Soryeong_RailBurst",
+      "frames": 24,
+      "nodes": 24,
+      "animations": [
+        "Soryeong_RailBurst"
+      ],
+      "atlas_size": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "Mes_CrossCut",
+      "frames": 16,
+      "nodes": 9,
+      "animations": [
+        "Mes_CrossCut"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "id": "Mes_ScissorSnap",
+      "frames": 24,
+      "nodes": 14,
+      "animations": [
+        "Mes_ScissorSnap"
+      ],
+      "atlas_size": [
+        1024,
+        1536
+      ]
+    },
+    {
+      "id": "Shared_Hit",
+      "frames": 16,
+      "nodes": 6,
+      "animations": [
+        "Shared_Hit"
+      ],
+      "atlas_size": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "issues": []
+}
