@@ -1176,6 +1176,15 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
     {
         return;
     }
+    if (art_)
+    {
+        if (!owner->weapon && owner->health > 0)
+        {
+            art_->Companion(
+                r, *owner, Project(actor.Position().x, actor.Position().y), zoom_, time_);
+        }
+        return;
+    }
     auto position = actor.Position();
     Point p = Project(position.x, position.y);
     int evolution = owner->Evolution();
@@ -1238,16 +1247,6 @@ void PrototypeWorld::Weapon(PrototypeRenderer& r, const WeaponActor& actor)
                 {p.x + facing.x * 30 * z, p.y - 25 * z + facing.y * 30 * z}, 45 * fade * z, energy);
             Ring(r, position.x, position.y, 40 + t * 50, energy, 2);
         }
-    }
-    if (art_ && owner->weapon)
-    {
-        if (actor.muzzleFlash > 0)
-        {
-            r.Glow({p.x + facing.x * 35 * z, p.y - 29 * z + facing.y * 35 * z},
-                   18 * z,
-                   Emissive(evolutionInk, 3));
-        }
-        return;
     }
     // Both forms inherit the same carapace, ivory horns and soul-core palette.
     Ink shell = owner->yokai == YokaiForm::Sword    ? Color(42, 69, 91)
@@ -2465,10 +2464,19 @@ void PrototypeWorld::PreviewAttack(YokaiForm form, float phase)
     level_.Player().weapon = true;
     level_.Player().transformPhase = 0;
     auto& weapon = level_.Weapon();
+    weapon.skillTime = -1;
+    for (auto* effect : level_.Graph().Query<WeaponVfxActor>())
+    {
+        effect->Destroy();
+    }
     weapon.StartSwing({80, 30});
     weapon.swingSide = 1;
     weapon.swingTime = weapon.swingDuration * (1 - std::max(0.f, std::min(.99f, phase)));
     weapon.animationTime = weapon.animationDuration * std::clamp(phase, 0.f, .99f);
+    for (auto* effect : level_.Graph().Query<WeaponVfxActor>())
+    {
+        effect->elapsed += weapon.animationTime;
+    }
 }
 
 void PrototypeWorld::PreviewYokai(YokaiForm form, int level, bool weaponForm, bool skill)
@@ -2487,6 +2495,20 @@ void PrototypeWorld::PreviewYokai(YokaiForm form, int level, bool weaponForm, bo
     {
         weapon.BeginAttackAnimation(form, form == YokaiForm::Ranged ? .20f : .50f);
         weapon.animationTime = weapon.animationDuration * .43f;
+        weapon.skillAim = weapon.aim;
+        ++weapon.skillSerial;
+        auto* effect = WeaponVfxActor::Spawn(level_.Graph(),
+                                             int(form),
+                                             Art::WeaponEffectKind::Skill,
+                                             weapon.Position(),
+                                             weapon.aim,
+                                             player.Id(),
+                                             player.Evolution(),
+                                             -1);
+        if (effect)
+        {
+            effect->elapsed += .43f * effect->rate;
+        }
     }
 }
 
@@ -2517,6 +2539,22 @@ void PrototypeWorld::Draw(const PlayerActor& actor)
 void PrototypeWorld::Draw(const WeaponActor& actor)
 {
     Weapon(*activeRenderer_, actor);
+}
+
+void PrototypeWorld::Draw(const WeaponVfxActor& actor)
+{
+    if (!art_)
+    {
+        return;
+    }
+    auto p = actor.Position();
+    auto screen = Project(p.x, p.y);
+    if (screen.x < -250 || screen.x > activeRenderer_->Width() + 250 || screen.y < -100
+        || screen.y > activeRenderer_->Height() + 250)
+    {
+        return;
+    }
+    art_->Vfx(*activeRenderer_, actor, screen, zoom_);
 }
 
 void PrototypeWorld::Draw(const RangeActor& actor)

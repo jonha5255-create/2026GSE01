@@ -150,6 +150,36 @@ namespace Art
         return r;
     }
 
+    Matrix Matrix::InverseAffine() const
+    {
+        float a = v[0], b = v[4], c = v[8], d = v[1], e = v[5], f = v[9], g = v[2], h = v[6],
+              i = v[10];
+        float det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+        Require(std::isfinite(det) && std::abs(det) > 1e-10f, "Singular affine transform");
+        Matrix r;
+        r.v = {(e * i - f * h) / det,
+               (f * g - d * i) / det,
+               (d * h - e * g) / det,
+               0,
+               (c * h - b * i) / det,
+               (a * i - c * g) / det,
+               (b * g - a * h) / det,
+               0,
+               (b * f - c * e) / det,
+               (c * d - a * f) / det,
+               (a * e - b * d) / det,
+               0,
+               0,
+               0,
+               0,
+               1};
+        auto p = r.Point({-v[12], -v[13], -v[14]});
+        r.v[12] = p.x;
+        r.v[13] = p.y;
+        r.v[14] = p.z;
+        return r;
+    }
+
     const Clip* Model::FindClip(const std::string& name) const
     {
         for (const auto& clip : clips)
@@ -196,7 +226,8 @@ namespace Art
                 "GLB object count exceeds limits");
         for (size_t i = 0; i < raw->extensions_required_count; ++i)
         {
-            Require(false, "Required glTF extensions unsupported by LowPolyKit renderer");
+            Require(std::string(raw->extensions_required[i]) == "KHR_materials_emissive_strength",
+                    "Required glTF extension unsupported by LowPolyKit renderer");
         }
         auto model = std::make_shared<Model>();
         model->nodes.resize(raw->nodes_count);
@@ -266,6 +297,15 @@ namespace Art
             auto* c = m.pbr_metallic_roughness.base_color_factor;
             out.color = {c[0], c[1], c[2], c[3]};
             out.emission = {m.emissive_factor[0], m.emissive_factor[1], m.emissive_factor[2]};
+            if (m.has_emissive_strength)
+            {
+                float strength = m.emissive_strength.emissive_strength;
+                Require(std::isfinite(strength) && strength >= 0 && strength <= 1000,
+                        "Invalid emissive strength");
+                out.emission = {out.emission.x * strength,
+                                out.emission.y * strength,
+                                out.emission.z * strength};
+            }
             out.doubleSided = m.double_sided != 0;
             model->materials.push_back(out);
         }

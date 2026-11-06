@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "AssetLibrary.h"
 #include "PlayerAnimator.h"
+#include "YokaiAssets.h"
 #include <cmath>
 #include <fstream>
 #include <iostream>
@@ -92,6 +93,8 @@ namespace Art
                   "all static and rigged GLBs produce finite animated poses");
             auto npc = library.Load(library.ModularFile());
             check(PlayerAnimator::SelfTest(*npc, library), "player animation integration");
+            check(YokaiAssets::SelfTest(root),
+                  "six evolving yokai forms, sockets and seven authored GLB effects");
             bool parts = true;
             for (const auto& appearance : library.Appearances())
             {

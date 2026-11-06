@@ -75,6 +75,24 @@ namespace Art
         }
         RenderDiagnostics::Get().Event("world_art_ready",
                                        "models=" + std::to_string(sources_.size()));
+        yokai_ = &YokaiAssets::Shared();
+        for (int family = 0; family < 3; ++family)
+        {
+            for (const auto& form : yokai_->Family(family).forms)
+            {
+                File(form.file);
+            }
+        }
+        for (const auto& effect : yokai_->Effects())
+        {
+            if (effect.family < 3)
+            {
+                File(effect.file);
+            }
+        }
+        RenderDiagnostics::Get().Event(
+            "yokai_assets_ready",
+            "playable_families=3; evolution_stages=4; node_mesh_sharing=enabled");
     }
 
     WorldArt::Source& WorldArt::File(const std::string& file)
@@ -122,8 +140,20 @@ namespace Art
     }
 
     const std::vector<PrototypeRenderer::ModelVertex>& WorldArt::Geometry(
-        Source& source, const std::map<std::string, int>& parts, std::string& key)
+        Source& source,
+        const std::map<std::string, int>& parts,
+        std::string& key,
+        bool rigidNodes,
+        bool authoredNormals)
     {
+        if (rigidNodes)
+        {
+            key += ":rigid-nodes";
+        }
+        if (authoredNormals)
+        {
+            key += ":authored-normals";
+        }
         for (const auto& part : parts)
         {
             key += ":" + part.first + "=" + std::to_string(part.second);
@@ -167,15 +197,22 @@ namespace Art
                 {
                     const auto& vertex = primitive.vertices[primitive.indices[i + k]];
                     auto p = vertex.position;
-                    auto n = normal;
+                    auto n = authoredNormals ? vertex.normal : normal;
                     PrototypeRenderer::ModelVertex out{};
                     if (primitive.skin < 0)
                     {
-                        auto& matrix = source.bind.world[primitive.node];
-                        p = matrix.Point(p);
-                        auto origin = matrix.Point({});
-                        n = matrix.Point(n);
-                        n = {n.x - origin.x, n.y - origin.y, n.z - origin.z};
+                        if (rigidNodes)
+                        {
+                            out.joints[0] = uint32_t(primitive.node + 1);
+                        }
+                        else
+                        {
+                            auto& matrix = source.bind.world[primitive.node];
+                            p = matrix.Point(p);
+                            auto origin = matrix.Point({});
+                            n = matrix.Point(n);
+                            n = {n.x - origin.x, n.y - origin.y, n.z - origin.z};
+                        }
                         out.weights[0] = 1;
                     }
                     else
@@ -445,14 +482,15 @@ namespace Art
                           float time)
     {
         auto parts = library_.Appearances()[0].parts;
-        parts["prop"] = player.weapon ? (player.yokai == YokaiForm::Sword  ? 3
-                                         : player.yokai == YokaiForm::Claw ? 5
-                                                                           : 4)
-                                      : -1;
+        parts["prop"] = -1;
         parts["accessory"] = 0;
         auto start = std::chrono::steady_clock::now();
         auto& source = File(library_.ModularFile());
-        const auto& pose = playerAnimator_.Evaluate(*source.model, library_, player, weapon);
+        auto& pose = playerAnimator_.Evaluate(*source.model, library_, player, weapon);
+        if (player.weapon && player.yokai == YokaiForm::Ranged && player.health > 0)
+        {
+            FitRifleHands(source, pose);
+        }
         auto bones = Palette(*source.model, pose);
         ++FrameProfiler::Get().Counters().poseBuilds;
         FrameProfiler::Get().Counters().artPoseMs +=
@@ -469,6 +507,13 @@ namespace Art
                     {1, 1, 1},
                     {},
                     player.invulnerable > 0 && int(time * 15) % 2 ? .5f : 1.f);
+        AttachWeapon(r,
+                     player,
+                     pose,
+                     source,
+                     p,
+                     zoom,
+                     player.invulnerable > 0 && int(time * 15) % 2 ? .5f : 1.f);
     }
 
     void WorldArt::Enemy(

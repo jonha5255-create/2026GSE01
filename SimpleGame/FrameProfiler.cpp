@@ -75,7 +75,7 @@ void FrameProfiler::EndFrame()
         << ',' << c.rejects << ',' << c.writes << ',' << c.evictions << ',' << c.splits << ','
         << presentMs_ << ',' << c.poseBuilds << ',' << c.poseHits << ',' << c.artPoseMs << ','
         << pacingMs_ << ',' << c.gpuModelUploads << ',' << c.gpuModelBytes << ','
-        << c.gpuModelEntries;
+        << c.gpuModelEntries << ',' << c.vfxDraws;
     RenderDiagnostics::Get().Frame(row.str());
     if (frameMs > 33.333)
     {
@@ -100,6 +100,7 @@ void FrameProfiler::EndFrame()
          << " PoseBuilds/Hits=" << c.poseBuilds << '/' << c.poseHits << " ArtPoseMs=" << c.artPoseMs
          << " PacingMs=" << pacingMs_ << " UploadKB=" << (c.instanceBytes + c.meshBytes) / 1024.
          << " GpuModels=" << c.gpuModelEntries << " GpuUploads=" << c.gpuModelUploads
+         << " VfxDraws=" << c.vfxDraws
          << " GpuMB=" << c.gpuModelBytes / (1024. * 1024.);
     std::cout << line.str() << std::endl;
     RenderDiagnostics::Get().Flush();

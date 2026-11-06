@@ -655,7 +655,10 @@ void PrototypeRenderer::ModelMesh(const std::string& key,
                                   float yaw,
                                   std::array<float, 3> stretch,
                                   std::array<float, 3> offset,
-                                  float opacity)
+                                  float opacity,
+                                  bool sharedDepth,
+                                  bool additive,
+                                  bool linearMaterial)
 {
     if (vertices.empty())
     {
@@ -748,14 +751,32 @@ void PrototypeRenderer::ModelMesh(const std::string& key,
     glUniform3fv(uniform("stretch"), 1, stretch.data());
     glUniform3fv(uniform("offset"), 1, offset.data());
     glUniform1i(uniform("linearScene"), linearScene_);
+    glUniform1i(uniform("linearMaterial"),linearMaterial);
     // The scene graph controls inter-actor painter order; depth resolves only
     // surfaces within this model, removing per-frame CPU triangle sorting.
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    if (additive)
+    {
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    }
+    else
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LEQUAL);
+        if (!sharedDepth)
+        {
+            glClear(GL_DEPTH_BUFFER_BIT);
+        }
+    }
     glBindVertexArray(mesh.vao);
     glDrawArrays(GL_TRIANGLES, 0, mesh.count);
+    if (additive)
+    {
+        glDepthMask(GL_TRUE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
     glDisable(GL_DEPTH_TEST);
     FrameProfiler::Get().RecordDrawCall(linearScene_ ? DrawStage::Scene : DrawStage::UI);
     auto& counters = FrameProfiler::Get().Counters();

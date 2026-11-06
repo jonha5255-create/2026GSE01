@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameplayActors.h"
 #include "GameplayContext.h"
+#include "WeaponVfxActor.h"
 #include <algorithm>
 
 void EnemyActor::TakeDamage(float amount, GameplayContext& context)
@@ -11,6 +12,7 @@ void EnemyActor::TakeDamage(float amount, GameplayContext& context)
     }
     health = std::max(0.f, health - amount);
     hitFlash = .15f;
+    WeaponVfxActor::Spawn(Scene(), -1, Art::WeaponEffectKind::Impact, Position(), {1, 0});
     context.Effect(Position(), std::to_string(int(amount)), .6f);
     if (health <= 0)
     {

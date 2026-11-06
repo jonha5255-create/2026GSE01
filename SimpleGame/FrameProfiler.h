@@ -17,6 +17,7 @@ struct RenderFrameCounters
     uint64_t poseBuilds = 0, poseHits = 0;
     double artPoseMs = 0;
     uint64_t gpuModelUploads = 0, gpuModelBytes = 0, gpuModelEntries = 0;
+    uint64_t vfxDraws = 0;
 };
 
 class FrameProfiler

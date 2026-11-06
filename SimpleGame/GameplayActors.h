@@ -229,6 +229,8 @@ class WeaponActor : public Actor
     float skillTime = -1, skillDamage = 0;
     int skillPulses = 0;
     YokaiForm skillForm = YokaiForm::Sword;
+    uint64_t skillSerial = 0;
+    FarmPoint skillAim{1, 0};
     bool ShootAt(Actor& target, GameplayContext& context);
     void StartSwing(FarmPoint target);
     float SwingProgress() const;

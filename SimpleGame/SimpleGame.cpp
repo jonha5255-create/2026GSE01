@@ -36,6 +36,7 @@ namespace
     int width = 1280, height = 800;
     bool initialized = false;
     bool profileTest = false;
+    bool profileYokai = false;
     int profileFrames = 0;
     int profileFrameLimit = 180;
     int fpsLimit = 60;
@@ -352,6 +353,139 @@ namespace
         return ok;
     }
 
+    bool VerifyYokaiArt()
+    {
+        auto art = Art::WorldArt::Shared();
+        const auto effects = renderer.Effects();
+        renderer.Effects().edgeBlur = false;
+        renderer.Effects().vignette = false;
+        bool ok = true;
+        auto capture = [&](const std::wstring& name)
+        {
+            renderer.Flush();
+            return renderer.Capture(ExecutableDirectory() + name) && glGetError() == GL_NO_ERROR;
+        };
+        auto tick = [](LevelOne& scene, GameplayContext& services)
+        {
+            constexpr float dt = 1.f / 60;
+            scene.Player().Update(dt, services);
+            scene.Weapon().Update(dt, services);
+            for (auto* effect : scene.Graph().Query<WeaponVfxActor>())
+            {
+                effect->Update(dt, services);
+            }
+            scene.Graph().CollectDestroyed();
+        };
+        const int levels[] = {1, 3, 6, 9};
+        for (bool armed : {false, true})
+        {
+            ok = renderer.Begin(1280, 800) && ok;
+            renderer.Rect(0, 0, 1280, 800, Color(22, 32, 39));
+            for (int family = 0; family < 3; ++family)
+            {
+                LevelOne scene;
+                auto& player = scene.Player();
+                player.SelectYokai(YokaiForm(family));
+                player.weapon = armed;
+                for (int stage = 0; stage < 4; ++stage)
+                {
+                    auto uploads = FrameProfiler::Get().Counters().gpuModelUploads;
+                    player.yokaiGrowth[family].level = levels[stage];
+                    Point at{stage * 320.f + 116, family * 260.f + 228};
+                    art->Player(renderer, player, scene.Weapon(), at, 2, 0);
+                    if (!armed)
+                    {
+                        art->Companion(renderer, player, at, 2, 0);
+                    }
+                    if (stage > 0)
+                    {
+                        ok = FrameProfiler::Get().Counters().gpuModelUploads == uploads && ok;
+                    }
+                }
+            }
+            renderer.CompositeScene();
+            for (int family = 0; family < 3; ++family)
+            {
+                for (int stage = 0; stage < 4; ++stage)
+                {
+                    renderer.Text(stage * 320.f + 20,
+                                  family * 260.f + 20,
+                                  Art::YokaiAssets::Shared().Family(family).name + " / LV."
+                                      + std::to_string(levels[stage]),
+                                  Color(218, 235, 231),
+                                  .74f);
+                }
+            }
+            ok = capture(armed ? L"yokai-weapons.bmp" : L"yokai-companions.bmp") && ok;
+        }
+        for (int family = 0; family < 3; ++family)
+        {
+            for (bool skill : {false, true})
+            {
+                LevelOne scene;
+                auto& actor = scene.Player();
+                auto& item = scene.Weapon();
+                actor.SelectYokai(YokaiForm(family));
+                actor.weapon = true;
+                actor.yokaiGrowth[family].level = 9;
+                auto services = scene.Context(
+                    [](float, float, float)
+                    {
+                        return true;
+                    });
+                auto& target = scene.SpawnEnemy({100, 20});
+                target.health = target.maximumHealth = 500;
+                if (skill)
+                {
+                    ok = item.CastSkill(services) && ok;
+                }
+                else if (family == 1)
+                {
+                    ok = item.ShootAt(target, services) && ok;
+                }
+                else
+                {
+                    item.StartSwing(target.Position());
+                }
+                int steps = skill ? 20 : family == 0 ? 17 : family == 1 ? 3 : 14;
+                for (int i = 0; i < steps; ++i)
+                {
+                    tick(scene, services);
+                }
+                ok = renderer.Begin(720, 600) && ok;
+                renderer.Rect(0, 0, 720, 600, Color(22, 32, 39));
+                Point origin{350, 410};
+                float zoom = 1.8f;
+                art->Player(renderer, actor, item, origin, zoom, actor.animationClock);
+                for (auto* effect : scene.Graph().Query<WeaponVfxActor>())
+                {
+                    auto at = effect->Position();
+                    art->Vfx(renderer,
+                             *effect,
+                             {origin.x + (at.x - at.y) * .85f * zoom,
+                              origin.y + (at.x + at.y) * .425f * zoom},
+                             zoom);
+                }
+                ok = FrameProfiler::Get().Counters().vfxDraws > 0 && ok;
+                renderer.CompositeScene();
+                renderer.Text(20,
+                              20,
+                              Art::YokaiAssets::Shared().Family(family).name
+                                  + (skill ? " / 스킬" : " / 일반 공격"),
+                              Color(232, 240, 235),
+                              .8f);
+                ok = capture(L"yokai-vfx-" + std::to_wstring(family)
+                             + (skill ? L"-skill.bmp" : L"-basic.bmp"))
+                     && ok;
+            }
+        }
+        std::cout
+            << (ok ? "PASS " : "FAIL ")
+            << "three yokai families: four evolution stages, cached meshes, six attack VFX captures\n";
+        renderer.Effects() = effects;
+        return ok;
+    }
+
     bool VerifyPostEffects()
     {
         const PostSettings saved = renderer.Effects();
@@ -446,6 +580,7 @@ int main(int argc, char** argv)
     bool monitorEnabled = true;
     bool platformTest = false;
     bool playerMotionTest = false;
+    bool yokaiArtTest = false;
     int swapInterval = 0;
     bool assetTest = false, assetSmoke = false, assetPreview = false;
     std::filesystem::path assetRoot;
@@ -455,12 +590,14 @@ int main(int argc, char** argv)
         smoke |= std::string(argv[i]) == "--smoke-test";
         selfTest |= std::string(argv[i]) == "--self-test";
         profileTest |= std::string(argv[i]) == "--profile-test";
+        profileYokai |= std::string(argv[i]) == "--profile-yokai";
         rebuildCache |= std::string(argv[i]) == "--rebuild-mesh-cache";
         legacy |= std::string(argv[i]) == "--level-one";
         monitorEnabled &= std::string(argv[i]) != "--no-monitor";
         monitorTest |= std::string(argv[i]) == "--monitor-test";
         platformTest |= std::string(argv[i]) == "--platform-test";
         playerMotionTest |= std::string(argv[i]) == "--player-motion-test";
+        yokaiArtTest |= std::string(argv[i]) == "--yokai-art-test";
         assetTest |= std::string(argv[i]) == "--asset-test";
         assetSmoke |= std::string(argv[i]) == "--asset-smoke-test";
         assetPreview |= std::string(argv[i]) == "--asset-preview";
@@ -671,6 +808,11 @@ int main(int argc, char** argv)
         }
     }
     world.reset(new PrototypeWorld(seed, !legacy));
+    if (profileTest && profileYokai)
+    {
+        world->PreviewRuins();
+        world->PreviewYokai(YokaiForm::Ranged, 9, true, false);
+    }
     if (assetPreview || assetSmoke)
     {
         try
@@ -734,6 +876,13 @@ int main(int argc, char** argv)
         Close();
         platform.Close();
         return ok ? 0 : 13;
+    }
+    if (yokaiArtTest)
+    {
+        bool ok = VerifyYokaiArt();
+        Close();
+        platform.Close();
+        return ok ? 0 : 14;
     }
     if (assetSmoke)
     {

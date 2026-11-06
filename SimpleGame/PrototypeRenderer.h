@@ -82,7 +82,10 @@ class PrototypeRenderer
                    float yaw,
                    std::array<float, 3> stretch = {1, 1, 1},
                    std::array<float, 3> offset = {},
-                   float opacity = 1);
+                   float opacity = 1,
+                   bool sharedDepth = false,
+                   bool additive = false,
+                   bool linearMaterial = false);
 
     void RebuildDiskCache(bool rebuild)
     {

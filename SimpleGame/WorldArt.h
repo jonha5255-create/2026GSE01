@@ -3,6 +3,8 @@
 #include "LivingWorld.h"
 #include "GameplayActors.h"
 #include "PlayerAnimator.h"
+#include "YokaiAssets.h"
+#include "WeaponVfxActor.h"
 #include <unordered_map>
 
 namespace Art
@@ -20,6 +22,9 @@ namespace Art
                     float zoom,
                     float time);
         void Enemy(PrototypeRenderer& r, const EnemyActor& enemy, Point p, float zoom, float time);
+        void Companion(
+            PrototypeRenderer& r, const PlayerActor& player, Point p, float zoom, float time);
+        void Vfx(PrototypeRenderer& r, const WeaponVfxActor& actor, Point p, float zoom);
         void Static(PrototypeRenderer& r,
                     const std::string& slot,
                     int index,
@@ -49,6 +54,10 @@ namespace Art
             std::map<std::string, std::vector<PrototypeRenderer::ModelVertex>> geometry;
             std::vector<std::array<float, 16>> bindBones;
             Vec3 low{1e9f, 1e9f, 1e9f}, high{-1e9f, -1e9f, -1e9f};
+            Vec3 effectAnchor;
+            Vec3 effectAnchorLocal;
+            size_t effectAnchorNode = size_t(-1);
+            bool effectAnchorReady = false;
         };
 
         Source& File(const std::string& path);
@@ -63,7 +72,37 @@ namespace Art
                       float opacity = 1);
         std::vector<std::array<float, 16>> Palette(const Model& model, const Pose& pose) const;
         const std::vector<PrototypeRenderer::ModelVertex>& Geometry(
-            Source& source, const std::map<std::string, int>& parts, std::string& key);
+            Source& source,
+            const std::map<std::string, int>& parts,
+            std::string& key,
+            bool rigidNodes = false,
+            bool authoredNormals = false);
+        void NodeDraw(PrototypeRenderer& r,
+                      Source& source,
+                      const std::string& file,
+                      const Pose& pose,
+                      const Matrix& attachment,
+                      const YokaiFormAsset* form,
+                      int evolution,
+                      Point p,
+                      float scale,
+                      float yaw,
+                      float opacity = 1,
+                      bool sharedDepth = false,
+                      bool additive = false);
+        Matrix HandAttachment(const Model& model,
+                              const Pose& bind,
+                              const Pose& pose,
+                              int family,
+                              bool left = false) const;
+        void AttachWeapon(PrototypeRenderer& r,
+                          const PlayerActor& player,
+                          Pose& pose,
+                          Source& body,
+                          Point p,
+                          float zoom,
+                          float opacity);
+        void FitRifleHands(Source& body, Pose& pose);
         void CreatureDraw(PrototypeRenderer& r,
                           int index,
                           const std::string& action,
@@ -78,5 +117,9 @@ namespace Art
         std::vector<std::vector<int>> regions_;
         uint64_t access_ = 0;
         PlayerAnimator playerAnimator_;
+        const YokaiAssets* yokai_ = nullptr;
+        Vec3 muzzleBody_;
+        float muzzleYaw_ = 0;
+        ActorId muzzleOwner_ = NoActor;
     };
 } // namespace Art

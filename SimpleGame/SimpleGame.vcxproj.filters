@@ -28,6 +28,8 @@
     <ClInclude Include="AssetLibrary.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="AssetPreview.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="WorldArt.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="YokaiAssets.h"><Filter>헤더 파일</Filter></ClInclude>
+    <ClInclude Include="WeaponVfxActor.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="PlayerAnimator.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="GlfwPlatform.h"><Filter>헤더 파일</Filter></ClInclude>
     <ClInclude Include="targetver.h">
@@ -82,6 +84,9 @@
     <ClCompile Include="AssetLibrary.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="AssetPreview.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="WorldArt.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="WorldYokai.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="YokaiAssets.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="WeaponVfxActor.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="PlayerAnimator.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="AssetTests.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LevelOne.cpp">

@@ -22,6 +22,7 @@ class PrototypeWorld : private ActorRenderContext
     void PrepareArt();
     void Draw(PrototypeRenderer& r);
     void DrawUI(PrototypeRenderer& r);
+    void Draw(const WeaponVfxActor& actor) override;
     static bool SelfTest();
     void PreviewBoss();
     void PreviewAttack(YokaiForm form, float phase);

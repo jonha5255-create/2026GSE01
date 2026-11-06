@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "WeaponVfxActor.h"
 #include "LivingWorld.h"
 #include "GameplayContext.h"
 #include "GameplayActors.h"
@@ -721,6 +722,11 @@ void LivingWorld::Damage(NpcActor& victim,
         return;
     }
     victim.health = std::max(0.f, victim.health - amount);
+    if (!attacker)
+    {
+        WeaponVfxActor::Spawn(
+            context.scene, -1, Art::WeaponEffectKind::Impact, victim.Position(), {1, 0});
+    }
     if (attacker)
     {
         victim.aggressor = attacker->Id();

@@ -24,6 +24,7 @@ namespace Art
         std::array<float, 16> v{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
         static Matrix TRS(Vec3 translation, Vec4 rotation, Vec3 scale);
         Matrix operator*(const Matrix& other) const;
+        Matrix InverseAffine() const;
         Vec3 Point(Vec3 p) const;
     };
 

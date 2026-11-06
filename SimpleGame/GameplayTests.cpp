@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LevelOne.h"
+#include "WeaponVfxActor.h"
 #include <iostream>
 
 bool LevelOne::SelfTest()
@@ -19,6 +20,41 @@ bool LevelOne::SelfTest()
         return x < 60 - radius || x > 90 + radius;
     };
     LevelOne a;
+    {
+        LevelOne vfx;
+        auto services = vfx.Context(open);
+        auto& hero = vfx.Player();
+        auto& item = vfx.Weapon();
+        hero.SelectYokai(YokaiForm::Sword);
+        item.StartSwing({80, 0});
+        check(vfx.Graph().Query<WeaponVfxActor>().empty(),
+              "companion mode does not emit a weapon slash");
+        hero.weapon = true;
+        item.StartSwing({80, 0});
+        auto effects = vfx.Graph().Query<WeaponVfxActor>();
+        bool delayed = effects.size() == 1 && effects[0]->elapsed < 0;
+        if (delayed)
+        {
+            effects[0]->Update(.24f, services);
+        }
+        check(delayed && effects[0]->elapsed > 0,
+              "weapon slash starts at the authored swing contact window");
+        hero.weapon = false;
+        if (delayed)
+        {
+            effects[0]->Update(.01f, services);
+        }
+        check(vfx.Graph().Query<WeaponVfxActor>().empty(),
+              "transforming back cancels owner-bound weapon effects");
+        auto* impact =
+            WeaponVfxActor::Spawn(vfx.Graph(), -1, Art::WeaponEffectKind::Impact, {70, 0}, {1, 0});
+        if (impact)
+        {
+            impact->Update(.6f, services);
+        }
+        check(impact && vfx.Graph().Query<WeaponVfxActor>().empty(),
+              "impact effects expire without changing gameplay state");
+    }
     {
         LevelOne motion;
         auto services = motion.Context(open);

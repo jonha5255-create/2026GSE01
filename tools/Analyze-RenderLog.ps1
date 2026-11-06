@@ -46,7 +46,7 @@ $report = [ordered]@{
     warm_instance_upload_bytes = Stats $warm 'instance_upload_bytes'
     batch_splits_all = Sum $rows 'batch_splits'
 }
-foreach ($column in @('present_ms', 'pacing_ms', 'pose_builds', 'pose_hits', 'art_pose_ms', 'gpu_model_uploads', 'gpu_model_resident_bytes', 'gpu_model_entries')) {
+foreach ($column in @('present_ms', 'pacing_ms', 'pose_builds', 'pose_hits', 'art_pose_ms', 'gpu_model_uploads', 'gpu_model_resident_bytes', 'gpu_model_entries', 'vfx_draws')) {
     if ($rows[0].PSObject.Properties.Name -contains $column) {
         $report["warm_${column}"] = Stats $warm $column
     }

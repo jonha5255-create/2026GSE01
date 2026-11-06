@@ -8,10 +8,10 @@ namespace Art
     class PlayerAnimator
     {
       public:
-        const Pose& Evaluate(const Model& model,
-                             const AssetLibrary& library,
-                             const PlayerActor& player,
-                             const WeaponActor& weapon);
+        Pose& Evaluate(const Model& model,
+                       const AssetLibrary& library,
+                       const PlayerActor& player,
+                       const WeaponActor& weapon);
 
         float Yaw() const
         {

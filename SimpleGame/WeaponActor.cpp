@@ -2,6 +2,7 @@
 #include "GameplayActors.h"
 #include "GameplayContext.h"
 #include "LivingWorld.h"
+#include "WeaponVfxActor.h"
 #include <algorithm>
 
 bool WeaponActor::CastSkill(GameplayContext& context)
@@ -46,6 +47,16 @@ bool WeaponActor::CastSkill(GameplayContext& context)
         }
     }
     context.Effect(Position(), owner->SkillName(), 1.1f);
+    skillAim = aim;
+    ++skillSerial;
+    WeaponVfxActor::Spawn(Scene(),
+                          int(skillForm),
+                          Art::WeaponEffectKind::Skill,
+                          Position(),
+                          aim,
+                          owner->Id(),
+                          owner->Evolution(),
+                          -1);
     return true;
 }
 
@@ -136,6 +147,18 @@ void WeaponActor::StartSwing(FarmPoint target)
     swingDuration = owner->yokai == YokaiForm::Claw ? .18f : .42f;
     swingTime = swingDuration;
     BeginAttackAnimation(owner->yokai, owner->yokai == YokaiForm::Claw ? .24f : .50f);
+    if (skillTime < 0)
+    {
+        float contact = owner->yokai == YokaiForm::Sword ? .23f : animationStroke < 0 ? .20f : .05f;
+        WeaponVfxActor::Spawn(Scene(),
+                              int(owner->yokai),
+                              Art::WeaponEffectKind::Basic,
+                              Position(),
+                              aim,
+                              owner->Id(),
+                              owner->Evolution(),
+                              contact);
+    }
 }
 
 void WeaponActor::BeginAttackAnimation(YokaiForm form, float duration)
@@ -258,5 +281,12 @@ bool WeaponActor::ShootAt(Actor& target, GameplayContext& context)
     muzzleFlash = .12f;
     owner->ApplyShotRecoil(aim);
     BeginAttackAnimation(YokaiForm::Ranged, .20f);
+    WeaponVfxActor::Spawn(Scene(),
+                          int(owner->yokai),
+                          Art::WeaponEffectKind::Basic,
+                          Position(),
+                          aim,
+                          owner->Id(),
+                          owner->Evolution());
     return true;
 }

@@ -77,7 +77,7 @@ void RenderDiagnostics::Open(const std::string& mode)
                "draws,ui_draws,objects,triangle_instances,instance_upload_bytes,mesh_upload_bytes,"
                "cache_hits,cache_misses,mesh_generations,disk_loads,disk_rejects,disk_writes,cache_"
                "evictions,batch_splits,present_ms,pose_builds,pose_hits,art_pose_ms,pacing_ms,"
-               "gpu_model_uploads,gpu_model_resident_bytes,gpu_model_entries\n";
+               "gpu_model_uploads,gpu_model_resident_bytes,gpu_model_entries,vfx_draws\n";
     Event("session",
           "schema=1; renderer=ordered-triangle-instancing-v1; mode=" + mode
 #ifdef _DEBUG

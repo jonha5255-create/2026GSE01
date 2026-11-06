@@ -29,10 +29,10 @@ namespace Art
         }
     } // namespace
 
-    const Pose& PlayerAnimator::Evaluate(const Model& model,
-                                         const AssetLibrary& library,
-                                         const PlayerActor& player,
-                                         const WeaponActor& weapon)
+    Pose& PlayerAnimator::Evaluate(const Model& model,
+                                   const AssetLibrary& library,
+                                   const PlayerActor& player,
+                                   const WeaponActor& weapon)
     {
         const float clock = player.animationClock;
         bool reset = model_ != &model || owner_ != &player || clock < lastClock_;
@@ -57,24 +57,31 @@ namespace Art
             }
         }
         float dt = reset ? 0 : std::max(0.f, clock - lastClock_);
-        bool active = player.weapon && player.health > 0 && weapon.animationTime >= 0
-                      && weapon.animationForm == player.yokai;
+        bool skill = player.weapon && player.health > 0 && weapon.skillTime >= 0
+                     && weapon.skillForm == player.yokai;
+        bool active = skill
+                      || (player.weapon && player.health > 0 && weapon.animationTime >= 0
+                          && weapon.animationForm == player.yokai);
         int state = int(player.yokai) + (player.weapon ? 10 : 0) + (active ? 100 : 0)
-                    + (player.health <= 0 ? 1000 : 0);
-        bool change = state != state_ || (active && serial_ != weapon.animationSerial);
+                    + (player.health <= 0 ? 1000 : 0) + (skill ? 200 : 0);
+        auto serial = skill ? weapon.skillSerial : weapon.animationSerial;
+        float attackElapsed = skill ? weapon.skillTime : weapon.animationTime;
+        bool change = state != state_ || (active && serial_ != serial);
         if (change)
         {
             transition_ = output_;
             // An event may have occurred between the previous render and this one.
-            transitionClock_ = clock - (active ? std::min(.08f, weapon.animationTime) : 0);
+            transitionClock_ = clock - (active ? std::min(.08f, attackElapsed) : 0);
             if (player.health <= 0 && state_ < 1000)
             {
                 deathClock_ = clock;
             }
             state_ = state;
-            serial_ = weapon.animationSerial;
+            serial_ = serial;
         }
-        FarmPoint direction = active ? weapon.animationAim : player.moveFacing;
+        FarmPoint direction = skill    ? weapon.skillAim
+                              : active ? weapon.animationAim
+                                       : player.moveFacing;
         float desired = std::atan2(direction.x, direction.y);
         if (reset)
         {
@@ -118,16 +125,63 @@ namespace Art
             sampleTime_ = 0;
             if (active)
             {
+                if (skill && player.yokai == YokaiForm::Sword)
+                {
+                    clip = "NPC_Attack_SwordHeavy";
+                }
                 const auto& info = library.Animation(clip);
-                float elapsed = weapon.animationTime;
-                float duration = std::max(.01f, weapon.animationDuration);
+                float elapsed = attackElapsed;
+                float duration = skill ? (player.yokai == YokaiForm::Ranged ? .50f
+                                          : player.yokai == YokaiForm::Claw ? .75f
+                                                                            : .85f)
+                                       : std::max(.01f, weapon.animationDuration);
                 float progress = std::clamp(elapsed / duration, 0.f, 1.f);
-                if (player.yokai == YokaiForm::Ranged)
+                if (skill && player.yokai == YokaiForm::Sword)
+                {
+                    float impact = info.events.empty() ? info.duration * .46f : info.events.front().time;
+                    sampleTime_ = elapsed <= .25f ? elapsed / .25f * impact
+                                                  : impact
+                                                        + std::min(1.f, (elapsed - .25f) / .60f)
+                                                              * (info.duration - impact);
+                }
+                else if (skill && player.yokai == YokaiForm::Claw && info.events.size() >= 2)
+                {
+                    float first = info.events[0].time, second = info.events[1].time,
+                          middle = (first + second) * .5f;
+                    if (elapsed <= .25f)
+                    {
+                        sampleTime_ = elapsed / .25f * first;
+                    }
+                    else if (elapsed <= .30f)
+                    {
+                        sampleTime_ = first + (elapsed - .25f) / .05f * (middle - first);
+                    }
+                    else if (elapsed <= .39f)
+                    {
+                        sampleTime_ = middle + (elapsed - .30f) / .09f * (second - middle);
+                    }
+                    else if (elapsed <= .44f)
+                    {
+                        sampleTime_ = second + (elapsed - .39f) / .05f * (info.duration - second);
+                    }
+                    else if (elapsed <= .53f)
+                    {
+                        sampleTime_ = (elapsed - .44f) / .09f * first;
+                    }
+                    else
+                    {
+                        sampleTime_ =
+                            first + std::min(1.f, (elapsed - .53f) / .07f) * (middle - first);
+                    }
+                }
+                else if (player.yokai == YokaiForm::Ranged)
                 {
                     // One gameplay shot uses one authored recoil cycle, not all four shots.
                     float first = info.events.empty() ? .05f : info.events[0].time;
                     float end = info.events.size() > 1 ? info.events[1].time - .05f : info.duration;
-                    sampleTime_ = std::min(end, first + elapsed);
+                    sampleTime_ = skill && elapsed < .25f
+                                      ? 0
+                                      : std::min(end, first + (skill ? elapsed - .25f : elapsed));
                 }
                 else if (player.yokai == YokaiForm::Claw && info.events.size() >= 2)
                 {
@@ -148,6 +202,11 @@ namespace Art
                     value = value > 0 ? 1.f : 1 - moving;
                 }
                 float envelope = Smooth(elapsed / .035f) * Smooth((duration - elapsed) / .075f);
+                if (skill && player.yokai == YokaiForm::Ranged)
+                {
+                    envelope =
+                        Smooth((elapsed - .25f) / .02f) * Smooth((duration - elapsed) / .075f);
+                }
                 target_.Mix(model, armed_, attack_, envelope, attackMask_, false);
             }
         }

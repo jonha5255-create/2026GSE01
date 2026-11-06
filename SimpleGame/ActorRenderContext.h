@@ -16,12 +16,18 @@ class HudActor;
 class NpcActor;
 class TownSiteActor;
 class NatureActor;
+class WeaponVfxActor;
 
 // Render visitor keeps actors/simulation independent of OpenGL and the camera.
 class ActorRenderContext
 {
   public:
     virtual ~ActorRenderContext() = default;
+
+    virtual void Draw(const WeaponVfxActor&)
+    {
+    }
+
     virtual void Draw(const PlayerActor&) = 0;
     virtual void Draw(const WeaponActor&) = 0;
     virtual void Draw(const RangeActor&) = 0;
