@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "art_revision": 6,
+  "art_revision": 7,
   "fps": 30,
   "units": "meters",
   "source_front": "-Y",
@@ -585,7 +585,7 @@
       "file": "rigged/SK_MOB_00_PaperBoxYokai.glb",
       "skeleton": "RIG_MOB_00_PaperBoxYokai",
       "bones": 18,
-      "triangles": 5710,
+      "triangles": 6086,
       "clips": [
         {
           "name": "MOB_00_Idle",
@@ -797,7 +797,8 @@
           "events": [],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 1,
@@ -807,7 +808,7 @@
       "file": "rigged/SK_MOB_01_StationWarden.glb",
       "skeleton": "RIG_MOB_01_StationWarden",
       "bones": 18,
-      "triangles": 6248,
+      "triangles": 6624,
       "clips": [
         {
           "name": "MOB_01_Idle",
@@ -1019,7 +1020,8 @@
           "events": [],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 2,
@@ -1029,7 +1031,7 @@
       "file": "rigged/SK_MOB_02_RedHornOni.glb",
       "skeleton": "RIG_MOB_02_RedHornOni",
       "bones": 18,
-      "triangles": 8808,
+      "triangles": 9052,
       "clips": [
         {
           "name": "MOB_02_Idle",
@@ -1241,7 +1243,8 @@
           "events": [],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 3,
@@ -1251,7 +1254,7 @@
       "file": "rigged/SK_MOB_03_SecurityConstruct.glb",
       "skeleton": "RIG_MOB_03_SecurityConstruct",
       "bones": 18,
-      "triangles": 6916,
+      "triangles": 6520,
       "clips": [
         {
           "name": "MOB_03_Idle",
@@ -1463,7 +1466,8 @@
           "events": [],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 4,
@@ -1473,7 +1477,7 @@
       "file": "rigged/SK_MOB_04_IronHound.glb",
       "skeleton": "RIG_MOB_04_IronHound",
       "bones": 27,
-      "triangles": 15768,
+      "triangles": 13316,
       "clips": [
         {
           "name": "MOB_04_Idle",
@@ -1793,7 +1797,8 @@
           ],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 5,
@@ -1803,7 +1808,7 @@
       "file": "rigged/SK_MOB_05_FusionBeast.glb",
       "skeleton": "RIG_MOB_05_FusionBeast",
       "bones": 27,
-      "triangles": 16396,
+      "triangles": 14072,
       "clips": [
         {
           "name": "MOB_05_Idle",
@@ -2123,7 +2128,8 @@
           ],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     },
     {
       "index": 6,
@@ -2133,7 +2139,7 @@
       "file": "rigged/SK_MOB_06_VoidStalker.glb",
       "skeleton": "RIG_MOB_06_VoidStalker",
       "bones": 27,
-      "triangles": 16288,
+      "triangles": 14612,
       "clips": [
         {
           "name": "MOB_06_Idle",
@@ -2453,7 +2459,8 @@
           ],
           "max_reach_error_m": 0
         }
-      ]
+      ],
+      "connected_body": true
     }
   ],
   "monster_reference": "../../doc/몬스터 컨셉 아트_ 2.5D 오픈월드 RPG.png",
@@ -2484,5 +2491,6 @@
     "quadruped_scapula_and_hock": true,
     "quadruped_bones": 27,
     "walk_and_run_rebaked": true
-  }
+  },
+  "monster_surface_revision": "continuous weighted body with separately modeled accessories"
 }

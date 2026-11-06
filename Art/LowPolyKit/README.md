@@ -1,5 +1,7 @@
 # 이름 없는 도시 · 로우폴리 모델링 키트 v6
 
+몬스터 표면 revision 7에서는 7종의 몸통과 팔다리를 연속된 스킨 메시로 다시 구성했습니다. `Characters_Rigged.blend`와 `rigged/SK_MOB_*.glb`에 반영했습니다. 외형과 동작 자세는 `previews/monsters_connected_idle.png`, `monsters_connected_walk.png`, `monsters_connected_run.png`에서 확인할 수 있습니다.
+
 추가 제작물: [계약 요괴·무기 5계열](YOKAI_WEAPONS_README.md), [무기 공격 VFX 11개](WEAPON_VFX_README.md). VFX 원본은 `Weapon_VFX.blend`, 전달용 메시/키프레임 GLB와 투명 플립북은 `vfx/`, 선택·타이밍 정보는 `data/weapon_vfx_catalog.json`에 있습니다.
 
 모델링 에셋 초안입니다. 게임 코드·빌드·렌더러·NPC 상태 구조에는 적용하지 않았습니다.

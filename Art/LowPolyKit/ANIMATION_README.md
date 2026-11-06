@@ -1,5 +1,7 @@
 # 캐릭터 리깅 · 몹 7종 · 키프레임 애니메이션
 
+몬스터 표면 revision 7은 2족 4종과 4족 3종의 몸통·팔다리 연결부를 하나의 스킨 표면으로 재구성합니다. 4족은 목과 꼬리도 이어지며, 가면·갑옷 장식·뿔·이빨·발톱처럼 독립적으로 읽혀야 하는 요소는 별도 표면입니다. 관절 주변 가중치를 여러 뼈에 분배했습니다. 기존 메시 ID·리그·키프레임을 사용합니다. 검증 기록은 `data/monster_connected_validation.json`에 있습니다.
+
 최신 revision 6: 캐릭터/몹의 둥근 부위에 면을 추가하고 모서리 베벨·부드러운 면 음영을 적용했습니다. NPC 다리에 무릎 변형용 링을 추가하고, 걷기는 체중 이동·뒤꿈치 접촉·발끝 밀기·편한 팔 흔들기, 달리기는 더 열린 팔꿈치 각도와 반대팔 반동으로 다시 구웠습니다. 4족은 scapula.L/R(어깨뼈), carpus.L/R(앞발목), hock.L/R(뒷발목)을 추가한 27본 골격이며 모든 클립을 새 다리 구조로 다시 구웠습니다. 메시에 넣은 관절과 면 음영을 유지해야 하므로, 적용 시 GLB의 NORMAL/JOINTS_0/WEIGHTS_0와 새 27본 계층을 사용하십시오. 가져온 법선을 면 법선으로 다시 생성하면 각진 음영으로 돌아갑니다.
 
 최신 미리보기는 `npc_walk_v6.gif`, `npc_run_v6.gif`, `quadruped_walk_v6.gif`, `quadruped_run_v6.gif`입니다. 전체 외형은 `characters_natural_v6.png`, 검증은 `natural_v6_validation.json`과 `natural_v6_contact_validation.json`을 확인하십시오. 아래 revision 4/5 설명은 이전 단계의 변경 기록입니다.

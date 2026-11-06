@@ -251,7 +251,8 @@ namespace Art
                             float seconds,
                             float yaw,
                             const std::map<std::string, int>& parts,
-                            float opacity)
+                            float opacity,
+                            bool authoredNormals)
     {
         auto& source = File(file);
         const auto& info = library_.Animation(name);
@@ -288,7 +289,7 @@ namespace Art
         }
         found->second.used = ++access_;
         std::string key = "gpu-art-v1:" + file;
-        const auto& geometry = Geometry(source, parts, key);
+        const auto& geometry = Geometry(source, parts, key, false, authoredNormals);
         r.ModelMesh(key, geometry, found->second.bones, origin, scale, yaw, {1, 1, 1}, {}, opacity);
     }
 
@@ -396,7 +397,8 @@ namespace Art
         {
             throw std::runtime_error("Missing creature action " + action);
         }
-        Animated(r, p, 36 * zoom, found->file, name, seconds, std::atan2(fx, fy), {});
+        // Preserve the sculpted shading across the revised skinned joints.
+        Animated(r, p, 36 * zoom, found->file, name, seconds, std::atan2(fx, fy), {}, 1.f, true);
     }
 
     void WorldArt::Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time)

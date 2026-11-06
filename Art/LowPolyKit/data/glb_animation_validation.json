@@ -355,7 +355,7 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 3783,
+      "vertices": 3294,
       "clips": [
         "MOB_00_Idle",
         "MOB_00_Turn_L90",
@@ -376,7 +376,7 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 4232,
+      "vertices": 3564,
       "clips": [
         "MOB_01_Idle",
         "MOB_01_Turn_L90",
@@ -397,7 +397,7 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 5939,
+      "vertices": 4840,
       "clips": [
         "MOB_02_Idle",
         "MOB_02_Turn_L90",
@@ -418,7 +418,7 @@
       "skins": 1,
       "bones": 18,
       "meshes": 1,
-      "vertices": 4739,
+      "vertices": 3292,
       "clips": [
         "MOB_03_Idle",
         "MOB_03_Turn_L90",
@@ -439,7 +439,7 @@
       "skins": 1,
       "bones": 27,
       "meshes": 1,
-      "vertices": 10611,
+      "vertices": 6783,
       "clips": [
         "MOB_04_Idle",
         "MOB_04_Walk",
@@ -462,7 +462,7 @@
       "skins": 1,
       "bones": 27,
       "meshes": 1,
-      "vertices": 10957,
+      "vertices": 7164,
       "clips": [
         "MOB_05_Idle",
         "MOB_05_Walk",
@@ -485,7 +485,7 @@
       "skins": 1,
       "bones": 27,
       "meshes": 1,
-      "vertices": 10904,
+      "vertices": 7404,
       "clips": [
         "MOB_06_Idle",
         "MOB_06_Walk",

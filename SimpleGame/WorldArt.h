@@ -69,7 +69,8 @@ namespace Art
                       float time,
                       float yaw,
                       const std::map<std::string, int>& parts,
-                      float opacity = 1);
+                      float opacity = 1,
+                      bool authoredNormals = false);
         std::vector<std::array<float, 16>> Palette(const Model& model, const Pose& pose) const;
         const std::vector<PrototypeRenderer::ModelVertex>& Geometry(
             Source& source,

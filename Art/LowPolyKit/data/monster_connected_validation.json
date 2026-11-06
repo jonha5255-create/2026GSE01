@@ -1,0 +1,65 @@
+[
+  {
+    "id": "SK_MOB_00_PaperBoxYokai",
+    "core_vertices": 2100,
+    "core_triangles": 4200,
+    "body_islands": 1,
+    "total_triangles": 6086,
+    "clips": 12,
+    "max_sampled_body_edge_stretch": 12.387
+  },
+  {
+    "id": "SK_MOB_01_StationWarden",
+    "core_vertices": 2102,
+    "core_triangles": 4200,
+    "body_islands": 1,
+    "total_triangles": 6624,
+    "clips": 12,
+    "max_sampled_body_edge_stretch": 9.398
+  },
+  {
+    "id": "SK_MOB_02_RedHornOni",
+    "core_vertices": 2102,
+    "core_triangles": 4200,
+    "body_islands": 1,
+    "total_triangles": 9052,
+    "clips": 12,
+    "max_sampled_body_edge_stretch": 11.082
+  },
+  {
+    "id": "SK_MOB_03_SecurityConstruct",
+    "core_vertices": 2102,
+    "core_triangles": 4200,
+    "body_islands": 1,
+    "total_triangles": 6520,
+    "clips": 12,
+    "max_sampled_body_edge_stretch": 12.684
+  },
+  {
+    "id": "SK_MOB_04_IronHound",
+    "core_vertices": 2802,
+    "core_triangles": 5600,
+    "body_islands": 1,
+    "total_triangles": 13316,
+    "clips": 14,
+    "max_sampled_body_edge_stretch": 4.686
+  },
+  {
+    "id": "SK_MOB_05_FusionBeast",
+    "core_vertices": 2802,
+    "core_triangles": 5600,
+    "body_islands": 1,
+    "total_triangles": 14072,
+    "clips": 14,
+    "max_sampled_body_edge_stretch": 15.675
+  },
+  {
+    "id": "SK_MOB_06_VoidStalker",
+    "core_vertices": 2802,
+    "core_triangles": 5600,
+    "body_islands": 1,
+    "total_triangles": 14612,
+    "clips": 14,
+    "max_sampled_body_edge_stretch": 6.039
+  }
+]
