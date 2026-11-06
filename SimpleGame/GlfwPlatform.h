@@ -46,6 +46,7 @@ class GlfwPlatform
   private:
     GlfwPlatform(const GlfwPlatform&) = delete;
     GlfwPlatform& operator=(const GlfwPlatform&) = delete;
+    void ReconcileMovementKeys(bool (*isHeld)(int));
 
   private:
     GLFWwindow* window_ = nullptr;

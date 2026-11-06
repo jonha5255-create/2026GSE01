@@ -2102,6 +2102,21 @@ bool PrototypeWorld::SelfTest()
     world.Update(.04f);
     world.Key('d', false);
     ok &= require(world.player_.x != before, "input movement");
+    const auto beforeDiagonal = world.player_;
+    world.Key('w', true);
+    world.Key('d', true);
+    world.Update(.04f);
+    const auto afterDiagonal = world.player_;
+    world.Key('w', false);
+    world.Key('d', false);
+    for (int i = 0; i < 60; ++i)
+    {
+        world.Update(.05f);
+    }
+    ok &= require(beforeDiagonal.x != afterDiagonal.x && beforeDiagonal.y != afterDiagonal.y
+                      && world.player_.cx == afterDiagonal.cx && world.player_.cy == afterDiagonal.cy
+                      && world.player_.x == afterDiagonal.x && world.player_.y == afterDiagonal.y,
+                  "releasing W and D stops world movement on the next update");
     world.Key('q', true);
     world.Key('q', true);
     ok &= require(world.level_.Player().weapon, "transform is edge triggered");

@@ -1,8 +1,14 @@
 #include "stdafx.h"
+#include <windows.h>
 #include "GlfwPlatform.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+
+namespace
+{
+    constexpr std::array<int, 4> MovementKeys{GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D};
+}
 
 GlfwPlatform::~GlfwPlatform()
 {
@@ -128,6 +134,17 @@ void GlfwPlatform::Swap()
 void GlfwPlatform::Poll()
 {
     glfwPollEvents();
+    if (window_ && glfwGetWindowAttrib(window_, GLFW_FOCUSED))
+    {
+        ReconcileMovementKeys(
+            [](int code)
+            {
+                // GLFW key names identify physical keys. Translate through the active layout.
+                int scan = glfwGetKeyScancode(code);
+                UINT vk = scan >= 0 ? MapVirtualKeyW(UINT(scan), MAPVK_VSC_TO_VK_EX) : 0;
+                return !vk || (GetAsyncKeyState(int(vk)) & 0x8000) != 0;
+            });
+    }
 }
 
 void GlfwPlatform::Wait(double seconds)
@@ -189,11 +206,17 @@ int GlfwPlatform::TranslateKey(int code)
 void GlfwPlatform::DispatchKey(int code, int action)
 {
     int translated = TranslateKey(code);
-    if (translated < 0 || action == GLFW_REPEAT)
+    if (translated < 0)
     {
         return;
     }
-    bool down = action == GLFW_PRESS;
+    if (action == GLFW_REPEAT
+        && std::find(MovementKeys.begin(), MovementKeys.end(), code) == MovementKeys.end())
+    {
+        return;
+    }
+    // A recovered key can still be held in GLFW's cache, so its next press can be a repeat.
+    bool down = action != GLFW_RELEASE;
     if (pressed_[translated] == down)
     {
         return;
@@ -202,6 +225,17 @@ void GlfwPlatform::DispatchKey(int code, int action)
     if (key)
     {
         key(static_cast<unsigned char>(translated), down);
+    }
+}
+
+void GlfwPlatform::ReconcileMovementKeys(bool (*isHeld)(int))
+{
+    for (int code : MovementKeys)
+    {
+        if (pressed_[TranslateKey(code)] && !isHeld(code))
+        {
+            DispatchKey(code, GLFW_RELEASE);
+        }
     }
 }
 
@@ -251,6 +285,27 @@ bool GlfwPlatform::SelfTest()
     platform.ReleaseKeys();
     platform.DispatchKey(GLFW_KEY_W, GLFW_RELEASE);
     check(ups == 1, "focus loss releases held movement keys exactly once");
+    std::array<bool, 256> gameKeys{};
+    int releases = 0;
+    platform.key = [&](unsigned char key, bool down)
+    {
+        gameKeys[key] = down;
+        if (!down)
+        {
+            ++releases;
+        }
+    };
+    platform.DispatchKey(GLFW_KEY_W, GLFW_PRESS);
+    platform.DispatchKey(GLFW_KEY_D, GLFW_PRESS);
+    platform.ReconcileMovementKeys([](int code) { return code == GLFW_KEY_D; });
+    check(!gameKeys['w'] && gameKeys['d'], "releasing W keeps D held when moving diagonally");
+    platform.ReconcileMovementKeys([](int) { return false; });
+    platform.DispatchKey(GLFW_KEY_D, GLFW_RELEASE);
+    check(!gameKeys['w'] && !gameKeys['d'] && releases == 2,
+          "missed diagonal key releases clear movement without duplicate callbacks");
+    platform.DispatchKey(GLFW_KEY_D, GLFW_REPEAT);
+    platform.DispatchKey(GLFW_KEY_Q, GLFW_REPEAT);
+    check(gameKeys['d'] && !gameKeys['q'], "movement can resume after a missed release");
     check(TranslateKey(GLFW_KEY_TAB) == '\t' && TranslateKey(GLFW_KEY_LEFT_BRACKET) == '['
               && TranslateKey(GLFW_KEY_3) == '3' && TranslateKey(GLFW_KEY_ESCAPE) == 27
               && TranslateKey(GLFW_KEY_UNKNOWN) == -1,
