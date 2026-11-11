@@ -224,6 +224,10 @@ class LivingWorld
     bool UseArenaDevice(FarmPoint player, GameplayContext& context);
     float LimitArenaDamage(NpcActor& boss, float damage);
     ArenaAttack arenaAttack;
+    ArenaAttack arenaRelease;
+    float arenaReleaseAge = 0, arenaHitTime = 0, arenaBreakTime = 0;
+    FarmPoint arenaHitPoint{};
+    bool arenaPlayerHit = false;
     ArenaTrial arenaTrial;
     bool CombatQuest() const;
     std::string QuestInstruction() const;

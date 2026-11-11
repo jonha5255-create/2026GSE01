@@ -535,7 +535,10 @@ void LivingWorld::MoveTo(NpcActor& npc, FarmPoint goal, float dt, GameplayContex
         }
     }
     FarmPoint delta = Minus(next, position);
-    float speed = npc.action == NpcAction::Rest ? 82.f : npc.job == NpcJob::Wraith ? 40.f : 65.f;
+    float speed = npc.action == NpcAction::Rest ? 82.f
+                  : npc.bossRegion == 1         ? 88.f
+                  : npc.job == NpcJob::Wraith   ? 40.f
+                                                : 65.f;
     float step = std::min(Length(delta), speed * dt);
     auto direction = Unit(delta);
     auto candidate = Add(npc.Position(), {direction.x * step, direction.y * step});
@@ -740,7 +743,13 @@ void LivingWorld::Damage(NpcActor& victim,
         }
     }
     victim.health = std::max(0.f, victim.health - amount);
-    if (!attacker)
+    if (victim.Id() == arenaBoss)
+    {
+        arenaHitPoint = victim.local;
+        arenaHitTime = .37f;
+        arenaPlayerHit = false;
+    }
+    else if (!attacker)
     {
         WeaponVfxActor::Spawn(
             context.scene, -1, Art::WeaponEffectKind::Impact, victim.Position(), {1, 0});
@@ -1052,6 +1061,9 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
 void LivingWorld::Tick(float dt, GameplayContext& context)
 {
     clock += dt;
+    arenaReleaseAge += dt;
+    arenaHitTime = std::max(0.f, arenaHitTime - dt);
+    arenaBreakTime = std::max(0.f, arenaBreakTime - dt);
     UpdateSettlements(dt, context);
     std::vector<WorldIncident> reports;
     for (auto& incident : incidents)

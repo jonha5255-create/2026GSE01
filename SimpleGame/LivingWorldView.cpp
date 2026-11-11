@@ -100,7 +100,11 @@ void PrototypeWorld::Draw(const NpcActor& npc)
     r.Ellipse(p, 14 * z, 5 * z, Color(0, 0, 0, .65f));
     if (art_)
     {
-        art_->Npc(r, npc, p, z, time_);
+        const auto& sim = level_.society;
+        float hurt = arenaBoss && !sim.arenaTrial.active && !sim.arenaPlayerHit
+                             && sim.arenaHitTime > .13f
+                         ? .37f - sim.arenaHitTime : -1.f;
+        art_->Npc(r, npc, p, z, time_, hurt);
     }
     if (npc.health <= 0)
     {

@@ -1051,11 +1051,15 @@ int main(int argc, char** argv)
             ok = Snapshot(L"living-world-grounded-ruins.bmp") && ok;
             for (int region = 0; region < int(BossArenas.size()); ++region)
             {
-                world = std::make_unique<PrototypeWorld>(2026);
-                world->PrepareArt();
-                world->PreviewArena(region);
-                auto file = L"story-boss-arena-" + std::to_wstring(region) + L".bmp";
-                ok = Snapshot(file.c_str()) && ok;
+                for (bool released : {false, true})
+                {
+                    world = std::make_unique<PrototypeWorld>(2026);
+                    world->PrepareArt();
+                    world->PreviewArena(region, released);
+                    auto file = L"story-boss-arena-" + std::to_wstring(region)
+                                + (released ? L"-release.bmp" : L".bmp");
+                    ok = Snapshot(file.c_str()) && ok;
+                }
             }
             world = std::move(savedWorld);
         }

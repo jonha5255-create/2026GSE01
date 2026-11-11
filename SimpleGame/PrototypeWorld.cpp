@@ -877,8 +877,20 @@ void PrototypeWorld::Update(float dt)
 
 Point PrototypeWorld::Project(float x, float y, float z) const
 {
-    return {center_.x + ((x - y) * .85f + cameraLag_.x) * zoom_,
-            center_.y + ((x + y) * .425f - z + cameraLag_.y) * zoom_};
+    Point lag = cameraLag_;
+    if (overworld_)
+    {
+        const auto& sim = level_.society;
+        float strength = sim.arenaBreakTime * 16.f + sim.arenaHitTime * 7.f;
+        if (sim.arenaRelease.pattern != ArenaPattern::None)
+        {
+            strength += std::max(0.f, .22f - sim.arenaReleaseAge) * 15.f;
+        }
+        lag.x += std::sin(time_ * 72) * strength;
+        lag.y += std::sin(time_ * 93) * strength * .6f;
+    }
+    return {center_.x + ((x - y) * .85f + lag.x) * zoom_,
+            center_.y + ((x + y) * .425f - z + lag.y) * zoom_};
 }
 
 void PrototypeWorld::LocalMesh(PrototypeRenderer& r,
@@ -2005,6 +2017,33 @@ void PrototypeWorld::Draw(PrototypeRenderer& r)
         DrawBossRoom(r);
     }
     level_.Graph().Render(*this, RenderLayer::Ground, RenderLayer::Weather);
+    if (overworld_)
+    {
+        const auto& sim = level_.society;
+        if (sim.arenaHitTime > 0)
+        {
+            auto hit = Project(sim.arenaHitPoint.x - arenaPosition_.x,
+                               sim.arenaHitPoint.y - arenaPosition_.y,
+                               sim.arenaPlayerHit ? 28.f : 45.f);
+            if (art_)
+            {
+                art_->BossHitFx(r, hit, zoom_, .37f - sim.arenaHitTime);
+            }
+            r.Glow(hit, 21 * zoom_, Color(255, 188, 110, sim.arenaHitTime * 1.3f));
+        }
+        if (sim.arenaBreakTime > 0)
+        {
+            if (const auto* boss = level_.Graph().Get<NpcActor>(sim.arenaBoss))
+            {
+                auto position = boss->Position();
+                float progress = 1.f - sim.arenaBreakTime / .45f;
+                Ring(r, position.x, position.y, 34.f + progress * 104.f,
+                     Color(119, 240, 255, 1 - progress), 3.f);
+                r.Glow(Project(position.x, position.y, 44), 62 * zoom_,
+                       Color(115, 236, 255, (1 - progress) * .8f));
+            }
+        }
+    }
     activeRenderer_ = nullptr;
 }
 
@@ -2102,9 +2141,25 @@ void PrototypeWorld::DrawBossRoom(PrototypeRenderer& r)
              attack.radius, attack.pattern == ArenaPattern::BloodSeal
                                 ? Color(107, 255, 224) : danger, 2.f);
     }
+    if (art_)
+    {
+        const auto& sim = level_.society;
+        art_->BossAttackFx(r, arenaRegion_, attack, project(attack.origin.x, attack.origin.y), zoom_);
+        if (sim.arenaReleaseAge < .65f)
+        {
+            const auto& release = sim.arenaRelease;
+            art_->BossAttackFx(r, arenaRegion_, release, project(release.origin.x, release.origin.y),
+                               zoom_, sim.arenaReleaseAge);
+        }
+    }
     const auto& trial = level_.society.arenaTrial;
     if (trial.active && level_.state != RunState::Lost)
     {
+        if (const auto* boss = level_.Graph().Get<NpcActor>(level_.society.arenaBoss))
+        {
+            auto position = boss->Position();
+            Ring(r, position.x, position.y, 57.f, Color(97, 203, 255, .75f), 2.5f);
+        }
         for (unsigned i = 0; i < trial.DeviceCount(); ++i)
         {
             const auto device = ArenaDevice(arenaRegion_, i);
@@ -2114,6 +2169,10 @@ void PrototypeWorld::DrawBossRoom(PrototypeRenderer& r)
             auto p = project(device.x, device.y);
             Ring(r, device.x - arenaPosition_.x, device.y - arenaPosition_.y, 34, color, 2.f);
             r.Glow(p, (ready ? 27 : 14) * zoom_, color);
+            if (art_)
+            {
+                art_->BossDevice(r, arenaRegion_, p, zoom_, used ? .35f : 1.f);
+            }
             std::string label = used ? "완료" : ready && arenaRegion_ == 2 ? "[E] " : "";
             if (!used)
             {
@@ -2143,6 +2202,12 @@ void PrototypeWorld::BossRoomHud(PrototypeRenderer& r)
     auto gold = Color(255, 199, 115);
     const auto& hero = level_.Player();
     const auto& sim = level_.society;
+    if (sim.arenaPlayerHit && sim.arenaHitTime > 0)
+    {
+        auto hit = Color(210, 46, 44, sim.arenaHitTime * 1.5f);
+        r.Rect(0, 90, 12, h - 178, hit);
+        r.Rect(w - 12, 90, 12, h - 178, hit);
+    }
     const auto* boss = level_.Graph().Get<NpcActor>(sim.arenaBoss);
     r.Rect(0, 0, w, 90, panel);
     r.Text(24, 12, BossArenas[arenaRegion_].name, gold, .96f);
@@ -3097,7 +3162,7 @@ void PrototypeWorld::PreviewRuins()
     cameraLag_ = {0, 0};
 }
 
-void PrototypeWorld::PreviewArena(int region)
+void PrototypeWorld::PreviewArena(int region, bool released)
 {
     auto& sim = level_.society;
     auto& story = sim.story;
@@ -3119,14 +3184,25 @@ void PrototypeWorld::PreviewArena(int region)
         auto context = level_.Context(
             [&](float x, float y, float radius) { return Walkable(x, y, radius); });
         room.Damage(*boss, 1000, nullptr, context);
-        for (int i = 0; i < 150; ++i)
+        for (int i = 0; i < 640; ++i)
         {
-            level_.Player().invulnerable = 2.f;
-            Update(1.f / 60);
-            if (room.arenaAttack.pattern == ArenaPattern::Charge
-                || room.arenaAttack.pattern == ArenaPattern::Poison
-                || room.arenaAttack.pattern == ArenaPattern::Core)
+            if (!released)
             {
+                level_.Player().invulnerable = 2.f;
+            }
+            Update(1.f / 60);
+            if (released ? room.arenaAttack.lingering
+                               || room.arenaRelease.pattern != ArenaPattern::None
+                         : room.arenaAttack.pattern != ArenaPattern::None
+                               && room.arenaAttack.remaining < room.arenaAttack.windup * .55f)
+            {
+                if (released)
+                {
+                    for (int frame = 0; frame < 5; ++frame)
+                    {
+                        Update(1.f / 60);
+                    }
+                }
                 break;
             }
         }

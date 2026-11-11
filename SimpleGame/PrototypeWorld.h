@@ -37,7 +37,7 @@ class PrototypeWorld : private ActorRenderContext
     void PreviewExpedition();
     void PreviewRoadJunction();
     void PreviewRuins();
-    void PreviewArena(int region);
+    void PreviewArena(int region, bool released = false);
 
   private:
     using Coord = std::pair<int64_t, int64_t>;

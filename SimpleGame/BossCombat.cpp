@@ -120,6 +120,7 @@ void LivingWorld::CompleteArenaDevice(NpcActor& boss, unsigned index)
     {
         arenaTrial.active = false;
         arenaAttack = {};
+        arenaBreakTime = .45f;
         boss.attackTime = -1;
         boss.cooldown = 2.8f;
         dialogue = "보호막이 깨졌습니다. 보스가 멈춘 사이 공격하세요.";
@@ -171,6 +172,17 @@ void LivingWorld::UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& con
     }
     const auto origin = Minus(boss.Position(), boss.local);
     const auto player = Minus(context.player.Position(), origin);
+    auto hitPlayer = [&](float damage)
+    {
+        float previous = context.player.health;
+        context.player.DamagePlayer(damage, context);
+        if (context.player.health < previous)
+        {
+            arenaHitPoint = player;
+            arenaHitTime = .37f;
+            arenaPlayerHit = true;
+        }
+    };
     auto& attack = arenaAttack;
     if (arenaTrial.active && boss.bossRegion == 2 && arenaTrial.used != 0)
     {
@@ -232,7 +244,7 @@ void LivingWorld::UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& con
                 attack.pulse = .9f;
                 if (attack.Hits(player))
                 {
-                    context.player.DamagePlayer(attack.damage, context);
+                    hitPlayer(attack.damage);
                 }
             }
         }
@@ -247,7 +259,12 @@ void LivingWorld::UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& con
         }
         if (!attack.lingering && attack.Hits(player))
         {
-            context.player.DamagePlayer(attack.damage, context);
+            hitPlayer(attack.damage);
+        }
+        if (!attack.lingering && attack.pattern != ArenaPattern::Poison)
+        {
+            arenaRelease = attack;
+            arenaReleaseAge = 0;
         }
         if (attack.pattern == ArenaPattern::Charge)
         {
@@ -306,8 +323,9 @@ void LivingWorld::UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& con
     {
         return;
     }
-    if (spec.pattern == ArenaPattern::Circle && Length(delta) > spec.radius - 12
-        && arenaChase_ < 2.f)
+    bool needsApproach = (spec.pattern == ArenaPattern::Circle && Length(delta) > spec.radius - 12)
+                         || (spec.pattern == ArenaPattern::Pounce && Length(delta) > spec.reach);
+    if (needsApproach && arenaChase_ < 2.f)
     {
         arenaChase_ += dt;
         MoveTo(boss, player, dt, context);
@@ -376,7 +394,7 @@ void LivingWorld::UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& con
     boss.arenaWindup = attack.windup;
     if (spec.pattern == ArenaPattern::Pounce)
     {
-        boss.arenaClip = "_Jump";
+        boss.arenaClip = Length(delta) < 72 ? "_AttackPrimary" : "_Jump";
     }
     else if (spec.pattern == ArenaPattern::Poison || spec.pattern == ArenaPattern::Core
              || spec.pattern == ArenaPattern::BloodSeal)

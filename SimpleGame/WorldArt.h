@@ -14,7 +14,8 @@ namespace Art
       public:
         static std::shared_ptr<WorldArt> Shared();
         WorldArt();
-        void Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time);
+        void Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time,
+                 float hurtAge = -1.f);
         void Player(PrototypeRenderer& r,
                     const PlayerActor& player,
                     const WeaponActor& weapon,
@@ -24,6 +25,10 @@ namespace Art
         void Enemy(PrototypeRenderer& r, const EnemyActor& enemy, Point p, float zoom, float time);
         bool Arena(PrototypeRenderer& r, int region, Point p, float scale);
         Point BossScreenBounds(int region);
+        void BossAttackFx(PrototypeRenderer& r, int region, const ArenaAttack& attack,
+                          Point p, float zoom, float releaseAge = -1.f);
+        void BossDevice(PrototypeRenderer& r, int region, Point p, float zoom, float opacity);
+        void BossHitFx(PrototypeRenderer& r, Point p, float zoom, float age);
         void Companion(
             PrototypeRenderer& r, const PlayerActor& player, Point p, float zoom, float time);
         void Vfx(PrototypeRenderer& r, const WeaponVfxActor& actor, Point p, float zoom);
@@ -118,6 +123,15 @@ namespace Art
                           float facingY,
                           bool boss = false);
         AssetLibrary library_;
+        struct BossEffect
+        {
+            std::string file;
+            float release = 0, radius = 0, reach = 0;
+        };
+        std::map<std::string, BossEffect> bossEffects_;
+        std::array<std::string, 3> bossDevices_;
+        std::string bossHit_;
+        float bossFxScale_ = 1;
         std::map<std::string, Source> sources_;
         std::map<std::string, std::map<int, std::string>> files_;
         std::vector<std::vector<int>> regions_;

@@ -74,6 +74,39 @@ namespace Art
                 File(arena->boss.file);
             }
         }
+        auto combatPath = library_.Resolve("data/boss_combat_catalog.json");
+        if (std::filesystem::exists(combatPath))
+        {
+            std::ifstream combatStream(combatPath);
+            auto combat = nlohmann::json::parse(combatStream);
+            float meters = combat.at("arena_m_per_game_unit");
+            if (!std::isfinite(meters) || meters <= 0)
+            {
+                throw std::runtime_error("Invalid boss effect scale");
+            }
+            bossFxScale_ = 1.f / meters;
+            for (const auto& effect : combat.at("effects"))
+            {
+                BossEffect data{effect.at("file"), effect.at("authored_windup_s"),
+                                effect.at("game_radius"), effect.at("game_reach")};
+                File(data.file);
+                bossEffects_.emplace(effect.at("id").get<std::string>(), std::move(data));
+            }
+            for (const auto& device : combat.at("devices"))
+            {
+                for (int region = 0; region < int(bossDevices_.size()); ++region)
+                {
+                    const auto* arena = library_.BossArena(region);
+                    if (arena && device.at("boss_id") == arena->boss.id)
+                    {
+                        bossDevices_[region] = device.at("file").get<std::string>();
+                        File(bossDevices_[region]);
+                    }
+                }
+            }
+            bossHit_ = combat.at("hit_confirm").at("file").get<std::string>();
+            File(bossHit_);
+        }
         for (const auto& item : library_.Entries())
         {
             if (item.slot == "building" || item.slot == "structure" || item.slot == "tree"
@@ -395,6 +428,106 @@ namespace Art
         return true;
     }
 
+    void WorldArt::BossAttackFx(PrototypeRenderer& r,
+                                 int region,
+                                 const ArenaAttack& attack,
+                                 Point p,
+                                 float zoom,
+                                 float releaseAge)
+    {
+        const char* id = nullptr;
+        switch (attack.pattern)
+        {
+        case ArenaPattern::Circle: id = region == 0 ? "AltarSlam" : "StoneSlam"; break;
+        case ArenaPattern::Charge: id = "HornCharge"; break;
+        case ArenaPattern::Pounce: id = "Bite"; break;
+        case ArenaPattern::Fan: id = "VenomJet"; break;
+        case ArenaPattern::Cross: id = "Fissure"; break;
+        case ArenaPattern::Ring: id = region == 0 ? "AltarSlam" : "StoneSlam"; break;
+        case ArenaPattern::BloodSeal: id = "BloodSeal"; break;
+        case ArenaPattern::Poison: id = "PoisonPool"; break;
+        case ArenaPattern::Core: id = "CoreOverload"; break;
+        default: return;
+        }
+        const bool released = releaseAge >= 0 || attack.lingering;
+        if (!released && (attack.pattern == ArenaPattern::Fan || attack.pattern == ArenaPattern::Ring))
+        {
+            // The authored effects for these attacks have a different footprint.
+            return;
+        }
+        auto effect = bossEffects_.find(id);
+        if (effect == bossEffects_.end())
+        {
+            return;
+        }
+        const auto& data = effect->second;
+        auto& source = File(data.file);
+        if (source.model->clips.empty())
+        {
+            return;
+        }
+        const auto& clip = source.model->clips.front();
+        float time = data.release * std::clamp(1.f - attack.remaining / attack.windup, 0.f, 1.f);
+        if (released)
+        {
+            time = data.release + (attack.lingering ? 3.6f - attack.remaining : releaseAge);
+        }
+        if (time >= clip.duration)
+        {
+            return;
+        }
+        Pose pose;
+        pose.Sample(*source.model, clip.name, time, false);
+        float yaw = std::atan2(attack.direction.x, attack.direction.y);
+        float width = data.radius > 0 ? attack.radius / data.radius : 1.f;
+        float length = data.reach > 0 ? attack.reach / data.reach : width;
+        if (attack.pattern == ArenaPattern::Fan)
+        {
+            width = 1.f;
+        }
+        if (attack.pattern == ArenaPattern::Ring)
+        {
+            width = length = 1.f;
+        }
+        auto stretch = Matrix::TRS({}, {0, 0, 0, 1}, {width, 1.f, length});
+        const int directions = attack.pattern == ArenaPattern::Cross ? 4 : 1;
+        for (int i = 0; i < directions; ++i)
+        {
+            float rotation = directions == 4 ? i * Pi / 2 : yaw;
+            NodeDraw(r, source, data.file, pose, stretch, nullptr, 0, p,
+                     zoom * bossFxScale_, rotation, released ? 1.f : .58f, false, true);
+            ++FrameProfiler::Get().Counters().vfxDraws;
+        }
+    }
+
+    void WorldArt::BossDevice(PrototypeRenderer& r, int region, Point p, float zoom, float opacity)
+    {
+        const auto& file = bossDevices_[region];
+        if (file.empty())
+        {
+            return;
+        }
+        auto& source = File(file);
+        NodeDraw(r, source, file, source.bind, {}, nullptr, 0, p, zoom * bossFxScale_, 0, opacity);
+    }
+
+    void WorldArt::BossHitFx(PrototypeRenderer& r, Point p, float zoom, float age)
+    {
+        if (bossHit_.empty())
+        {
+            return;
+        }
+        auto& source = File(bossHit_);
+        if (source.model->clips.empty() || age >= source.model->clips.front().duration)
+        {
+            return;
+        }
+        Pose pose;
+        pose.Sample(*source.model, source.model->clips.front().name, age, false);
+        NodeDraw(r, source, bossHit_, pose, {}, nullptr, 0, p, zoom * bossFxScale_, 0, 1, false, true);
+        ++FrameProfiler::Get().Counters().vfxDraws;
+    }
+
     Point WorldArt::BossScreenBounds(int region)
     {
         const auto* arena = library_.BossArena(region);
@@ -454,7 +587,8 @@ namespace Art
                  std::atan2(fx, fy), {}, 1.f, true, boss);
     }
 
-    void WorldArt::Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time)
+    void WorldArt::Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time,
+                       float hurtAge)
     {
         if (npc.job == NpcJob::Wraith)
         {
@@ -469,6 +603,8 @@ namespace Art
             }
             std::string action = npc.health <= 0        ? "_Death"
                                  : npc.attackTime >= 0  ? npc.arenaClip
+                                 : hurtAge >= 0         ? "_Hit"
+                                 : npc.bossRegion == 1 && npc.moveBlend > .7f ? "_Run"
                                  : npc.moveBlend > .15f ? "_Walk"
                                                         : "_Idle";
             const auto* arena = library_.BossArena(npc.bossRegion);
@@ -478,7 +614,8 @@ namespace Art
             {
                 action = "_AttackSecondary";
             }
-            float seconds = npc.health > 0 ? time : arena ? 2.5f - npc.recovery : 10.f;
+            float seconds = npc.health <= 0 ? (arena ? 2.5f - npc.recovery : 10.f)
+                            : action == "_Hit" ? hurtAge : time;
             if (npc.attackTime >= 0)
             {
                 float windup = npc.AttackWindup();
