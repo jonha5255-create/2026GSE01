@@ -119,7 +119,7 @@ namespace Art
             if (player.weapon)
             {
                 ready_.Sample(model, clip, 0, false, true, false);
-                armed_.Mix(model, locomotion_, ready_, 1, upperBody_, false);
+                armed_.Mix(model, locomotion_, ready_, player.WeaponGripBlend(), upperBody_, false);
             }
             target_ = armed_;
             sampleTime_ = 0;

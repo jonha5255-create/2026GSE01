@@ -165,7 +165,8 @@ const char* LivingWorld::SiteName(TownSite site)
                                   "묵의 기억",
                                   "동부 중계기",
                                   "사라진 승강장 신호",
-                                  "존재하지 않는 역"};
+                                  "존재하지 않는 역",
+                                  "보스방 입구"};
     return names[int(site)];
 }
 
@@ -646,6 +647,10 @@ void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& 
     victim.gold -= money;
     victim.goods = 0;
     victim.recovery = victim.fieldBoss ? 90.f : prey ? 22.f : 28.f;
+    if (victim.Id() == arenaBoss)
+    {
+        victim.recovery = 2.5f;
+    }
     victim.action = NpcAction::Recover;
     victim.path.clear();
     victim.target = victim.aggressor = NoActor;
@@ -669,6 +674,10 @@ void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& 
         goods += cargo;
         if (prey)
         {
+            if (victim.Id() == arenaBoss)
+            {
+                arenaCleared = true;
+            }
             if (victim.bossRegion >= 0 && victim.bossRegion < 3)
             {
                 unsigned bit = 1u << victim.bossRegion;
@@ -684,8 +693,9 @@ void LivingWorld::Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& 
                         bossRelicReward = true;
                         gold += 150;
                         context.player.AddExperience(120, context);
-                        dialogue = "삼역의 유물 완료! 보상: 150전 / 경험치 120";
+                        dialogue = "묵: 세 유물이 모였어. 지워진 역에서 하린의 봉인을 풀자.";
                         Note(dialogue, "quest");
+                        context.Effect(victim.Position(), "삼역의 유물 보상 / 150전", 2.5f);
                     }
                 }
             }
@@ -720,6 +730,14 @@ void LivingWorld::Damage(NpcActor& victim,
     if (!Alive(victim) || amount <= 0)
     {
         return;
+    }
+    if (victim.Id() == arenaBoss)
+    {
+        amount = LimitArenaDamage(victim, amount);
+        if (amount <= 0)
+        {
+            return;
+        }
     }
     victim.health = std::max(0.f, victim.health - amount);
     if (!attacker)
@@ -761,6 +779,11 @@ void LivingWorld::BeginMonsterAttack(
 
 void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
 {
+    if (npc.Id() == arenaBoss)
+    {
+        UpdateArenaBoss(npc, dt, context);
+        return;
+    }
     if (npc.health <= 0)
     {
         npc.attackTime = -1;
@@ -772,7 +795,7 @@ void LivingWorld::UpdateNpc(NpcActor& npc, float dt, GameplayContext& context)
     if (npc.attackTime >= 0 && npc.health > 0)
     {
         npc.attackTime += dt;
-        float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
+        float windup = npc.AttackWindup();
         if (!npc.attackHit && npc.attackTime >= windup)
         {
             npc.attackHit = true;

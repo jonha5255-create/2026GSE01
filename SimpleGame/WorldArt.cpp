@@ -16,6 +16,7 @@ namespace Art
     namespace
     {
         constexpr float Pi = 3.14159265359f;
+        constexpr float BossScale = 16.f;
     }
 
     std::shared_ptr<WorldArt> WorldArt::Shared()
@@ -64,6 +65,14 @@ namespace Art
         for (const auto& creature : library_.Creatures())
         {
             File(creature.file);
+        }
+        for (int region = 0; region < 3; ++region)
+        {
+            if (const auto* arena = library_.BossArena(region))
+            {
+                File(arena->roomFile);
+                File(arena->boss.file);
+            }
         }
         for (const auto& item : library_.Entries())
         {
@@ -252,7 +261,8 @@ namespace Art
                             float yaw,
                             const std::map<std::string, int>& parts,
                             float opacity,
-                            bool authoredNormals)
+                            bool authoredNormals,
+                            bool linearMaterial)
     {
         auto& source = File(file);
         const auto& info = library_.Animation(name);
@@ -290,7 +300,8 @@ namespace Art
         found->second.used = ++access_;
         std::string key = "gpu-art-v1:" + file;
         const auto& geometry = Geometry(source, parts, key, false, authoredNormals);
-        r.ModelMesh(key, geometry, found->second.bones, origin, scale, yaw, {1, 1, 1}, {}, opacity);
+        r.ModelMesh(key, geometry, found->second.bones, origin, scale, yaw,
+                    {1, 1, 1}, {}, opacity, false, false, linearMaterial);
     }
 
     int WorldArt::BuildingIndex(int region, uint32_t variant) const
@@ -365,14 +376,42 @@ namespace Art
                     opacity);
     }
 
-    void WorldArt::CreatureDraw(PrototypeRenderer& r,
-                                int index,
-                                const std::string& action,
-                                float seconds,
-                                Point p,
-                                float zoom,
-                                float fx,
-                                float fy)
+    bool WorldArt::Arena(PrototypeRenderer& r, int region, Point p, float scale)
+    {
+        const auto* arena = library_.BossArena(region);
+        if (!arena)
+        {
+            return false;
+        }
+        auto& source = File(arena->roomFile);
+        if (source.bindBones.empty())
+        {
+            source.bindBones = Palette(*source.model, source.bind);
+        }
+        std::string key = "gpu-arena:" + arena->roomFile;
+        const auto& geometry = Geometry(source, {}, key, false, true);
+        r.ModelMesh(key, geometry, source.bindBones, p, scale, 0, {1, 1, 1}, {}, 1,
+                    false, false, true);
+        return true;
+    }
+
+    Point WorldArt::BossScreenBounds(int region)
+    {
+        const auto* arena = library_.BossArena(region);
+        if (!arena)
+        {
+            return {22 * 1.6f, 60 * 1.6f};
+        }
+        const auto& source = File(arena->boss.file);
+        float x = std::max(std::abs(source.low.x), std::abs(source.high.x));
+        float z = std::max(std::abs(source.low.z), std::abs(source.high.z));
+        float radius = std::hypot(x, z);
+        constexpr float scale = BossScale * 1.6f;
+        return {std::max(36.f, radius * 1.21f * scale),
+                (source.high.y + radius * .61f) * scale};
+    }
+
+    const Creature& WorldArt::CreatureModel(int index) const
     {
         auto found = std::find_if(library_.Creatures().begin(),
                                   library_.Creatures().end(),
@@ -384,8 +423,21 @@ namespace Art
         {
             throw std::runtime_error("Unknown world art creature index");
         }
+        return *found;
+    }
+
+    void WorldArt::CreatureDraw(PrototypeRenderer& r,
+                                const Creature& creature,
+                                const std::string& action,
+                                float seconds,
+                                Point p,
+                                float zoom,
+                                float fx,
+                                float fy,
+                                bool boss)
+    {
         std::string name;
-        for (const auto& clip : found->clips)
+        for (const auto& clip : creature.clips)
         {
             if (clip.size() >= action.size() && clip.substr(clip.size() - action.size()) == action)
             {
@@ -398,7 +450,8 @@ namespace Art
             throw std::runtime_error("Missing creature action " + action);
         }
         // Preserve the sculpted shading across the revised skinned joints.
-        Animated(r, p, 36 * zoom, found->file, name, seconds, std::atan2(fx, fy), {}, 1.f, true);
+        Animated(r, p, (boss ? BossScale : 36.f) * zoom, creature.file, name, seconds,
+                 std::atan2(fx, fy), {}, 1.f, true, boss);
     }
 
     void WorldArt::Npc(PrototypeRenderer& r, const NpcActor& npc, Point p, float zoom, float time)
@@ -415,23 +468,26 @@ namespace Art
                                                : horn[npc.Id() % 3];
             }
             std::string action = npc.health <= 0        ? "_Death"
-                                 : npc.attackTime >= 0  ? "_AttackPrimary"
+                                 : npc.attackTime >= 0  ? npc.arenaClip
                                  : npc.moveBlend > .15f ? "_Walk"
                                                         : "_Idle";
-            float seconds = npc.health <= 0 ? 10.f : time;
+            const auto* arena = library_.BossArena(npc.bossRegion);
+            const auto& creature = arena ? arena->boss : CreatureModel(index);
+            if (action == "_TrialCast"
+                && (!arena || !File(creature.file).model->FindClip(creature.id + action)))
+            {
+                action = "_AttackSecondary";
+            }
+            float seconds = npc.health > 0 ? time : arena ? 2.5f - npc.recovery : 10.f;
             if (npc.attackTime >= 0)
             {
-                float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
+                float windup = npc.AttackWindup();
                 // Match the art impact marker to the existing authoritative hit time.
-                const auto& creature = *std::find_if(library_.Creatures().begin(),
-                                                     library_.Creatures().end(),
-                                                     [&](const Creature& c)
-                                                     {
-                                                         return c.index == index;
-                                                     });
                 for (const auto& clip : creature.clips)
                 {
-                    if (clip.find("AttackPrimary") != std::string::npos)
+                    if (clip == creature.id + action
+                        || (clip.size() >= action.size()
+                            && clip.compare(clip.size() - action.size(), action.size(), action) == 0))
                     {
                         const auto& info = library_.Animation(clip);
                         float impact =
@@ -444,7 +500,8 @@ namespace Art
                 }
             }
             auto direction = npc.attackTime >= 0 ? npc.attackDirection : npc.moveFacing;
-            CreatureDraw(r, index, action, seconds, p, zoom, direction.x, direction.y);
+            CreatureDraw(r, creature, action, seconds, p, zoom, direction.x, direction.y,
+                         arena != nullptr);
             return;
         }
         size_t appearance =
@@ -491,7 +548,7 @@ namespace Art
         auto& pose = playerAnimator_.Evaluate(*source.model, library_, player, weapon);
         if (player.weapon && player.yokai == YokaiForm::Ranged && player.health > 0)
         {
-            FitRifleHands(source, pose);
+            FitRifleHands(source, pose, player.WeaponGripBlend());
         }
         auto bones = Palette(*source.model, pose);
         ++FrameProfiler::Get().Counters().poseBuilds;
@@ -522,7 +579,7 @@ namespace Art
         PrototypeRenderer& r, const EnemyActor& enemy, Point p, float zoom, float time)
     {
         CreatureDraw(r,
-                     enemy.boss ? 6 : int(enemy.Id() % 7),
+                     CreatureModel(enemy.boss ? 6 : int(enemy.Id() % 7)),
                      "_Walk",
                      time,
                      p,

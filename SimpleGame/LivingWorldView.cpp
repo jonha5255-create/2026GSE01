@@ -83,7 +83,10 @@ void PrototypeWorld::Draw(const NpcActor& npc)
 {
     auto& r = *activeRenderer_;
     Point p = Project(npc.Position().x, npc.Position().y);
-    if (p.x < -120 || p.x > r.Width() + 120 || p.y < -120 || p.y > r.Height() + 140)
+    const bool arenaBoss = npc.bossRegion >= 0;
+    auto bounds = arenaBoss && art_ ? art_->BossScreenBounds(npc.bossRegion) : Point{};
+    if (p.x < -120 - bounds.x * zoom_ || p.x > r.Width() + 120 + bounds.x * zoom_
+        || p.y < -120 || p.y > r.Height() + 140 + bounds.y * zoom_)
     {
         return;
     }
@@ -105,6 +108,10 @@ void PrototypeWorld::Draw(const NpcActor& npc)
         {
             r.Line({p.x - 12 * z, p.y - 5 * z}, {p.x + 12 * z, p.y - 5 * z}, 7 * z, color);
         }
+        if (npc.bossRegion >= 0)
+        {
+            return;
+        }
         r.Text(p.x - 24 * z,
                p.y - 24 * z,
                "회복 " + std::to_string(int(npc.recovery)),
@@ -116,7 +123,7 @@ void PrototypeWorld::Draw(const NpcActor& npc)
     {
         if (npc.job == NpcJob::Wraith)
         {
-            float windup = npc.monsterForm == 1 ? .22f : npc.monsterForm == 2 ? .55f : .35f;
+            float windup = npc.AttackWindup();
             auto ease = [](float value)
             {
                 float t = std::max(0.f, std::min(1.f, value));
@@ -368,10 +375,17 @@ void PrototypeWorld::Draw(const NpcActor& npc)
             }
         }
     }
+    if (arenaBoss && overworld_)
+    {
+        return;
+    }
+    const float barY = p.y - (arenaBoss && art_ ? bounds.y * zoom_
+                              : (npc.job == NpcJob::Wraith ? 64 : 54) * z);
     r.Text(p.x - 25 * z,
-           p.y - 84 * z,
+           arenaBoss && art_ ? barY - 20 * z : p.y - 84 * z,
            (npc.courier                            ? "[전령] "
             : npc.migrating && npc.travelTown >= 0 ? "[이사 중] "
+            : npc.bossRegion >= 0                  ? "[스토리 보스] "
             : npc.fieldBoss                        ? "[중간 보스] "
             : npc.job == NpcJob::Wraith            ? "[괴물] "
                                                    : "[주민] ")
@@ -379,14 +393,13 @@ void PrototypeWorld::Draw(const NpcActor& npc)
            color,
            .55f * z);
     r.Text(p.x - 25 * z,
-           p.y - 68 * z,
+           arenaBoss && art_ ? barY - 4 * z : p.y - 68 * z,
            npc.travelTown >= 0 ? (npc.migrating      ? "이사 이동 중"
                                   : npc.letter.known ? "편지 운반 중"
                                                      : "마을로 귀환 중")
                                : LivingWorld::ActionName(npc.action),
            Color(205, 214, 220),
            .43f * z);
-    float barY = p.y - (npc.job == NpcJob::Wraith ? 64 : 54) * z;
     r.Rect(p.x - 17 * z, barY, 34 * z, 3 * z, Color(31, 31, 42));
     r.Rect(p.x - 17 * z, barY, 34 * z * npc.health / npc.maximumHealth, 3 * z, color);
 }
@@ -432,7 +445,16 @@ void PrototypeWorld::Draw(const TownSiteActor& site)
         r.Line({p.x - 36 * z, p.y - 86 * z}, {p.x + 36 * z, p.y - 86 * z}, 8 * z, ink);
         r.Text(p.x - 26 * z, p.y - 80 * z, "지워진 역", ink, .6f * z);
     }
-    r.Text(p.x - 40 * z, p.y + 9 * z, LivingWorld::SiteName(site.site), ink, .62f * z);
+    std::string label = LivingWorld::SiteName(site.site);
+    if (site.bossRegion >= 0)
+    {
+        const auto& sim = level_.society;
+        label = std::string(BossArenas[site.bossRegion].name)
+                + (sim.bossRelics & (1u << site.bossRegion) ? " / E 재도전"
+                   : sim.QuestStage() == 3                ? " / E 보스방 진입"
+                                                          : " / 3장에 개방");
+    }
+    r.Text(p.x - 40 * z, p.y + 9 * z, label, ink, .62f * z);
     if (site.site == TownSite::Market)
     {
         auto* town = level_.Graph().Get<TownActor>(site.Parent());
@@ -500,24 +522,30 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
            .7f);
 
     auto* goal = level_.Graph().Get<Actor>(sim.QuestTarget(level_.Graph()));
-    bool complete = sim.story.caseClosed;
+    bool complete = sim.story.harinRescued;
     int step = sim.QuestStep();
+    int stage = sim.QuestStage();
+    const int stageStart[] = {1, 7, 15};
+    const int stageLength[] = {6, 8, 2};
+    const char* stageTitle[] = {"1장  하린의 흔적", "2장  지워진 역", "3장  하린의 귀환"};
+    const int count = stageLength[stage - 1];
+    const int current = step - stageStart[stage - 1];
     r.Rect(20, 109, 340, 190, panel);
     r.Rect(20, 109, 4, 190, gold);
-    r.Text(34, 120, "주요 퀘스트 / 하린의 흔적", gold, .8f);
+    r.Text(34, 120, stageTitle[stage - 1], gold, .8f);
     r.Text(34,
            148,
-           complete ? "원정 완료 / 기억의 진실" : "현재 단계 " + std::to_string(step) + " / 14",
+           complete ? "스토리 완료" : "목표 " + std::to_string(current + 1) + " / " + std::to_string(count),
            muted,
            .65f);
-    for (int i = 0; i < 14; ++i)
+    for (int i = 0; i < count; ++i)
     {
         r.Rect(34 + i * 22.f,
                173,
                17,
                4,
-               complete || i < step - 1 ? cyan
-               : i == step - 1          ? gold
+               complete || i < current ? cyan
+               : i == current          ? gold
                                         : Color(48, 60, 69));
     }
     r.Text(34, 190, sim.Objective(), white, .82f);
@@ -525,7 +553,7 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     r.Text(34, 250, sim.QuestInstruction(), white, .57f);
     r.Text(34,
            273,
-           complete            ? "무기 강화 +1 / 동조율 +20 / 보상 획득"
+           complete            ? "구출 보상 100전 / 경험치 100"
            : sim.CombatQuest() ? "가까이 접근하세요. 주민은 사냥 대상이 아닙니다."
                                : "WASD 이동 / 건물을 피해 도로를 이용하세요.",
            muted,
@@ -553,19 +581,23 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     {
         r.Text(34, 439, "완료: 150전 / 경험치 120 지급", cyan, .58f);
     }
+    else if (stage < 3)
+    {
+        r.Text(34, 439, "3장부터 보스방을 조사할 수 있습니다.", muted, .58f);
+    }
     else
     {
         int next = !(sim.bossRelics & 1) ? 0 : !(sim.bossRelics & 2) ? 1 : 2;
         const char* names[] = {
             "핏빛 제단 / 핏빛 인장", "독안개 분지 / 독안개 심장", "붕괴 석정 / 석정 핵"};
-        int cx = next == 0 ? 2 : next == 2 ? -2 : 0, cy = next == 1 ? 2 : 0;
-        double dx = (double(cx) - double(player_.cx)) * 640 + 320 - player_.x;
-        double dy = (double(cy) - double(player_.cy)) * 640 + 320 - player_.y;
+        int cx = BossArenas[next].cx, cy = BossArenas[next].cy;
+        double dx = (double(cx) - double(player_.cx)) * 640 + ArenaCenter - player_.x;
+        double dy = (double(cy) - double(player_.cy)) * 640 + ArenaGate - player_.y;
         r.Text(34, 435, names[next], white, .58f);
         r.Text(34,
                459,
-               "청크 " + std::to_string(cx) + "," + std::to_string(cy) + " 중앙 / "
-                   + std::to_string(int(std::min(999999.0, std::hypot(dx, dy)))) + "m / 보스 처치",
+               "청크 " + std::to_string(cx) + "," + std::to_string(cy) + " 남쪽 / "
+                   + std::to_string(int(std::min(999999.0, std::hypot(dx, dy)))) + "m / E 진입",
                cyan,
                .53f);
     }
@@ -740,7 +772,9 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     if (goal && !mapExpanded_ && level_.state != RunState::Lost)
     {
         Point world = Project(goal->Position().x, goal->Position().y);
-        Point marker{world.x / scale, world.y / scale - 65 * zoom_ / scale};
+        const auto* targetBoss = dynamic_cast<const NpcActor*>(goal);
+        float markerOffset = targetBoss && targetBoss->bossRegion >= 0 ? 12.f : -65.f;
+        Point marker{world.x / scale, (world.y + markerOffset * zoom_) / scale};
         Point raw = marker;
         marker.x = std::max(390.f, std::min(w - 350, marker.x));
         marker.y = std::max(125.f, std::min(h - 190, marker.y));
@@ -808,7 +842,7 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     r.Text(22,
            h - 40,
            "WASD 이동   왼쪽 클릭 대상 공격   E 조사/대화   Q 영혼포   T 판매   Y 회복 구입   P PK "
-           "전환   R 새 시작",
+           "전환",
            muted,
            .63f);
     r.Text(22,
@@ -820,7 +854,7 @@ void PrototypeWorld::LivingHud(PrototypeRenderer& r)
     if (level_.state == RunState::Lost)
     {
         r.Rect(w * .5f - 210, h * .45f - 35, 420, 80, panel);
-        r.Text(w * .5f - 185, h * .45f - 20, "쓰러졌습니다 / R로 새 세션", red, 1);
+        r.Text(w * .5f - 185, h * .45f - 20, "쓰러졌습니다 / R로 다시 도전", red, 1);
         r.Text(w * .5f - 185, h * .45f + 13, "주민들의 생활은 계속됩니다.", white, .7f);
     }
     r.SetScale(1);

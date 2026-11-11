@@ -1,0 +1,225 @@
+{
+  "version": 2,
+  "units": "meters",
+  "source_up": "+Z",
+  "source_front": "-Y",
+  "glb_up": "+Y",
+  "glb_front": "+Z",
+  "scenes": [
+    {
+      "index": 0,
+      "arena_id": "ARENA_00_BloodAltar",
+      "name": "핏빛 제단",
+      "boss_id": "BOSS_00_HornKing",
+      "boss_name": "뿔왕",
+      "reference_chunk": [
+        2,
+        0
+      ],
+      "footprint_m": [
+        44,
+        44
+      ],
+      "clear_combat_radius_m": 11,
+      "placement_blender": {
+        "BOSS_SPAWN": [
+          0,
+          0,
+          0
+        ],
+        "PLAYER_ENTRY": [
+          0,
+          -19,
+          0
+        ],
+        "ROAD_EXIT": [
+          0,
+          -22,
+          0
+        ]
+      },
+      "arena_file": "boss_arenas/ARENA_00_BloodAltar.glb",
+      "boss_file": "boss_arenas/BOSS_00_HornKing.glb",
+      "arena_nodes": [
+        "SM_ARENA_00_BloodAltar_Ground",
+        "SM_ARENA_00_BloodAltar_BloodSeal",
+        "SM_ARENA_00_BloodAltar_ShrinesAndWalls",
+        "SM_ARENA_00_BloodAltar_EmberLanterns",
+        "SM_ARENA_00_BloodAltar_Rubble"
+      ],
+      "boss_bind_dimensions_m": [
+        3.19,
+        1.54,
+        5.86
+      ],
+      "boss_nodes": [
+        "RIG_BOSS_00_HornKing",
+        "SK_BOSS_00_HornKing_Body",
+        "SK_BOSS_00_HornKing_Armor"
+      ],
+      "animations": [
+        "BOSS_00_HornKing_Idle",
+        "BOSS_00_HornKing_Turn_L90",
+        "BOSS_00_HornKing_Turn_R90",
+        "BOSS_00_HornKing_Jump",
+        "BOSS_00_HornKing_Hit",
+        "BOSS_00_HornKing_Death",
+        "BOSS_00_HornKing_Walk",
+        "BOSS_00_HornKing_Walk_RootMotion",
+        "BOSS_00_HornKing_Run",
+        "BOSS_00_HornKing_Run_RootMotion",
+        "BOSS_00_HornKing_AttackPrimary",
+        "BOSS_00_HornKing_AttackSecondary",
+        "BOSS_00_HornKing_TrialCast"
+      ],
+      "arena_triangles": 6236,
+      "boss_triangles": 7096
+    },
+    {
+      "index": 1,
+      "arena_id": "ARENA_01_PoisonBasin",
+      "name": "독안개 분지",
+      "boss_id": "BOSS_01_MireHound",
+      "boss_name": "독안개 포식견",
+      "reference_chunk": [
+        0,
+        2
+      ],
+      "footprint_m": [
+        44,
+        44
+      ],
+      "clear_combat_radius_m": 11,
+      "placement_blender": {
+        "BOSS_SPAWN": [
+          0,
+          0,
+          0
+        ],
+        "PLAYER_ENTRY": [
+          0,
+          -19,
+          0
+        ],
+        "ROAD_EXIT": [
+          0,
+          -22,
+          0
+        ]
+      },
+      "arena_file": "boss_arenas/ARENA_01_PoisonBasin.glb",
+      "boss_file": "boss_arenas/BOSS_01_MireHound.glb",
+      "arena_nodes": [
+        "SM_ARENA_01_PoisonBasin_Ground",
+        "SM_ARENA_01_PoisonBasin_PoisonChannels",
+        "SM_ARENA_01_PoisonBasin_DrainageWorks",
+        "SM_ARENA_01_PoisonBasin_Reeds",
+        "SM_ARENA_01_PoisonBasin_Rubble"
+      ],
+      "boss_bind_dimensions_m": [
+        3.28,
+        8.28,
+        4.59
+      ],
+      "boss_nodes": [
+        "RIG_BOSS_01_MireHound",
+        "SK_BOSS_01_MireHound_Body",
+        "SK_BOSS_01_MireHound_Armor"
+      ],
+      "animations": [
+        "BOSS_01_MireHound_Idle",
+        "BOSS_01_MireHound_Walk",
+        "BOSS_01_MireHound_Walk_RootMotion",
+        "BOSS_01_MireHound_Run",
+        "BOSS_01_MireHound_Run_RootMotion",
+        "BOSS_01_MireHound_Turn_L90",
+        "BOSS_01_MireHound_Turn_R90",
+        "BOSS_01_MireHound_Jump",
+        "BOSS_01_MireHound_Hit",
+        "BOSS_01_MireHound_Death",
+        "BOSS_01_MireHound_Sprint",
+        "BOSS_01_MireHound_Sprint_RootMotion",
+        "BOSS_01_MireHound_AttackPrimary",
+        "BOSS_01_MireHound_AttackSecondary",
+        "BOSS_01_MireHound_TrialCast"
+      ],
+      "arena_triangles": 7196,
+      "boss_triangles": 14080
+    },
+    {
+      "index": 2,
+      "arena_id": "ARENA_02_CollapsedCourt",
+      "name": "붕괴 석정",
+      "boss_id": "BOSS_02_StoneColossus",
+      "boss_name": "거신",
+      "reference_chunk": [
+        -2,
+        0
+      ],
+      "footprint_m": [
+        44,
+        44
+      ],
+      "clear_combat_radius_m": 11,
+      "placement_blender": {
+        "BOSS_SPAWN": [
+          0,
+          0,
+          0
+        ],
+        "PLAYER_ENTRY": [
+          0,
+          -19,
+          0
+        ],
+        "ROAD_EXIT": [
+          0,
+          -22,
+          0
+        ]
+      },
+      "arena_file": "boss_arenas/ARENA_02_CollapsedCourt.glb",
+      "boss_file": "boss_arenas/BOSS_02_StoneColossus.glb",
+      "arena_nodes": [
+        "SM_ARENA_02_CollapsedCourt_Ground",
+        "SM_ARENA_02_CollapsedCourt_CoreInlay",
+        "SM_ARENA_02_CollapsedCourt_BrokenColumns",
+        "SM_ARENA_02_CollapsedCourt_CollapsedFacades",
+        "SM_ARENA_02_CollapsedCourt_Rubble"
+      ],
+      "boss_bind_dimensions_m": [
+        4.01,
+        2.71,
+        7.87
+      ],
+      "boss_nodes": [
+        "RIG_BOSS_02_StoneColossus",
+        "SK_BOSS_02_StoneColossus_Body",
+        "SK_BOSS_02_StoneColossus_Armor"
+      ],
+      "animations": [
+        "BOSS_02_StoneColossus_Idle",
+        "BOSS_02_StoneColossus_Turn_L90",
+        "BOSS_02_StoneColossus_Turn_R90",
+        "BOSS_02_StoneColossus_Jump",
+        "BOSS_02_StoneColossus_Hit",
+        "BOSS_02_StoneColossus_Death",
+        "BOSS_02_StoneColossus_Walk",
+        "BOSS_02_StoneColossus_Walk_RootMotion",
+        "BOSS_02_StoneColossus_Run",
+        "BOSS_02_StoneColossus_Run_RootMotion",
+        "BOSS_02_StoneColossus_AttackPrimary",
+        "BOSS_02_StoneColossus_AttackSecondary",
+        "BOSS_02_StoneColossus_TrialCast"
+      ],
+      "arena_triangles": 6084,
+      "boss_triangles": 5272
+    }
+  ],
+  "notes": [
+    "Origin at boss spawn. South entrance is source -Y.",
+    "The 44 m art layout is independent of current runtime chunk dimensions.",
+    "Boss rigs reuse the compatible biped and quadruped gait clips under separate boss names."
+  ],
+  "combat_revision": 2
+}

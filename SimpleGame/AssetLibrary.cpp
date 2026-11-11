@@ -16,7 +16,9 @@ namespace Art
     {
         using Json = nlohmann::json;
 
-        Json Read(const std::filesystem::path& file)
+        Json Read(const std::filesystem::path& file,
+                  const char* versionKey = "schema_version",
+                  int latestVersion = 1)
         {
             std::ifstream stream(file);
             if (!stream || std::filesystem::file_size(file) > 8 * 1024 * 1024)
@@ -24,7 +26,8 @@ namespace Art
                 throw std::runtime_error("Cannot read asset catalog: " + file.u8string());
             }
             auto json = Json::parse(stream);
-            if (json.at("schema_version") != 1)
+            if (!json.at(versionKey).is_number_integer() || json.at(versionKey) < 1
+                || json.at(versionKey) > latestVersion)
             {
                 throw std::runtime_error("Unsupported asset catalog schema");
             }
@@ -243,6 +246,83 @@ namespace Art
             }
             creatures.push_back(creature);
         }
+        std::map<int, BossArenaArt> bossArenas;
+        auto arenaCatalog = Resolve("data/boss_arena_catalog.json");
+        if (std::filesystem::exists(arenaCatalog))
+        {
+            const auto authored = Read(arenaCatalog, "version", 2);
+            std::map<std::string, float> releaseTimes;
+            auto combatCatalog = Resolve("data/boss_combat_catalog.json");
+            if (std::filesystem::exists(combatCatalog))
+            {
+                std::ifstream stream(combatCatalog);
+                const auto combat = Json::parse(stream);
+                for (const auto& effect : combat.at("effects"))
+                {
+                    releaseTimes.emplace(effect.at("motion").get<std::string>(),
+                                         effect.at("authored_windup_s").get<float>());
+                }
+            }
+            constexpr int sourceIds[] = {2, 4, 3};
+            for (const auto& item : authored.at("scenes"))
+            {
+                int region = item.at("index");
+                if (region < 0 || region >= 3 || bossArenas.count(region))
+                {
+                    throw std::runtime_error("Invalid boss arena index");
+                }
+                auto& arena = bossArenas[region];
+                arena.roomFile = item.at("arena_file");
+                auto& boss = arena.boss;
+                boss.id = item.at("boss_id");
+                boss.name = item.at("boss_name");
+                boss.file = item.at("boss_file");
+                boss.index = region;
+                auto source = std::find_if(creatures.begin(), creatures.end(),
+                                           [&](const Creature& creature)
+                                           {
+                                               return creature.index == sourceIds[region];
+                                           });
+                if (source == creatures.end())
+                {
+                    throw std::runtime_error("Missing source boss rig");
+                }
+                const auto model = Load(boss.file);
+                for (const std::string name : item.at("animations"))
+                {
+                    const auto prefix = boss.id + "_";
+                    if (name.compare(0, prefix.size(), prefix) != 0)
+                    {
+                        throw std::runtime_error("Invalid boss clip name");
+                    }
+                    const auto* animation = model->FindClip(name);
+                    if (!animation)
+                    {
+                        throw std::runtime_error("Missing boss animation: " + name);
+                    }
+                    auto previous = clips.find("MOB_0" + std::to_string(source->index)
+                                               + name.substr(boss.id.size()));
+                    ClipInfo info;
+                    if (previous != clips.end())
+                    {
+                        info = previous->second;
+                    }
+                    info.name = name;
+                    info.duration = animation->duration;
+                    auto release = releaseTimes.find(name);
+                    if (release != releaseTimes.end())
+                    {
+                        info.events = {{std::clamp(release->second, 0.f, info.duration), "impact", 0}};
+                    }
+                    clips.emplace(name, info);
+                    boss.clips.push_back(name);
+                }
+            }
+            if (bossArenas.size() != 3)
+            {
+                throw std::runtime_error("Expected three authored boss arenas");
+            }
+        }
         for (const auto& appearance : appearances)
         {
             for (const auto& part : appearance.parts)
@@ -257,6 +337,7 @@ namespace Art
         entries_ = std::move(entries);
         appearances_ = std::move(appearances);
         creatures_ = std::move(creatures);
+        bossArenas_ = std::move(bossArenas);
         clips_ = std::move(clips);
         partNodes_ = std::move(nodes);
         modularFile_ = modular;
@@ -275,6 +356,12 @@ namespace Art
             throw std::runtime_error("Animation metadata not found: " + name);
         }
         return it->second;
+    }
+
+    const BossArenaArt* AssetLibrary::BossArena(int region) const
+    {
+        auto found = bossArenas_.find(region);
+        return found != bossArenas_.end() ? &found->second : nullptr;
     }
 
     std::vector<size_t> AssetLibrary::SelectParts(const Model& model,

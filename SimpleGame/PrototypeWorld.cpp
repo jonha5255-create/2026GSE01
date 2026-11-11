@@ -4,6 +4,7 @@
 #include "WorldMonitor.h"
 #include "WorldArt.h"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <limits>
 #include <sstream>
@@ -38,6 +39,77 @@ namespace
     float Distance(float x, float y)
     {
         return std::sqrt(x * x + y * y);
+    }
+
+    bool ArenaObstacle(int region, const Location& position, float radius)
+    {
+        const float x = float(position.x - ArenaCenter) / ArenaScale;
+        const float z = float(position.y - ArenaCenter) / ArenaScale;
+        const float margin = radius / ArenaScale;
+        auto box = [&](float cx, float cz, float halfWidth, float halfDepth)
+        {
+            float dx = std::max(0.f, std::abs(x - cx) - halfWidth);
+            float dz = std::max(0.f, std::abs(z - cz) - halfDepth);
+            return dx * dx + dz * dz < margin * margin;
+        };
+        const float side = std::abs(x);
+        if (region == 0)
+        {
+            return box(std::copysign(3.25f, x), 20.f, .7f, .7f)
+                   || box(std::copysign(3.25f, x), -17.8f, .7f, .7f)
+                   || box(std::copysign(20.4f, x), 1.25f, .6f, 17.95f)
+                   || box(std::copysign(11.5f, x), -17.f, 2.6f, 2.05f)
+                   || box(0, -14.65f, 2.75f, 1.73f);
+        }
+        if (region == 1)
+        {
+            return box(std::copysign(15.6f, x), -.3f, 4.35f, 15.2f)
+                   || box(0, -18.55f, 4.1f, 1.85f);
+        }
+        if (box(std::copysign(4.3f, x), 19.2f, .74f, 1.1f)
+            || box(std::copysign(3.5f, x), -15.9f, .78f, .69f)
+            || box(std::copysign(side < 9.75f ? 6.5f : 13.f, x), -19.1f, 2.38f, 1.73f))
+        {
+            return true;
+        }
+        for (int i = 0; i < 10; ++i)
+        {
+            float angle = (i + .15f) * 2 * Pi / 10;
+            float cx = std::cos(angle) * 16, cz = -std::sin(angle) * 16;
+            if (!(std::abs(cx) < 4.6f && cz > 0) && box(cx, cz, 1.45f, 1.45f))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void TransferCampaign(LevelOne& from, LevelOne& to)
+    {
+        const auto& player = from.Player();
+        auto& next = to.Player();
+        next.level = player.level;
+        next.experience = player.experience;
+        next.weaponRank = player.weaponRank;
+        next.health = player.health;
+        next.yokai = player.yokai;
+        next.yokaiGrowth = player.yokaiGrowth;
+        next.weapon = player.weapon;
+        next.weaponRaise = player.weaponRaise;
+        next.showRange = player.showRange;
+        next.moveFacing = player.moveFacing;
+        next.magnetTime = player.magnetTime;
+        next.invulnerable = player.invulnerable;
+        next.animationClock = player.animationClock;
+        auto& target = to.society;
+        const auto& source = from.society;
+        target.story = source.story;
+        target.gold = source.gold;
+        target.goods = source.goods;
+        target.notoriety = source.notoriety;
+        target.hunts = source.hunts;
+        target.bossRelics = source.bossRelics;
+        target.bossRelicReward = source.bossRelicReward;
     }
 } // namespace
 
@@ -89,14 +161,23 @@ void Location::Normalize()
 CityChunk PrototypeWorld::Generate(Coord c, uint32_t seed)
 {
     auto chunk = GenerateCityChunk(c.first, c.second, seed);
-    chunk.bossRegion = c == Coord{2, 0} ? 0 : c == Coord{0, 2} ? 1 : c == Coord{-2, 0} ? 2 : -1;
+    for (int i = 0; i < int(BossArenas.size()); ++i)
+    {
+        if (c == Coord{BossArenas[i].cx, BossArenas[i].cy})
+        {
+            chunk.bossRegion = i;
+            break;
+        }
+    }
     if (chunk.bossRegion >= 0)
     {
-        // Preserve roads, but reserve a broad, accessible clearing for the encounter.
+        // Reserve the doorway and its approach. The encounter has its own scene.
         for (size_t i = chunk.plots.size(); i-- > 0;)
         {
             const auto& lot = chunk.plots[i];
-            if (lot.x < 510 && lot.x + lot.width > 130 && lot.y < 510 && lot.y + lot.depth > 130)
+            bool entrance = lot.x < ArenaCenter + 38 && lot.x + lot.width > ArenaCenter - 38
+                            && lot.y + lot.depth > ArenaGate - 48;
+            if (entrance)
             {
                 chunk.plots.erase(chunk.plots.begin() + i);
                 chunk.heights.erase(chunk.heights.begin() + i);
@@ -237,7 +318,8 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
     {
         FarmPoint point{35.f + float(next() % 570), 35.f + float(next() % 570)};
         auto origin = chunk.Position();
-        if (std::abs(point.x - chunk.data.roadX) < 65 || std::abs(point.y - chunk.data.roadY) < 65
+        if (std::abs(point.x - chunk.data.roadX) < 65
+            || std::abs(point.y - chunk.data.roadY) < 65
             || !Walkable(origin.x + point.x, origin.y + point.y, 25))
         {
             continue;
@@ -248,20 +330,9 @@ void PrototypeWorld::PopulateChunk(Coord coord, ChunkActor& chunk)
     }
     if (chunk.data.bossRegion >= 0)
     {
-        int region = chunk.data.bossRegion;
-        const char* names[] = {"핏빛 제단의 뿔왕", "독안개 포식견", "붕괴 석정의 거신"};
-        auto& boss = graph.Spawn<NpcActor>(parent, names[region], NpcJob::Wraith);
-        boss.local = boss.home = {320, 320};
-        boss.wilderness = boss.fieldBoss = true;
-        boss.bossRegion = boss.monsterForm = region;
-        const int bossArt[] = {2, 5, 3};
-        boss.artCreature = bossArt[region];
-        boss.health = boss.maximumHealth = 420 + region * 90.f;
-        boss.gold = 85;
-        boss.goods = 6;
-        RenderDiagnostics::Get().Event("quest_boss_spawn",
-                                       "region=" + std::to_string(region)
-                                           + "; actor=" + std::to_string(boss.Id()));
+        auto& gate = graph.Spawn<TownSiteActor>(parent, TownSite::ArenaGate);
+        gate.bossRegion = chunk.data.bossRegion;
+        gate.local = {ArenaCenter, ArenaGate};
     }
     int spawned = 0;
     for (int attempt = 0; attempt < 80 && spawned < count; ++attempt)
@@ -371,6 +442,13 @@ bool PrototypeWorld::Blocked(const Location& p, float radius) const
 
 bool PrototypeWorld::Walkable(float x, float y, float radius) const
 {
+    if (overworld_)
+    {
+        const Location point{0, 0, arenaPosition_.x + x, arenaPosition_.y + y};
+        return std::abs(point.x - ArenaCenter) + radius <= ArenaHalf
+               && std::abs(point.y - ArenaCenter) + radius <= ArenaHalf
+               && !ArenaObstacle(arenaRegion_, point, radius);
+    }
     Location p = player_;
     p.x += x;
     p.y += y;
@@ -380,6 +458,20 @@ bool PrototypeWorld::Walkable(float x, float y, float radius) const
 
 void PrototypeWorld::Move(float dx, float dy)
 {
+    if (overworld_)
+    {
+        if (Walkable(dx, 0, 12))
+        {
+            arenaPosition_.x += dx;
+            level_.Shift(dx, 0);
+        }
+        if (Walkable(0, dy, 12))
+        {
+            arenaPosition_.y += dy;
+            level_.Shift(0, dy);
+        }
+        return;
+    }
     auto before = Coord(player_.cx, player_.cy);
     Location p = player_;
     p.x += dx;
@@ -407,6 +499,100 @@ void PrototypeWorld::Move(float dx, float dy)
     }
 }
 
+void PrototypeWorld::Relocate(const Location& target)
+{
+    level_.Shift(float((double(target.cx) - double(player_.cx)) * Side + target.x - player_.x),
+                 float((double(target.cy) - double(player_.cy)) * Side + target.y - player_.y));
+    player_ = target;
+    cameraLag_ = {};
+    Stream();
+}
+
+void PrototypeWorld::Respawn()
+{
+    if (level_.state != RunState::Lost)
+    {
+        return;
+    }
+    if (overworld_)
+    {
+        LeaveBossRoom(true);
+        return;
+    }
+    if (!level_.society.enabled)
+    {
+        for (auto* enemy : level_.Enemies())
+        {
+            enemy->Destroy();
+        }
+        level_.Portal().visible = false;
+    }
+    level_.state = RunState::Farming;
+    auto& player = level_.Player();
+    player.health = player.MaximumHealth();
+    player.invulnerable = 2.f;
+    player.recoilVelocity = {};
+    player.firingHold = 0;
+    Relocate(Location{});
+    if (level_.society.enabled)
+    {
+        level_.society.dialogue = "잔명 마을에서 깨어났습니다. 진행 중인 목표를 확인하세요.";
+    }
+}
+
+void PrototypeWorld::EnterBossRoom(int region)
+{
+    for (auto* projectile : level_.Bullets())
+    {
+        projectile->Destroy();
+    }
+    overworld_.emplace(std::move(level_));
+    level_ = LevelOne(seed_);
+    TransferCampaign(*overworld_, level_);
+    level_.society.enabled = true;
+    arenaRegion_ = region;
+    arenaPosition_ = {ArenaCenter, ArenaEntry};
+    cameraLag_ = {};
+    mapExpanded_ = false;
+    auto& root = level_.Graph().Spawn<Actor>(NoActor, "Boss room");
+    root.SetPosition({-arenaPosition_.x, -arenaPosition_.y});
+    level_.Graph().Spawn<HudActor>(NoActor);
+    level_.society.SpawnArenaBoss(level_.Graph(), root.Id(), region);
+}
+
+void PrototypeWorld::LeaveBossRoom(bool defeated)
+{
+    const bool cleared = level_.society.arenaCleared;
+    TransferCampaign(level_, *overworld_);
+    level_ = std::move(*overworld_);
+    overworld_.reset();
+    arenaRegion_ = -1;
+    cameraLag_ = {};
+    level_.Weapon().animationTime = level_.Weapon().skillTime = -1;
+    level_.Weapon().swingTime = level_.Weapon().muzzleFlash = 0;
+    auto& player = level_.Player();
+    player.recoilVelocity = {};
+    player.firingHold = 0;
+    player.invulnerable = 2.f;
+    if (defeated)
+    {
+        player.health = player.MaximumHealth();
+    }
+    level_.society.dialogue = defeated ? "입구로 돌아왔습니다. E로 다시 도전할 수 있습니다."
+                             : cleared ? "보스를 격파하고 돌아왔습니다. E로 다시 도전할 수 있습니다."
+                                       : "보스방에서 물러났습니다. E로 다시 입장할 수 있습니다.";
+}
+
+int PrototypeWorld::ProgressCheckpoint() const
+{
+    if (!level_.society.enabled)
+    {
+        return int(level_.state);
+    }
+    int quest = level_.society.QuestStep() * 8 + int(level_.society.bossRelics);
+    return quest * 3 + (overworld_ ? (level_.society.arenaCleared ? 2 : 1) : 0);
+}
+
 void PrototypeWorld::Key(unsigned char key, bool down)
 {
     if (key >= 'A' && key <= 'Z')
@@ -432,6 +618,7 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     if (key == 'q')
     {
         level_.Player().weapon = !level_.Player().weapon;
+        level_.Player().weaponRaise = level_.Player().weapon ? PlayerActor::WeaponRaiseDuration : 0;
         level_.Weapon().animationTime = -1;
         level_.Weapon().skillTime = -1;
         level_.Player().transformPhase = 1;
@@ -445,7 +632,7 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     {
         distortion_ = !distortion_;
     }
-    if (key == 'm')
+    if (key == 'm' && !overworld_)
     {
         mapExpanded_ = !mapExpanded_;
     }
@@ -455,6 +642,11 @@ void PrototypeWorld::Key(unsigned char key, bool down)
     }
     if (key == 'r')
     {
+        if (overworld_)
+        {
+            Respawn();
+            return;
+        }
         *this = PrototypeWorld(seed_, level_.society.enabled);
         return;
     }
@@ -467,7 +659,35 @@ void PrototypeWorld::Key(unsigned char key, bool down)
             });
         if (key == 'e')
         {
+            if (overworld_)
+            {
+                const bool cleared = level_.society.arenaCleared;
+                if (level_.state == RunState::Lost)
+                {
+                    return;
+                }
+                if (level_.society.UseArenaDevice(arenaPosition_, context))
+                {
+                    return;
+                }
+                if (cleared || Length(Minus(arenaPosition_, {ArenaCenter, ArenaEntry})) < 32)
+                {
+                    LeaveBossRoom(false);
+                }
+                return;
+            }
+            int region = -1;
+            context.enterArena = [&](int requested) { region = requested; };
             level_.society.Interact(context);
+            if (region >= 0)
+            {
+                EnterBossRoom(region);
+            }
+            return;
+        }
+        if (overworld_ && key != 'j')
+        {
+            return;
         }
         if (key == 't')
         {
@@ -522,7 +742,7 @@ void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
 {
     if (mapExpanded_ || width <= 0 || height <= 0 || x < 0 || y < 0 || x >= width || y >= height
         || level_.state == RunState::Lost || level_.state == RunState::Won
-        || !level_.Player().enabled)
+        || !level_.Player().enabled || level_.Player().weaponRaise > 0)
     {
         return;
     }
@@ -532,7 +752,7 @@ void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
     float uiScale = std::min(1.f, zoom_);
     float ux = x / uiScale, uy = y / uiScale;
     float w = width / uiScale, h = height / uiScale;
-    if (level_.society.enabled
+    if (level_.society.enabled && !overworld_
         && (uy <= 91 || uy >= h - 148 || (ux >= 20 && ux <= 360 && uy >= 109 && uy <= 495)
             || (ux >= w - 328 && ux <= w - 20 && uy >= 109 && uy <= 331)
             || (level_.society.panel && ux >= w - 328 && ux <= w - 20 && uy >= 341 && uy <= 625)))
@@ -551,6 +771,20 @@ void PrototypeWorld::MouseAttack(int x, int y, int width, int height)
         Point p = Project(actor.Position().x, actor.Position().y);
         float dx = (x - p.x) / zoom_, dy = (y - p.y) / zoom_;
         auto* pickedNpc = dynamic_cast<NpcActor*>(&actor);
+        if (pickedNpc && pickedNpc->bossRegion >= 0 && art_)
+        {
+            auto bounds = art_->BossScreenBounds(pickedNpc->bossRegion);
+            if (std::abs(dx) <= bounds.x && dy >= -bounds.y && dy <= 16)
+            {
+                float distance = dx * dx + (dy + bounds.y * .5f) * (dy + bounds.y * .5f);
+                if (distance < closest)
+                {
+                    selected = &actor;
+                    closest = distance;
+                }
+            }
+            return;
+        }
         if (pickedNpc && (pickedNpc->storyGuardian || pickedNpc->fieldBoss))
         {
             dx /= 1.6f;
@@ -637,7 +871,8 @@ void PrototypeWorld::Update(float dt)
         });
     float follow = 1 - std::exp(-10 * dt);
     cameraLag_ = Lerp(cameraLag_, {0, 0}, follow);
-    WorldMonitor::Get().Publish(level_, player_, chunks_.size(), seed_, monitorWorldId_);
+    WorldMonitor::Get().Publish(overworld_ ? *overworld_ : level_, player_,
+                                chunks_.size(), seed_, monitorWorldId_);
 }
 
 Point PrototypeWorld::Project(float x, float y, float z) const
@@ -676,7 +911,7 @@ void PrototypeWorld::LocalMesh(PrototypeRenderer& r,
 void PrototypeWorld::Floor(PrototypeRenderer& r, float x, float y, const CityChunk& chunk)
 {
     LocalMesh(r,
-              "floor:city-v11:" + std::to_string(chunk.bossRegion) + ":"
+              "floor:city-v12:" + std::to_string(chunk.bossRegion) + ":"
                   + std::to_string(chunk.seed) + ":" + std::to_string(chunk.roadX) + ":"
                   + std::to_string(chunk.roadY) + ":" + std::to_string(debug_),
               x,
@@ -704,42 +939,12 @@ void PrototypeWorld::FloorGeometry(PrototypeRenderer& r, float x, float y, const
         }
     };
     rect(0, 0, Side, Side, chunk.village ? Color(44, 57, 48) : Color(49, 43, 37));
-    if (chunk.bossRegion >= 0)
-    {
-        const Ink earth[] = {Color(75, 30, 32), Color(34, 62, 44), Color(49, 49, 72)};
-        const Ink marks[] = {Color(173, 63, 60), Color(112, 160, 76), Color(115, 132, 192)};
-        int region = chunk.bossRegion;
-        for (int i = 0; i < 48; ++i)
-        {
-            float a = i * Pi / 24, b = (i + 1) * Pi / 24;
-            float radius = 182 + std::sin(i * 2.3f) * 16;
-            r.Triangle(p(320, 320),
-                       p(320 + std::cos(a) * radius, 320 + std::sin(a) * radius),
-                       p(320 + std::cos(b) * radius, 320 + std::sin(b) * radius),
-                       earth[region]);
-            r.Line(p(320 + std::cos(a) * 125, 320 + std::sin(a) * 125),
-                   p(320 + std::cos(b) * 125, 320 + std::sin(b) * 125),
-                   2,
-                   marks[region]);
-        }
-        for (int i = 0; i < 14; ++i)
-        {
-            float a = i * 2.4f;
-            float px = 320 + std::cos(a) * (50 + i * 8.f);
-            float py = 320 + std::sin(a) * (50 + i * 8.f);
-            rect(px, py, region == 2 ? 23.f : 9.f, region == 1 ? 20.f : 7.f, marks[region]);
-        }
-    }
     if (!chunk.village)
     {
         for (int i = 0; i < 65; ++i)
         {
             auto detail = Mix(chunk.seed + i * 7919);
             float a = 32 + float(detail % 576), b = 32 + float((detail >> 16) % 576);
-            if (chunk.bossRegion >= 0 && Distance(a - 320, b - 320) < 175)
-            {
-                continue;
-            }
             float radius = 9 + float((detail >> 8) % 21);
             Ink soil = i % 3 == 0 ? Color(43, 47, 36) : Color(43, 38, 33);
             for (int edge = 0; edge < 7; ++edge)
@@ -1612,6 +1817,11 @@ void PrototypeWorld::Rift(PrototypeRenderer& r, float x, float y)
 
 void PrototypeWorld::Hud(PrototypeRenderer& r)
 {
+    if (overworld_)
+    {
+        BossRoomHud(r);
+        return;
+    }
     if (level_.society.enabled)
     {
         LivingHud(r);
@@ -1735,7 +1945,7 @@ void PrototypeWorld::Hud(PrototypeRenderer& r)
     r.Rect(0, h - 49, w, 49, Color(8, 15, 23, .99f));
     r.Text(27,
            h - 40,
-           "WASD 이동   Q 무기 변신 / 자동 사격   C 사거리   E 보스 소환   R 처음부터   ESC 종료",
+           "WASD 이동   Q 무기 변신 / 자동 사격   C 사거리   E 보스 소환   ESC 종료",
            muted,
            .68f);
     const PostSettings& post = r.Effects();
@@ -1790,8 +2000,209 @@ void PrototypeWorld::Draw(PrototypeRenderer& r)
     zoom_ = std::min(r.Width() / 1280.f, r.Height() / 800.f);
     center_ = {r.Width() * .48f, r.Height() * .54f};
     activeRenderer_ = &r;
+    if (overworld_)
+    {
+        DrawBossRoom(r);
+    }
     level_.Graph().Render(*this, RenderLayer::Ground, RenderLayer::Weather);
     activeRenderer_ = nullptr;
+}
+
+void PrototypeWorld::DrawBossRoom(PrototypeRenderer& r)
+{
+    r.Rect(0, 0, float(r.Width()), float(r.Height()), Color(15, 17, 25));
+    auto project = [&](float x, float y)
+    {
+        return Project(x - arenaPosition_.x, y - arenaPosition_.y);
+    };
+    if (!art_ || !art_->Arena(r, arenaRegion_, project(ArenaCenter, ArenaCenter), ArenaScale * zoom_))
+    {
+        const float low = ArenaCenter - ArenaHalf, high = ArenaCenter + ArenaHalf;
+        r.Quad(project(low, low), project(high, low), project(high, high),
+               project(low, high), Color(53, 46, 56));
+    }
+    auto door = project(ArenaCenter, ArenaEntry);
+    r.Ellipse(door, 19 * zoom_, 7 * zoom_, Color(117, 222, 213, .65f));
+    r.Text(door.x - 17 * zoom_, door.y + 9 * zoom_, "E 출구",
+           Color(142, 233, 223), .56f * zoom_);
+    const auto& attack = level_.society.arenaAttack;
+    const auto danger = attack.pattern == ArenaPattern::Poison
+                            ? Color(151, 234, 74, attack.lingering ? .55f : .32f)
+                            : Color(245, 77, 55, .36f);
+    if (attack.pattern == ArenaPattern::Charge)
+    {
+        const auto direction = attack.direction;
+        FarmPoint width{-direction.y * attack.radius, direction.x * attack.radius};
+        FarmPoint end{attack.origin.x + direction.x * attack.reach,
+                      attack.origin.y + direction.y * attack.reach};
+        r.Quad(project(attack.origin.x + width.x, attack.origin.y + width.y),
+               project(end.x + width.x, end.y + width.y),
+               project(end.x - width.x, end.y - width.y),
+               project(attack.origin.x - width.x, attack.origin.y - width.y), danger);
+    }
+    else if (attack.pattern == ArenaPattern::Cross)
+    {
+        auto strip = [&](float halfWidth, float halfHeight)
+        {
+            float x = attack.origin.x, y = attack.origin.y;
+            r.Quad(project(x - halfWidth, y - halfHeight), project(x + halfWidth, y - halfHeight),
+                   project(x + halfWidth, y + halfHeight), project(x - halfWidth, y + halfHeight),
+                   danger);
+        };
+        strip(attack.reach, attack.radius);
+        strip(attack.radius, attack.reach);
+    }
+    else if (attack.pattern == ArenaPattern::Fan)
+    {
+        float heading = std::atan2(attack.direction.y, attack.direction.x);
+        auto edge = [&](int i)
+        {
+            float angle = heading + (i / 16.f * 2 - 1) * attack.radius;
+            return project(attack.origin.x + std::cos(angle) * attack.reach,
+                           attack.origin.y + std::sin(angle) * attack.reach);
+        };
+        for (int i = 0; i < 16; ++i)
+        {
+            r.Triangle(project(attack.origin.x, attack.origin.y), edge(i), edge(i + 1), danger);
+        }
+    }
+    else if (attack.pattern == ArenaPattern::Circle || attack.pattern == ArenaPattern::Poison
+             || attack.pattern == ArenaPattern::Pounce || attack.pattern == ArenaPattern::Ring
+             || attack.pattern == ArenaPattern::BloodSeal)
+    {
+        auto rim = [&](float angle, float radius)
+        {
+            return project(attack.origin.x + std::cos(angle) * radius,
+                           attack.origin.y + std::sin(angle) * radius);
+        };
+        for (int i = 0; i < 48; ++i)
+        {
+            float a = i * Pi / 24, b = (i + 1) * Pi / 24;
+            if (attack.pattern == ArenaPattern::Ring)
+            {
+                r.Quad(rim(a, attack.radius), rim(a, attack.reach), rim(b, attack.reach),
+                       rim(b, attack.radius), danger);
+            }
+            else if (attack.pattern == ArenaPattern::BloodSeal)
+            {
+                auto edge = [](float angle)
+                {
+                    return ArenaHalf / std::max(std::abs(std::cos(angle)), std::abs(std::sin(angle)));
+                };
+                r.Quad(rim(a, attack.radius), rim(a, edge(a)), rim(b, edge(b)),
+                       rim(b, attack.radius), danger);
+            }
+            else
+            {
+                r.Triangle(project(attack.origin.x, attack.origin.y), rim(a, attack.radius),
+                           rim(b, attack.radius), danger);
+            }
+        }
+        Ring(r, attack.origin.x - arenaPosition_.x, attack.origin.y - arenaPosition_.y,
+             attack.radius, attack.pattern == ArenaPattern::BloodSeal
+                                ? Color(107, 255, 224) : danger, 2.f);
+    }
+    const auto& trial = level_.society.arenaTrial;
+    if (trial.active && level_.state != RunState::Lost)
+    {
+        for (unsigned i = 0; i < trial.DeviceCount(); ++i)
+        {
+            const auto device = ArenaDevice(arenaRegion_, i);
+            const bool used = (trial.used & (1u << i)) != 0;
+            const bool ready = !used && (arenaRegion_ != 0 || i == trial.UsedCount());
+            auto color = ready ? Color(100, 238, 255) : Color(121, 145, 156);
+            auto p = project(device.x, device.y);
+            Ring(r, device.x - arenaPosition_.x, device.y - arenaPosition_.y, 34, color, 2.f);
+            r.Glow(p, (ready ? 27 : 14) * zoom_, color);
+            std::string label = used ? "완료" : ready && arenaRegion_ == 2 ? "[E] " : "";
+            if (!used)
+            {
+                label += ArenaDeviceName(arenaRegion_);
+                if (arenaRegion_ == 0)
+                {
+                    label += " " + std::to_string(i + 1);
+                }
+            }
+            r.Text(p.x - 20 * zoom_, p.y - 22 * zoom_, label, color, .64f * zoom_);
+            if (arenaRegion_ == 1 && trial.holdingDevice == int(i))
+            {
+                r.Rect(p.x - 20 * zoom_, p.y - 4 * zoom_, 40 * trial.hold * zoom_,
+                       4 * zoom_, color);
+            }
+        }
+    }
+}
+
+void PrototypeWorld::BossRoomHud(PrototypeRenderer& r)
+{
+    float scale = std::min(1.f, zoom_);
+    r.SetScale(scale);
+    float w = r.Width() / scale, h = r.Height() / scale;
+    auto panel = Color(13, 20, 30, .96f);
+    auto white = Color(231, 242, 247);
+    auto gold = Color(255, 199, 115);
+    const auto& hero = level_.Player();
+    const auto& sim = level_.society;
+    const auto* boss = level_.Graph().Get<NpcActor>(sim.arenaBoss);
+    r.Rect(0, 0, w, 90, panel);
+    r.Text(24, 12, BossArenas[arenaRegion_].name, gold, .96f);
+    r.Text(24, 45, "체력 " + std::to_string(int(hero.health)) + " / "
+                    + std::to_string(int(hero.MaximumHealth())), white, .72f);
+    if (boss && boss->health > 0)
+    {
+        r.Text(w * .42f, 12, boss->Name(), gold, .8f);
+        r.Rect(w * .42f, 45, w * .49f, 10, Color(54, 42, 53));
+        r.Rect(w * .42f, 45, w * .49f * boss->health / boss->maximumHealth, 10,
+               Color(231, 87, 95));
+        for (float threshold : {.50f, .15f})
+        {
+            r.Rect(w * (.42f + .49f * threshold), 43, 2, 14, gold);
+        }
+    }
+    r.Rect(0, h - 88, w, 88, panel);
+    const auto& attack = sim.arenaAttack;
+    if (level_.state == RunState::Lost)
+    {
+        r.Text(24, h - 70, "쓰러졌습니다. R로 입구에 돌아가 다시 도전하세요.", gold, .82f);
+    }
+    else if (sim.arenaCleared)
+    {
+        r.Text(24, h - 70, "보스 격파 완료. E로 입구에 돌아가세요.", gold, .82f);
+    }
+    else if (sim.arenaTrial.active)
+    {
+        const auto& trial = sim.arenaTrial;
+        std::string label = trial.phase == 1 ? "체력 50% / 보호막" : "발악 15% / 보호막";
+        label += "   " + std::string(ArenaDeviceName(arenaRegion_)) + " "
+                 + std::to_string(trial.UsedCount()) + "/"
+                 + std::to_string(trial.DeviceCount()) + " 해제";
+        std::string hint = arenaRegion_ == 0 ? "밝은 봉인석 뒤에서 돌진을 유도하고 옆으로 회피"
+                           : arenaRegion_ == 1 ? "오염되지 않은 배수판 위에서 1초 버티기"
+                                               : "첫 장치부터 제한 시간 안에 E로 연속 해제";
+        if (arenaRegion_ == 2 && trial.used != 0)
+        {
+            label += "   연결 " + std::to_string(int(std::ceil(trial.linkTime))) + "초";
+        }
+        r.Text(24, h - 76, label, gold, .8f);
+        if (attack.pattern != ArenaPattern::None)
+        {
+            hint += "   |   " + std::string(attack.name) + " "
+                    + std::to_string(int(std::ceil(std::max(0.f, attack.remaining)))) + "초";
+        }
+        r.Text(24, h - 49, hint, white, .67f);
+    }
+    else if (attack.pattern != ArenaPattern::None)
+    {
+        const auto seconds = std::to_string(int(std::ceil(std::max(0.f, attack.remaining))));
+        r.Text(24, h - 70, std::string(attack.name) + "  " + seconds + "초", gold, .82f);
+    }
+    else
+    {
+        r.Text(24, h - 70, sim.dialogue, white, .76f);
+    }
+    r.Text(24, h - 24, "WASD 이동   Q 무기화   좌클릭 공격   우클릭 스킬   입구에서 E 철수",
+           white, .65f);
+    r.SetScale(1);
 }
 
 void PrototypeWorld::Ring(
@@ -2319,6 +2730,48 @@ bool PrototypeWorld::SelfTest()
     }
     ok &= require(expedition.QuestStep() == 11 && journey.chunks_.count({0, 0}) == 0,
                   "expedition road route and interactions work beyond the unloaded starting town");
+    auto saveTest = std::filesystem::temp_directory_path()
+                    / ("2026GSE01-test-"
+                       + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())
+                       + ".json");
+    try
+    {
+        auto& hero = journey.level_.Player();
+        hero.level = 4;
+        hero.experience = 23;
+        hero.yokaiGrowth[2] = {6, 30, 0};
+        journey.SaveGame(saveTest);
+        auto restored = LoadGame(saveTest, true);
+        const auto& restoredHero = restored->level_.Player();
+        const auto& restoredStory = restored->level_.society;
+        auto* restoredGuard = restored->level_.Graph().Get<NpcActor>(restoredStory.guardian);
+        ok &= require(restored->seed_ == journey.seed_ && restoredHero.level == 4
+                          && restoredHero.experience == 23 && restoredHero.yokaiGrowth[2].level == 6
+                          && restoredHero.yokaiGrowth[2].experience == 30
+                          && restored->player_.cx == journey.player_.cx
+                          && restored->player_.x == journey.player_.x
+                          && restoredStory.gold == expedition.gold
+                          && restoredStory.QuestStep() == 11 && restoredGuard
+                          && restoredGuard->storyGuardian && Length(restoredGuard->Position()) < 72,
+                      "save reload restores levels, position and the open guardian encounter");
+        restored->level_.state = RunState::Lost;
+        restored->level_.Player().health = 0;
+        restored->SaveGame(saveTest);
+        restored = LoadGame(saveTest, true);
+        ok &= require(restored->player_.cx == 0 && restored->player_.x == Location{}.x
+                          && restored->level_.state == RunState::Farming
+                          && restored->level_.Player().health == restored->level_.MaximumHealth()
+                          && restored->level_.Player().level == 4
+                          && restored->level_.society.QuestStep() == 11,
+                      "reloading after defeat keeps progress and starts at a safe position");
+    }
+    catch (const std::exception& error)
+    {
+        std::cerr << "[SAVE TEST] " << error.what() << '\n';
+        ok &= require(false, "save round trip");
+    }
+    std::error_code ignored;
+    std::filesystem::remove(saveTest, ignored);
     auto services = journey.level_.Context(
         [&](float x, float y, float radius)
         {
@@ -2344,6 +2797,192 @@ bool PrototypeWorld::SelfTest()
     interact();
     ok &= require(expedition.story.caseClosed && journey.level_.Player().weaponRank == 1,
                   "real world combat return route and E interactions finish the extended quest");
+    auto solveTrial = [&](NpcActor& boss, GameplayContext& context)
+    {
+        auto& room = journey.level_.society;
+        const int region = boss.bossRegion;
+        for (unsigned i = 0; i < room.arenaTrial.DeviceCount(); ++i)
+        {
+            const auto device = ArenaDevice(region, i);
+            auto destination = device;
+            if (region == 0)
+            {
+                boss.local = boss.home;
+                const auto aim = Unit(Minus(device, boss.home));
+                destination = {device.x + aim.x * 60, device.y + aim.y * 60};
+            }
+            auto delta = Minus(destination, journey.arenaPosition_);
+            journey.Move(delta.x, delta.y);
+            if (region == 2)
+            {
+                if (!room.UseArenaDevice(journey.arenaPosition_, context))
+                {
+                    return false;
+                }
+            }
+            else if (region == 1)
+            {
+                boss.cooldown = 10.f;
+                room.UpdateNpc(boss, .5f, context);
+                room.UpdateNpc(boss, .5f, context);
+            }
+            else
+            {
+                boss.cooldown = 0;
+                room.UpdateNpc(boss, .01f, context);
+                if (room.arenaAttack.pattern == ArenaPattern::BloodSeal)
+                {
+                    room.UpdateNpc(boss, 3.f, context);
+                    boss.cooldown = 0;
+                    room.UpdateNpc(boss, .01f, context);
+                }
+                if (room.arenaAttack.pattern != ArenaPattern::Charge)
+                {
+                    return false;
+                }
+                room.UpdateNpc(boss, 2.f, context);
+            }
+            if (room.arenaTrial.UsedCount() != i + 1)
+            {
+                return false;
+            }
+        }
+        return !room.arenaTrial.active && room.arenaAttack.pattern == ArenaPattern::None;
+    };
+    bool arenasOpened = true, relicsAdvanced = true, patternsWork = true;
+    bool roomRecovery = false, roomSave = false;
+    for (int region = 0; region < int(BossArenas.size()); ++region)
+    {
+        const auto& arena = BossArenas[region];
+        journey.Relocate({arena.cx, arena.cy, ArenaCenter, ArenaGate + 12});
+        auto* gate = journey.level_.Graph().Get<TownSiteActor>(
+            expedition.QuestTarget(journey.level_.Graph()));
+        arenasOpened &= gate && gate->bossRegion == region;
+        if (region == 0)
+        {
+            expedition.story.caseClosed = false;
+            interact();
+            arenasOpened &= !journey.overworld_;
+            expedition.story.caseClosed = true;
+        }
+        interact();
+        auto& room = journey.level_.society;
+        auto* boss = journey.level_.Graph().Get<NpcActor>(expedition.arenaBoss);
+        arenasOpened &= journey.overworld_.has_value() && boss && boss->bossRegion == region
+                        && journey.arenaPosition_.y == ArenaEntry
+                        && journey.player_.y == ArenaGate + 12
+                        && journey.level_.Graph().Query<TownActor>().empty()
+                        && journey.Walkable(0, ArenaCenter + ArenaHalf - 16 - ArenaEntry, 12)
+                        && !journey.Walkable(0, ArenaCenter + ArenaHalf - 8 - ArenaEntry, 12)
+                        && Navigation::Sight({}, boss->Position(), services.walkable, 12);
+        if (region == 0 && boss)
+        {
+            journey.level_.Player().health = 0;
+            journey.level_.state = RunState::Lost;
+            journey.Respawn();
+            roomRecovery = !journey.overworld_ && journey.player_.y == ArenaGate + 12
+                           && journey.level_.Player().health == journey.level_.MaximumHealth();
+            interact();
+            boss = journey.level_.Graph().Get<NpcActor>(room.arenaBoss);
+            roomRecovery &= boss && boss->health == boss->maximumHealth;
+        }
+        if (boss)
+        {
+            journey.Move(0, ArenaCenter + 32 - ArenaEntry);
+            auto roomContext = journey.level_.Context(services.walkable);
+            journey.level_.Player().invulnerable = 120.f;
+            constexpr ArenaPattern normal[][3] = {
+                {ArenaPattern::Circle, ArenaPattern::Charge, ArenaPattern::Ring},
+                {ArenaPattern::Pounce, ArenaPattern::Fan, ArenaPattern::Poison},
+                {ArenaPattern::Circle, ArenaPattern::Cross, ArenaPattern::Ring}};
+            for (auto pattern : normal[region])
+            {
+                boss->cooldown = 0;
+                room.UpdateNpc(*boss, .01f, roomContext);
+                patternsWork &= room.arenaAttack.pattern == pattern;
+                room.UpdateNpc(*boss, 2.f, roomContext);
+            }
+            for (int phase = 1; phase <= 2; ++phase)
+            {
+                room.Damage(*boss, 1000, nullptr, roomContext);
+                const float floor = boss->maximumHealth * (phase == 1 ? .50f : .15f);
+                patternsWork &= room.arenaTrial.active && room.arenaTrial.phase == phase
+                                && std::abs(boss->health - floor) < .01f;
+                room.Damage(*boss, 1000, nullptr, roomContext);
+                patternsWork &= std::abs(boss->health - floor) < .01f;
+                if (region == 2)
+                {
+                    room.UseArenaDevice(ArenaDevice(region, 0), roomContext);
+                    room.UpdateNpc(*boss, 6.f, roomContext);
+                    patternsWork &= room.arenaTrial.used == 0 && room.arenaTrial.active;
+                    room.arenaAttack = {};
+                }
+                patternsWork &= solveTrial(*boss, roomContext);
+            }
+            room.Damage(*boss, 1000, nullptr, roomContext);
+            relicsAdvanced &= (room.bossRelics & (1u << region)) != 0;
+            if (region == 0)
+            {
+                try
+                {
+                    journey.SaveGame(saveTest);
+                    auto loaded = LoadGame(saveTest, true);
+                    roomSave = !loaded->overworld_ && loaded->player_.cx == arena.cx
+                               && loaded->player_.y == ArenaGate + 12
+                               && (loaded->level_.society.bossRelics & 1) != 0;
+                }
+                catch (const std::exception& error)
+                {
+                    std::cerr << "[BOSS SAVE TEST] " << error.what() << '\n';
+                }
+                std::filesystem::remove(saveTest, ignored);
+            }
+            interact();
+            arenasOpened &= !journey.overworld_ && journey.player_.cx == arena.cx
+                            && journey.player_.cy == arena.cy && journey.player_.y == ArenaGate + 12;
+        }
+    }
+    ok &= require(arenasOpened, "boss rooms isolate the scene and E returns to the same entrance");
+    ok &= require(patternsWork, "boss trials block overkill at 50 and 15 percent until map devices are solved");
+    ok &= require(roomRecovery && roomSave, "boss room defeat and save resume at the entrance");
+    auto* finalStation = journey.level_.Graph().Get<TownSiteActor>(
+        expedition.QuestTarget(journey.level_.Graph()));
+    ok &= require(relicsAdvanced && expedition.QuestStep() == 16 && finalStation
+                      && finalStation->site == TownSite::Station,
+                  "defeating the three room bosses unlocks the station rescue");
+    const int goldBeforeReplay = expedition.gold;
+    const int goodsBeforeReplay = expedition.goods;
+    interact();
+    auto& replay = journey.level_.society;
+    auto* replayBoss = journey.level_.Graph().Get<NpcActor>(replay.arenaBoss);
+    bool replayWorks = journey.overworld_ && replayBoss
+                       && replayBoss->health == replayBoss->maximumHealth
+                       && !replay.arenaCleared && replay.arenaTrial.phase == 0;
+    if (replayWorks)
+    {
+        journey.Move(0, ArenaCenter + 32 - ArenaEntry);
+        interact();
+        replayWorks &= journey.overworld_.has_value();
+        if (journey.overworld_)
+        {
+            auto replayContext = journey.level_.Context(services.walkable);
+            for (int phase = 1; phase <= 2; ++phase)
+            {
+                replay.Damage(*replayBoss, 1000, nullptr, replayContext);
+                replayWorks &= replay.arenaTrial.active && replay.arenaTrial.phase == phase;
+                replayWorks &= solveTrial(*replayBoss, replayContext);
+            }
+            replay.Damage(*replayBoss, 1000, nullptr, replayContext);
+            replayWorks &= replay.arenaCleared;
+            replay.UpdateNpc(*replayBoss, 3.f, replayContext);
+            interact();
+            replayWorks &= !journey.overworld_ && expedition.bossRelics == 7
+                           && expedition.QuestStep() == 16
+                           && expedition.gold == goldBeforeReplay + 85
+                           && expedition.goods == goodsBeforeReplay + 6;
+        }
+    }
+    ok &= require(replayWorks, "cleared boss rooms replay both phases and grant only regular loot");
     PrototypeWorld skillInput(2026);
     skillInput.level_.Player().weapon = true;
     skillInput.level_.Player().yokaiGrowth[0].level = 3;
@@ -2456,6 +3095,43 @@ void PrototypeWorld::PreviewRuins()
         Move(0, 10);
     }
     cameraLag_ = {0, 0};
+}
+
+void PrototypeWorld::PreviewArena(int region)
+{
+    auto& sim = level_.society;
+    auto& story = sim.story;
+    story.homeInvestigated = story.hasHarinStudentCard = story.metRecorder = story.mukContracted =
+        story.reported = story.relayAligned = story.signalDecoded = story.gateOpened =
+            story.guardianDefeated = story.echoRecovered = story.weaponAwakened = story.caseClosed =
+                true;
+    story.hunted = 3;
+    story.suppliesDelivered = 2;
+    sim.bossRelics = (1u << region) - 1;
+    const auto& arena = BossArenas[region];
+    Relocate({arena.cx, arena.cy, ArenaCenter, ArenaGate + 12});
+    Key('e', true);
+    Key('e', false);
+    auto& room = level_.society;
+    if (auto* boss = level_.Graph().Get<NpcActor>(room.arenaBoss))
+    {
+        Move(0, ArenaCenter + 56 - ArenaEntry);
+        auto context = level_.Context(
+            [&](float x, float y, float radius) { return Walkable(x, y, radius); });
+        room.Damage(*boss, 1000, nullptr, context);
+        for (int i = 0; i < 150; ++i)
+        {
+            level_.Player().invulnerable = 2.f;
+            Update(1.f / 60);
+            if (room.arenaAttack.pattern == ArenaPattern::Charge
+                || room.arenaAttack.pattern == ArenaPattern::Poison
+                || room.arenaAttack.pattern == ArenaPattern::Core)
+            {
+                break;
+            }
+        }
+    }
+    cameraLag_ = {};
 }
 
 void PrototypeWorld::PreviewExpedition()

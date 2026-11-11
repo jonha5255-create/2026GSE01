@@ -23,6 +23,12 @@ namespace Art
         std::vector<std::string> clips;
     };
 
+    struct BossArenaArt
+    {
+        std::string roomFile;
+        Creature boss;
+    };
+
     // A library is independent of OpenGL and of runtime NPC/monster IDs.
     class AssetLibrary
     {
@@ -35,6 +41,7 @@ namespace Art
         std::vector<size_t> SelectParts(const Model& model,
                                         const std::map<std::string, int>& parts) const;
         const ClipInfo& Animation(const std::string& name) const;
+        const BossArenaArt* BossArena(int region) const;
 
         const std::vector<AssetEntry>& Entries() const
         {
@@ -69,6 +76,7 @@ namespace Art
         std::vector<AssetEntry> entries_;
         std::vector<Appearance> appearances_;
         std::vector<Creature> creatures_;
+        std::map<int, BossArenaArt> bossArenas_;
         std::map<std::string, ClipInfo> clips_;
         std::map<std::string, std::map<int, std::string>> partNodes_;
 

@@ -33,6 +33,19 @@ def curve(points,r,n):
  for i in range(len(points)-1):rod(points[i],points[i+1],r*(1-i/len(points)),n,r*(1-(i+1)/len(points)) if i<len(points)-2 else .005)
 def ring(p,r,n,rotation=(math.pi/2,0,0),minor=.025):
  bpy.ops.mesh.primitive_torus_add(major_segments=20,minor_segments=6,location=p,major_radius=r,minor_radius=minor,rotation=rotation);return mat(bpy.context.object,n)
+def cuff():
+ # Open through both ends. Local +Y is the back of the hand after mounting.
+ vertices=[]
+ for z,rx,ry in [(-.16,.125,.109),(.14,.115,.097),(.14,.096,.078),(-.16,.106,.090)]:
+  for i in range(16):
+   angle=math.tau*i/16
+   vertices.append((rx*math.cos(angle),ry*math.sin(angle),z))
+ faces=[(j*16+i,j*16+(i+1)%16,((j+1)%4)*16+(i+1)%16,((j+1)%4)*16+i)
+        for j in range(4) for i in range(16)]
+ mesh=bpy.data.meshes.new('Open cuff');mesh.from_pydata(vertices,[],faces);mesh.update()
+ obj=bpy.data.objects.new('Open cuff',mesh);scene.collection.objects.link(obj)
+ for face in mesh.polygons:face.use_smooth=face.index<16 or 32<=face.index<48
+ return mat(obj,'shell')
 def blade(x,y,z,length,width,n='bone',sweep=.12):
  # Double-edged, convex diamond section, tapered tip.
  vs=[]
@@ -115,14 +128,19 @@ def weapon(f,stage):
    for z in [.055,.11,.165,.22]:ring((0,0,z),.046,'cloth',rotation=(0,0,0),minor=.008)
   elif i==1:
    # Local Z barrel axis. Rear grip origin, support and muzzle sockets in manifest.
-   box((0,.07,.40),(.20,.22,.47),'shell');box((0,.09,-.18),(.23,.17,.27),'steel');rod((0,.08,-.08),(0,.08,.20),.04,'steel')
-   box((0,-.07,0),(.085,.16,.20),'cloth');box((0,.16,.15),(.13,.19,.24),'steel');rod((0,.08,.61),(0,.08,1.04),.055,'steel');ring((0,.08,1.05),.06,'bone',rotation=(0,0,0),minor=.015)
-   box((0,-.09,.45),(.12,.11,.30),'cloth');sphere((0,-.065,.51),(.068,.04,.09),c);box((0,-.01,.93),(.025,.09,.06),'bone')
-   ring((0,-.09,.12),.085,'steel',rotation=(0,math.pi/2,0),minor=.013)
+   box((0,.07,.40),(.20,.22,.47),'shell')
+   rod((.16,.095,-.095),(0,.09,.23),.045,'steel',.058)
+   box((.16,.095,-.12),(.13,.20,.09),'steel',.024)
+   grip=box((0,-.085,.026),(.077,.17,.10),'cloth',.023);grip.rotation_euler.x=-.20
+   box((0,-.085,.235),(.108,.19,.105),'steel')
+   rod((0,.08,.61),(0,.08,1.04),.055,'steel');ring((0,.08,1.05),.06,'bone',rotation=(0,0,0),minor=.015)
+   box((0,-.074,.38),(.145,.074,.22),'cloth',.019)
+   sphere((0,.178,.51),(.068,.032,.09),c);box((0,.155,.93),(.025,.075,.06),'bone')
+   ring((0,-.045,.111),.052,'steel',rotation=(0,math.pi/2,0),minor=.009)
   elif i==2:
-   rod((0,0,-.10),(0,0,.28),.11,'shell');ring((0,0,-.1),.11,'steel',rotation=(0,0,0));sphere((0,-.07,.29),(.15,.12,.15),'steel')
-   for x in [-.12,0,.12]:blade(x,-.08,.31,.48,.035,'bone',.09 if x>=0 else -.09)
-   sphere((0,-.18,.25),(.067,.03,.07),c)
+   cuff();box((0,.105,.065),(.235,.063,.235),'steel',.028)
+   for x in [-.096,0,.096]:blade(x,.104,.15,.41,.028,'bone',x*.45)
+   sphere((0,.141,.055),(.047,.021,.061),c)
   elif i==3:
    for s in [-1,1]:
     x=s*.22;box((x,.03,.23),(.12,.18,.44),'shell');box((x,-.06,0),(.095,.15,.20),'cloth');rod((x,.03,.43),(x,.03,.58),.044,'steel');ring((x,.03,.59),.045,'bone',rotation=(0,0,0),minor=.012)
@@ -139,14 +157,14 @@ def weapon(f,stage):
    for s in ([-1,1] if i==3 else [0]):
     x=s*.22
     for j in range(3):box((x,.07,.30+j*.09),(.17 if i==3 else .29,.25,.065),'steel')
-  elif i==2:sphere((0,.015,.20),(.17,.13,.22),'bone')
+  elif i==2:box((0,.124,.028),(.244,.049,.195),'bone',.022)
   else:
    for s in [-1,1]:blade(s*.05,s*.025,.25,.67,.10,'steel',s*.25)
  elif stage==2:
   for s in [-1,1]:
    if i in [1,3]:curve([(s*.12,.10,.28),(s*.25,.12,.10),(s*.22,.12,-.06)],.055,'bone')
    elif i==2:
-    for j in range(3):blade(s*.12,.01,j*.09,.22,.045,'bone',s*.13)
+    for j in range(3):blade(s*.105,.100,-.13+j*.064,.145,.031,'bone',s*.05)
    else:
     for j in range(3):blade(s*(.09+j*.025),.02,.42+j*.16,.19,.04,'bone',s*.14)
  elif stage==3:
@@ -154,8 +172,8 @@ def weapon(f,stage):
    for s in [-1,1]:box((s*(.08 if i==1 else .22),-.11,.43),(.025,.025,.37 if i==1 else .26),c,.008)
    sphere((0 if i==1 else -.22,-.09,.23),(.07,.035,.09),c)
   elif i==2:
-   sphere((0,-.14,.19),(.10,.05,.12),c)
-   for x in [-.12,0,.12]:blade(x,-.115,.36,.38,.013,c,.08 if x>=0 else -.08)
+   sphere((0,.158,.026),(.061,.025,.079),c)
+   for x in [-.096,0,.096]:blade(x,.14,.187,.30,.012,c,x*.38)
   else:
    blade(0,-.045,.49,.53,.026,c,.06 if i==0 else 0);sphere((0,-.09,.33),(.07,.04,.09),c)
 defs=[('Muk','묵','Sword','blue'),('SoulRifle','영혼총 요괴','SoulRifle','gold'),('Claw','클로 요괴','Claw','violet'),('Soryeong','소령','DualGun','gold'),('Mes','메스','ScissorDualBlade','jade')]
@@ -174,9 +192,11 @@ for idx,(id,ko,typ,c) in enumerate(defs):
   # Source library on a separate collection, instance layout uses linked mesh data.
   for o in objs:o.hide_render=True;o.hide_set(True)
   f['forms'][form]['sockets']=({'root':[0,0,0],'soul_core':[0,-.19,.69]} if form=='Companion' else {'grip':[0,0,0],'forward':[0,0,1]})
-  if form=='Weapon' and idx==1:f['forms'][form]['sockets'].update(support_hand=[0,-.09,.45],muzzle=[0,.08,1.06])
-  if form=='Weapon' and idx==3:f['forms'][form]['sockets'].update(grip_L=[-.22,0,0],grip_R=[.22,0,0],muzzle_L=[-.22,.03,.59],muzzle_R=[.22,.03,.59])
-  if form=='Weapon' and idx==4:f['forms'][form]['sockets'].update(pivot=[0,0,.25],split_blades=True)
+  if form=='Weapon' and idx==0:f['forms'][form]['sockets'].update(grip=[0,0,.128])
+  if form=='Weapon' and idx==1:f['forms'][form]['sockets'].update(grip=[0,-.085,.026],support_hand=[0,-.127,.38],muzzle=[0,.08,1.06])
+  if form=='Weapon' and idx==2:f['forms'][form]['sockets'].update(cuff_back=[0,0,-.16],knuckle=[0,.105,.14])
+  if form=='Weapon' and idx==3:f['forms'][form]['sockets'].update(grip_L=[-.22,-.06,0],grip_R=[.22,-.06,0],muzzle_L=[-.22,.03,.59],muzzle_R=[.22,.03,.59])
+  if form=='Weapon' and idx==4:f['forms'][form]['sockets'].update(grip_L=[-.11,0,-.12],grip_R=[.11,0,-.12],pivot=[0,0,.25],split_blades=True)
 # Additional limb/grip group indices preserved on vertices for future rigging / splitting.
 for f in families:
  for form,desc in f['forms'].items():

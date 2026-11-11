@@ -1,0 +1,273 @@
+{
+  "fps": 30,
+  "arena_m_per_game_unit": 0.06875,
+  "local_forward_blender": "-Y",
+  "local_forward_glb": "+Z",
+  "effects": [
+    {
+      "id": "AltarSlam",
+      "name": "제단 강타",
+      "boss_id": "BOSS_00_HornKing",
+      "slot": "normal",
+      "motion": "BOSS_00_HornKing_AttackPrimary",
+      "shape": "circle",
+      "release_frame": 27,
+      "motion_last_frame": 38,
+      "effect_last_frame": 45,
+      "authored_windup_s": 0.8666666666666667,
+      "game_windup_s": 0.85,
+      "game_radius": 64,
+      "game_reach": 0,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_AltarSlam.glb"
+    },
+    {
+      "id": "HornCharge",
+      "name": "뿔 돌진",
+      "boss_id": "BOSS_00_HornKing",
+      "slot": "special",
+      "motion": "BOSS_00_HornKing_AttackSecondary",
+      "shape": "line",
+      "release_frame": 34,
+      "motion_last_frame": 45,
+      "effect_last_frame": 52,
+      "authored_windup_s": 1.1,
+      "game_windup_s": 1.1,
+      "game_radius": 26,
+      "game_reach": 300,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_HornCharge.glb"
+    },
+    {
+      "id": "BloodSeal",
+      "name": "핏빛 파동",
+      "boss_id": "BOSS_00_HornKing",
+      "slot": "gimmick",
+      "motion": "BOSS_00_HornKing_TrialCast",
+      "shape": "outside_circle",
+      "release_frame": 79,
+      "motion_last_frame": 90,
+      "effect_last_frame": 97,
+      "authored_windup_s": 2.6,
+      "game_windup_s": 2.6,
+      "game_radius": 78,
+      "game_reach": 0,
+      "anchor": "arena_center",
+      "file": "boss_arenas/combat/FX_BOSS_BloodSeal.glb"
+    },
+    {
+      "id": "Bite",
+      "name": "포식견 물어뜯기",
+      "boss_id": "BOSS_01_MireHound",
+      "slot": "normal",
+      "motion": "BOSS_01_MireHound_AttackPrimary",
+      "shape": "circle",
+      "release_frame": 21,
+      "motion_last_frame": 32,
+      "effect_last_frame": 39,
+      "authored_windup_s": 0.6666666666666666,
+      "game_windup_s": 0.65,
+      "game_radius": 53,
+      "game_reach": 0,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_Bite.glb"
+    },
+    {
+      "id": "VenomJet",
+      "name": "독액 분사",
+      "boss_id": "BOSS_01_MireHound",
+      "slot": "special",
+      "motion": "BOSS_01_MireHound_AttackSecondary",
+      "shape": "line",
+      "release_frame": 29,
+      "motion_last_frame": 40,
+      "effect_last_frame": 47,
+      "authored_windup_s": 0.9333333333333333,
+      "game_windup_s": 0.95,
+      "game_radius": 33,
+      "game_reach": 280,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_VenomJet.glb"
+    },
+    {
+      "id": "PoisonPool",
+      "name": "독웅덩이",
+      "boss_id": "BOSS_01_MireHound",
+      "slot": "gimmick",
+      "motion": "BOSS_01_MireHound_TrialCast",
+      "shape": "circle",
+      "release_frame": 35,
+      "motion_last_frame": 46,
+      "effect_last_frame": 143,
+      "authored_windup_s": 1.1333333333333333,
+      "game_windup_s": 1.15,
+      "game_radius": 64,
+      "game_reach": 0,
+      "anchor": "target_ground",
+      "file": "boss_arenas/combat/FX_BOSS_PoisonPool.glb"
+    },
+    {
+      "id": "StoneSlam",
+      "name": "거신 내려찍기",
+      "boss_id": "BOSS_02_StoneColossus",
+      "slot": "normal",
+      "motion": "BOSS_02_StoneColossus_AttackPrimary",
+      "shape": "circle",
+      "release_frame": 33,
+      "motion_last_frame": 44,
+      "effect_last_frame": 51,
+      "authored_windup_s": 1.0666666666666667,
+      "game_windup_s": 1.05,
+      "game_radius": 72,
+      "game_reach": 0,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_StoneSlam.glb"
+    },
+    {
+      "id": "Fissure",
+      "name": "지면 균열",
+      "boss_id": "BOSS_02_StoneColossus",
+      "slot": "special",
+      "motion": "BOSS_02_StoneColossus_AttackSecondary",
+      "shape": "line",
+      "release_frame": 40,
+      "motion_last_frame": 51,
+      "effect_last_frame": 58,
+      "authored_windup_s": 1.3,
+      "game_windup_s": 1.3,
+      "game_radius": 35,
+      "game_reach": 300,
+      "anchor": "attack_origin",
+      "file": "boss_arenas/combat/FX_BOSS_Fissure.glb"
+    },
+    {
+      "id": "CoreOverload",
+      "name": "핵 폭주",
+      "boss_id": "BOSS_02_StoneColossus",
+      "slot": "gimmick",
+      "motion": "BOSS_02_StoneColossus_TrialCast",
+      "shape": "arena",
+      "release_frame": 241,
+      "motion_last_frame": 252,
+      "effect_last_frame": 259,
+      "authored_windup_s": 8.0,
+      "game_windup_s": 8.0,
+      "game_radius": 0,
+      "game_reach": 0,
+      "anchor": "arena_center",
+      "file": "boss_arenas/combat/FX_BOSS_CoreOverload.glb"
+    }
+  ],
+  "devices": [
+    {
+      "boss_id": "BOSS_00_HornKing",
+      "file": "boss_arenas/combat/SealStone.glb",
+      "positions_game_chunk": [
+        [
+          320,
+          432
+        ],
+        [
+          222,
+          301
+        ],
+        [
+          414,
+          273
+        ]
+      ],
+      "positions_blender": [
+        [
+          0.0,
+          -7.700000000000001,
+          0
+        ],
+        [
+          -6.737500000000001,
+          1.3062500000000001,
+          0
+        ],
+        [
+          6.4625,
+          3.23125,
+          0
+        ]
+      ]
+    },
+    {
+      "boss_id": "BOSS_01_MireHound",
+      "file": "boss_arenas/combat/DrainValve.glb",
+      "positions_game_chunk": [
+        [
+          246,
+          396
+        ],
+        [
+          395,
+          357
+        ],
+        [
+          315,
+          215
+        ]
+      ],
+      "positions_blender": [
+        [
+          -5.0875,
+          -5.2250000000000005,
+          0
+        ],
+        [
+          5.15625,
+          -2.54375,
+          0
+        ],
+        [
+          -0.34375,
+          7.218750000000001,
+          0
+        ]
+      ]
+    },
+    {
+      "boss_id": "BOSS_02_StoneColossus",
+      "file": "boss_arenas/combat/CoreDevice.glb",
+      "positions_game_chunk": [
+        [
+          227,
+          360
+        ],
+        [
+          408,
+          381
+        ],
+        [
+          342,
+          214
+        ]
+      ],
+      "positions_blender": [
+        [
+          -6.393750000000001,
+          -2.75,
+          0
+        ],
+        [
+          6.050000000000001,
+          -4.1937500000000005,
+          0
+        ],
+        [
+          1.5125000000000002,
+          7.2875000000000005,
+          0
+        ]
+      ]
+    }
+  ],
+  "hit_confirm": {
+    "file": "boss_arenas/combat/FX_BOSS_HitConfirm.glb",
+    "anchor": "confirmed_damage_contact",
+    "frames": 12
+  }
+}

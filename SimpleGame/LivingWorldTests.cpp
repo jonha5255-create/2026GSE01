@@ -215,9 +215,20 @@ bool LivingWorld::SelfTest()
         quests.Interact(tutorialContext);
         int reward = quests.gold;
         quests.Interact(tutorialContext);
-        check(quests.story.caseClosed && quests.gold == reward
-                  && quests.QuestTarget(tutorial.Graph()) == NoActor,
-              "expedition completion grants rewards once and clears navigation");
+        check(quests.story.caseClosed && quests.gold == reward && quests.QuestStage() == 3
+                  && quests.QuestStep() == 15,
+              "expedition completion grants rewards once and opens stage three");
+        quests.AdvanceStory(TownSite::Station);
+        check(!quests.story.harinRescued, "station seal requires all three relics");
+        quests.bossRelics = 7;
+        auto* rescue = tutorial.Graph().Get<TownSiteActor>(quests.QuestTarget(tutorial.Graph()));
+        check(quests.QuestStep() == 16 && rescue && rescue->site == TownSite::Station,
+              "all relics route the player to the final station");
+        quests.Interact(tutorialContext);
+        quests.Interact(tutorialContext);
+        check(quests.story.harinRescued && quests.QuestStep() == 17
+                  && quests.gold == reward + 100 && quests.QuestTarget(tutorial.Graph()) == NoActor,
+              "rescuing Harin completes the campaign and pays the reward once");
     }
 
     NpcActor merchant("seller", NpcJob::Merchant), hunter("buyer", NpcJob::Hunter);

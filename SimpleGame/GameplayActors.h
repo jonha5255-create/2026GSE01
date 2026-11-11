@@ -77,6 +77,9 @@ class PlayerActor : public Actor
     int level = 1, experience = 0, weaponRank = 0;
     float health = 100, invulnerable = 0, magnetTime = 0;
     bool weapon = false, showRange = true;
+    static constexpr float WeaponRaiseDuration = .32f;
+    float weaponRaise = 0;
+    float WeaponGripBlend() const;
     FarmPoint moveInput;
     FarmPoint moveFacing{1, 0};
     float animationClock = 0, locomotionTime = 0, movementBlend = 0;

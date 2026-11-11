@@ -274,13 +274,30 @@ namespace Art
         }
     }
 
-    void WorldArt::FitRifleHands(Source& body, Pose& pose)
+    void WorldArt::FitRifleHands(Source& body, Pose& pose, float gripBlend)
     {
-        auto chest = pose.world[Bone(*body.model, "chest")].Point({});
-        SolveArm(*body.model, pose, false, {chest.x + .03f, chest.y - .13f, chest.z + .10f});
+        if (gripBlend <= 0)
+        {
+            return;
+        }
+        auto& model = *body.model;
+        if (rifleReady_.world.empty())
+        {
+            rifleReady_.Sample(model, "NPC_Attack_DualPistol", 0, false);
+        }
+        auto chest = Bone(model, "chest");
+        auto right = Bone(model, "hand.R");
+        auto left = Bone(model, "hand.L");
+        auto rightNow = pose.world[right].Point({});
+        auto chestNow = pose.world[chest].Point({});
+        auto rest = Sub(rifleReady_.world[right].Point({}), rifleReady_.world[chest].Point({}));
+        auto recoil = Sub(Sub(rightNow, chestNow), rest);
+        auto anchor = Add(Add(chestNow, {.03f, -.13f, .10f}), Times(recoil, gripBlend));
+        SolveArm(model, pose, false, Add(rightNow, Times(Sub(anchor, rightNow), gripBlend)));
         auto weapon = HandAttachment(*body.model, body.bind, pose, 1);
         auto support = weapon.Point(yokai_->Family(1).forms[1].sockets.at("support_hand"));
-        SolveArm(*body.model, pose, true, support);
+        auto leftNow = pose.world[left].Point({});
+        SolveArm(model, pose, true, Add(leftNow, Times(Sub(support, leftNow), gripBlend)));
     }
 
     void WorldArt::Companion(

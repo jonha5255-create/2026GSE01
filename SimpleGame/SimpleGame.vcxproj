@@ -214,9 +214,11 @@
     <ClCompile Include="PlayerAnimator.cpp" />
     <ClCompile Include="AssetTests.cpp" />
     <ClCompile Include="PrototypeWorld.cpp" />
+    <ClCompile Include="GameSave.cpp" />
     <ClCompile Include="CityGenerator.cpp" />
     <ClCompile Include="LevelOne.cpp" />
     <ClCompile Include="LivingWorld.cpp" />
+    <ClCompile Include="BossCombat.cpp" />
     <ClCompile Include="LivingWorldInteraction.cpp" />
     <ClCompile Include="LivingWorldView.cpp" />
     <ClCompile Include="LivingWorldTests.cpp" />

@@ -1,0 +1,44 @@
+{
+  "files": 19,
+  "checks": [
+    {
+      "arena": "ARENA_00_BloodAltar",
+      "boss": "BOSS_00_HornKing",
+      "arena_triangles": 6236,
+      "boss_triangles": 7096,
+      "clips": 13,
+      "mesh_nodes": 5
+    },
+    {
+      "arena": "ARENA_01_PoisonBasin",
+      "boss": "BOSS_01_MireHound",
+      "arena_triangles": 7196,
+      "boss_triangles": 14080,
+      "clips": 15,
+      "mesh_nodes": 5
+    },
+    {
+      "arena": "ARENA_02_CollapsedCourt",
+      "boss": "BOSS_02_StoneColossus",
+      "arena_triangles": 6084,
+      "boss_triangles": 5272,
+      "clips": 13,
+      "mesh_nodes": 5
+    }
+  ],
+  "combat_files": [
+    "boss_arenas/combat/FX_BOSS_AltarSlam.glb",
+    "boss_arenas/combat/FX_BOSS_HornCharge.glb",
+    "boss_arenas/combat/FX_BOSS_BloodSeal.glb",
+    "boss_arenas/combat/FX_BOSS_Bite.glb",
+    "boss_arenas/combat/FX_BOSS_VenomJet.glb",
+    "boss_arenas/combat/FX_BOSS_PoisonPool.glb",
+    "boss_arenas/combat/FX_BOSS_StoneSlam.glb",
+    "boss_arenas/combat/FX_BOSS_Fissure.glb",
+    "boss_arenas/combat/FX_BOSS_CoreOverload.glb",
+    "boss_arenas/combat/SealStone.glb",
+    "boss_arenas/combat/DrainValve.glb",
+    "boss_arenas/combat/CoreDevice.glb",
+    "boss_arenas/combat/FX_BOSS_HitConfirm.glb"
+  ]
+}

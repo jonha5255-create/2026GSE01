@@ -32,6 +32,7 @@ struct GameplayContext : ActorUpdateContext
     std::function<void(const EnemyActor&)> defeated;
     std::function<bool(FarmPoint&, float, float)> findSpawn;
     std::function<void(float, float)> movePlayer;
+    std::function<void(int)> enterArena;
     EffectActor& Effect(FarmPoint position, const std::string& text, float life);
     LootActor& Drop(FarmPoint position, LootKind kind, int amount = 12);
 };

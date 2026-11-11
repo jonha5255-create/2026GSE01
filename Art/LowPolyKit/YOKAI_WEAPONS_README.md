@@ -1,5 +1,7 @@
 # 계약 요괴와 요괴병기 모델링
 
+파지 revision 2는 묵의 손잡이 중앙, 영혼총의 방아쇠 손잡이와 앞손잡이, 클로의 열린 손목 커프에 손을 맞춥니다. 소령은 좌우 권총 손잡이, 메스는 쌍검으로 분리했을 때 좌우 손잡이 고리의 중심을 각각 사용합니다. `data/yokai_weapon_catalog.json`의 소켓은 Blender 로컬 좌표입니다. 각 파지 자세는 `Characters_Rigged.blend`의 기존 검·쌍권총·클로·가위 공격 클립에 들어 있습니다. `previews/yokai_weapon_grips.png`는 이 클립의 준비·공격 자세를 비교한 렌더입니다.
+
 게임 코드는 수정하지 않은 별도 모델링 패키지입니다. `Yokai_Weapons.blend`가 원본이며 `yokai/`의 GLB와 `data/yokai_weapon_catalog.json`으로 전달합니다. 기존 NPC·몬스터·건물 파일은 유지합니다.
 
 | family_index | 계열 | 동행 형태 | 무기 형태 |

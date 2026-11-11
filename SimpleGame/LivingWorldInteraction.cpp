@@ -3,6 +3,7 @@
 #include "GameplayContext.h"
 #include "GameplayActors.h"
 #include "RenderDiagnostics.h"
+#include "WorldTypes.h"
 #include <algorithm>
 
 namespace
@@ -32,7 +33,21 @@ void LivingWorld::AdvanceStory(TownSite site)
         }
         else if (site == TownSite::Station && story.signalDecoded)
         {
-            if (!story.gateOpened)
+            if (story.harinRescued)
+            {
+                dialogue = "하린: 내 이름을 기억해 줘서 고마워. 이제 같이 돌아가자.";
+            }
+            else if (story.caseClosed && bossRelics == 7)
+            {
+                story.harinRescued = true;
+                gold += 100;
+                dialogue = "하린: 서진아, 이제 내 이름이 들려. 세 유물로 역의 봉인을 풀었구나.";
+            }
+            else if (story.caseClosed)
+            {
+                dialogue = "묵: 하린이 봉인 너머에 있어. 봉인을 풀려면 삼역의 유물이 필요해.";
+            }
+            else if (!story.gateOpened)
             {
                 story.gateOpened = true;
                 dialogue = "문지기가 깨어났다! 요괴를 무기화하고 문지기를 제압하세요.";
@@ -75,18 +90,26 @@ void LivingWorld::AdvanceStory(TownSite site)
     }
     else if (site == TownSite::Archive)
     {
-        if (story.weaponAwakened && !story.caseClosed)
+        if (story.harinRescued)
+        {
+            dialogue = "백연: 하린이 돌아왔어요. 이제 마을 사람들도 그 이름을 기억할 거예요.";
+        }
+        else if (story.caseClosed)
+        {
+            dialogue = "백연: 삼역의 유물을 지워진 역으로 가져가세요. 그곳에 하린이 있어요.";
+        }
+        else if (story.weaponAwakened)
         {
             story.caseClosed = true;
             gold += 80;
-            dialogue = "백연: 하린은 살아 있어요. 기억을 지우는 자들의 흔적을 찾았군요. 보상 80전.";
+            dialogue = "백연: 하린은 역에 갇혀 있어요. 삼역의 유물을 모아 봉인을 푸세요. 보상 80전.";
         }
         else if (story.mukContracted && story.hunted >= 3 && !story.reported)
         {
             story.reported = true;
             gold += 20;
             dialogue =
-                "백연: 잔향석에 동쪽 역의 좌표가 있어요. 시장에서 2개를 판매해 원정 보급을 "
+                "백연: 잔향석에서 동쪽 역의 좌표를 찾았어요. 시장에서 2개를 판매해 원정 보급을 "
                 "마련하세요. 보상 20전.";
         }
         else if (story.reported)
@@ -129,11 +152,67 @@ void LivingWorld::AdvanceStory(TownSite site)
     Note(dialogue, "story");
 }
 
+void LivingWorld::RestoreGuardian(SceneGraph& graph)
+{
+    if (!story.gateOpened || story.guardianDefeated || graph.Get(guardian))
+    {
+        return;
+    }
+    auto& guard = graph.Spawn<NpcActor>(town, "기억을 삼키는 문지기", NpcJob::Wraith);
+    guard.local = guard.home = {2502, 0};
+    guard.storyGuardian = true;
+    guard.health = guard.maximumHealth = 240;
+    guard.gold = 40;
+    guard.goods = 3;
+    guardian = guard.Id();
+}
+
+void LivingWorld::InteractArena(const TownSiteActor& gate, GameplayContext& context)
+{
+    const int region = gate.bossRegion;
+    if (region < 0 || region >= int(BossArenas.size()))
+    {
+        return;
+    }
+    if (!story.caseClosed)
+    {
+        dialogue = "묵: 이 봉인은 아직 열 수 없어. 지워진 역에서 하린의 기억부터 찾아야 해.";
+        return;
+    }
+    if (!Navigation::Sight(context.player.Position(), gate.Position(), context.walkable, 12))
+    {
+        dialogue = "입구에 가까이 다가가 E를 누르세요.";
+        return;
+    }
+    if (context.enterArena)
+    {
+        context.enterArena(region);
+    }
+}
+
+void LivingWorld::SpawnArenaBoss(SceneGraph& graph, ActorId parent, int region)
+{
+    auto& boss = graph.Spawn<NpcActor>(parent, BossArenas[region].boss, NpcJob::Wraith);
+    boss.cooldown = 1.5f;
+    boss.local = boss.home = {ArenaCenter, ArenaCenter};
+    boss.fieldBoss = true;
+    boss.bossRegion = boss.monsterForm = region;
+    const int fallbackArt[] = {2, 4, 3};
+    boss.artCreature = fallbackArt[region];
+    boss.health = boss.maximumHealth = 420 + region * 90.f;
+    boss.gold = 85;
+    boss.goods = 6;
+    boss.moveFacing = {0, 1};
+    arenaBoss = boss.Id();
+    dialogue = std::string(BossArenas[region].name) + ": " + boss.Name() + "이(가) 깨어났습니다.";
+    Note(dialogue, "quest_boss_enter");
+}
+
 bool LivingWorld::Interact(GameplayContext& context)
 {
     if (context.state == RunState::Lost)
     {
-        dialogue = "쓰러졌습니다. R로 새 세션을 시작하세요. 주민들의 시간은 계속 흐릅니다.";
+        dialogue = "쓰러졌습니다. R을 눌러 다시 도전하세요.";
         return true;
     }
     TownSiteActor* nearest = nullptr;
@@ -183,7 +262,11 @@ bool LivingWorld::Interact(GameplayContext& context)
         }
         return true;
     }
-    if (nearest->site == TownSite::Market)
+    if (nearest->site == TownSite::ArenaGate)
+    {
+        InteractArena(*nearest, context);
+    }
+    else if (nearest->site == TownSite::Market)
     {
         dialogue =
             "시장: T로 잔향석 1개 판매(8전), Y로 회복 재료 구입(15전). 상인의 재고와 자금이 "
@@ -215,6 +298,7 @@ bool LivingWorld::Interact(GameplayContext& context)
     {
         bool awakened = story.weaponAwakened;
         bool closed = story.caseClosed;
+        bool rescued = story.harinRescued;
         if (nearest->site == TownSite::Shrine && story.echoRecovered && !awakened)
         {
             story.weaponAwakened = true;
@@ -234,17 +318,12 @@ bool LivingWorld::Interact(GameplayContext& context)
         {
             context.player.AddExperience(60, context);
         }
-        if (nearest->site == TownSite::Station && story.gateOpened && guardian == NoActor)
+        if (!rescued && story.harinRescued)
         {
-            auto& guard =
-                context.scene.Spawn<NpcActor>(town, "기억을 삼키는 문지기", NpcJob::Wraith);
-            guard.local = guard.home = {2502, 0};
-            guard.storyGuardian = true;
-            guard.health = guard.maximumHealth = 240;
-            guard.gold = 40;
-            guard.goods = 3;
-            guardian = guard.Id();
+            context.player.AddExperience(100, context);
+            context.Effect({}, "하린 구출 완료 / 100전", 2.5f);
         }
+        RestoreGuardian(context.scene);
     }
     return true;
 }
@@ -322,7 +401,7 @@ void LivingWorld::PlayerStrike(bool human,
                                ActorId selected,
                                bool basicAttack)
 {
-    if (context.state == RunState::Lost || strikeCooldown_ > 0)
+    if (context.state == RunState::Lost || context.player.weaponRaise > 0 || strikeCooldown_ > 0)
     {
         return;
     }
@@ -447,12 +526,22 @@ int LivingWorld::QuestStep() const
     {
         return 14;
     }
-    return 15;
+    if (bossRelics != 7)
+    {
+        return 15;
+    }
+    return story.harinRescued ? 17 : 16;
+}
+
+int LivingWorld::QuestStage() const
+{
+    return story.caseClosed ? 3 : story.reported ? 2 : 1;
 }
 
 bool LivingWorld::CombatQuest() const
 {
-    return QuestStep() == 5 || QuestStep() == 11;
+    const int step = QuestStep();
+    return step == 5 || step == 11 || (step == 15 && arenaBoss != NoActor);
 }
 
 std::string LivingWorld::Objective() const
@@ -471,7 +560,9 @@ std::string LivingWorld::Objective() const
                                        "역에서 하린의 기억 회수",
                                        "기억의 제단에서 묵 각성",
                                        "백연에게 하린의 기억 전달",
-                                       "하린의 흔적 / 사건 해결"};
+                                       "보스방에서 삼역의 유물 회수",
+                                       "지워진 역의 봉인을 풀고 하린 구출",
+                                       "하린의 귀환 / 사건 해결"};
     int step = QuestStep();
     std::string result = objectives[step - 1];
     if (step == 5)
@@ -482,11 +573,22 @@ std::string LivingWorld::Objective() const
     {
         result += " " + std::to_string(story.suppliesDelivered) + "/2";
     }
+    if (step == 15)
+    {
+        int relics = int((bossRelics & 1) != 0) + int((bossRelics & 2) != 0)
+                   + int((bossRelics & 4) != 0);
+        result += " " + std::to_string(relics) + "/3";
+    }
     return result;
 }
 
 std::string LivingWorld::QuestInstruction() const
 {
+    if (QuestStep() == 15)
+    {
+        return arenaBoss == NoActor ? "보스방 입구에서 E로 전투 시작"
+                                     : "공격 예고 범위를 피하고 보스를 처치하세요.";
+    }
     if (CombatQuest())
     {
         return "2 선택 → Q 무기화 → 괴물 왼쪽 클릭";
@@ -495,9 +597,9 @@ std::string LivingWorld::QuestInstruction() const
     {
         return "시장 근처에서 T: 잔향석 2개 판매";
     }
-    if (story.caseClosed)
+    if (story.harinRescued)
     {
-        return "원정 보상 획득! 거래와 탐험을 이어가세요.";
+        return "구출 보상 획득! 거래와 탐험을 이어가세요.";
     }
     if (QuestStep() >= 8 && QuestStep() <= 12)
     {
@@ -509,7 +611,7 @@ std::string LivingWorld::QuestInstruction() const
 ActorId LivingWorld::QuestTarget(const SceneGraph& graph) const
 {
     int step = QuestStep();
-    if (step == 15)
+    if (step == 17)
     {
         return NoActor;
     }
@@ -533,13 +635,30 @@ ActorId LivingWorld::QuestTarget(const SceneGraph& graph) const
         }
         return target;
     }
+    if (step == 15)
+    {
+        auto* boss = graph.Get<NpcActor>(arenaBoss);
+        if (boss && Alive(*boss))
+        {
+            return boss->Id();
+        }
+        int region = !(bossRelics & 1) ? 0 : !(bossRelics & 2) ? 1 : 2;
+        for (auto* gate : graph.Query<TownSiteActor>())
+        {
+            if (gate->bossRegion == region)
+            {
+                return gate->Id();
+            }
+        }
+        return NoActor;
+    }
     TownSite goal = step == 1                              ? TownSite::Home
                     : step == 2                            ? TownSite::School
                     : step == 3 || step == 6 || step == 14 ? TownSite::Archive
                     : step == 7                            ? TownSite::Market
                     : step == 8                            ? TownSite::Relay
                     : step == 9                            ? TownSite::Signal
-                    : step == 10 || step == 12             ? TownSite::Station
+                    : step == 10 || step == 12 || step == 16 ? TownSite::Station
                                                            : TownSite::Shrine;
     for (auto* site : graph.Query<TownSiteActor>())
     {
@@ -553,13 +672,17 @@ ActorId LivingWorld::QuestTarget(const SceneGraph& graph) const
 
 std::string LivingWorld::Hint(const SceneGraph& graph) const
 {
-    if (story.caseClosed)
+    if (story.harinRescued)
     {
-        return "현재 프로토타입의 퀘스트를 완료했습니다.";
+        return "하린이 이름을 되찾았습니다.";
     }
     auto* target = graph.Get<Actor>(QuestTarget(graph));
     if (!target)
     {
+        if (QuestStep() == 15)
+        {
+            return "미니맵과 삼역의 유물 안내를 확인하세요.";
+        }
         return "잔향귀가 다시 나타날 때까지 기다리세요.";
     }
     auto p = target->Position();

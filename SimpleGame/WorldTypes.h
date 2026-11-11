@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <array>
 #include <vector>
 
 // Never convert absolute chunk coordinates into floating-point world positions.
@@ -9,6 +10,24 @@ struct Location
     double x = 90, y = 90;
     void Normalize();
 };
+
+struct BossArenaLayout
+{
+    int cx, cy;
+    const char* name;
+    const char* boss;
+};
+
+inline constexpr std::array<BossArenaLayout, 3> BossArenas{{
+    {2, 0, "핏빛 제단", "핏빛 제단의 뿔왕"},
+    {0, 2, "독안개 분지", "독안개 포식견"},
+    {-2, 0, "붕괴 석정", "붕괴 석정의 거신"},
+}};
+inline constexpr float ArenaScale = 30.f;
+inline constexpr float ArenaCenter = 320.f;
+inline constexpr float ArenaHalf = 22.f * ArenaScale;
+inline constexpr float ArenaEntry = ArenaCenter + 19.f * ArenaScale;
+inline constexpr float ArenaGate = 496.f;
 
 struct CityChunk
 {

@@ -32,6 +32,30 @@ namespace Art
             {
                 files.insert(creature.file);
             }
+            bool bossClips = true;
+            std::set<std::string> bossFiles;
+            for (int region = 0; region < 3; ++region)
+            {
+                const auto* arena = library.BossArena(region);
+                if (!arena)
+                {
+                    continue;
+                }
+                files.insert(arena->roomFile);
+                files.insert(arena->boss.file);
+                bossFiles.insert(arena->boss.file);
+                const auto room = library.Load(arena->roomFile);
+                const auto boss = library.Load(arena->boss.file);
+                bossClips &= !room->primitives.empty() && room->skins.empty()
+                             && !boss->skins.empty() && !arena->boss.clips.empty();
+                for (const auto& name : arena->boss.clips)
+                {
+                    const auto* clip = boss->FindClip(name);
+                    bossClips &= clip && std::abs(clip->duration - library.Animation(name).duration)
+                                            < .04f;
+                }
+            }
+            check(bossClips, "authored boss rooms and rigs use their cataloged animation clips");
             files.insert(library.ModularFile());
             for (const auto& appearance : library.Appearances())
             {
@@ -60,8 +84,12 @@ namespace Art
                     totalVertices += positions.size();
                     for (size_t i = 0; i < positions.size(); ++i)
                     {
-                        auto expected =
-                            pose.world[primitive.node].Point(primitive.vertices[i].position);
+                        // The boss exporter bakes the enlarged rest space into the vertices.
+                        // Skinned positions already use world joints and inverse bind matrices.
+                        auto rest = primitive.vertices[i].position;
+                        auto expected = primitive.skin >= 0 && bossFiles.count(file)
+                                            ? rest
+                                            : pose.world[primitive.node].Point(rest);
                         auto p = positions[i];
                         binds &= std::abs(p.x - expected.x) + std::abs(p.y - expected.y)
                                      + std::abs(p.z - expected.z)
@@ -87,8 +115,7 @@ namespace Art
                 }
             }
             check(binds,
-                  "inverse-bind skinning matches mesh-node world transform without double "
-                  "transforms");
+                  "inverse-bind skinning matches authored rest space without double transforms");
             check(finite && totalVertices > 0 && totalClips >= 104,
                   "all static and rigged GLBs produce finite animated poses");
             auto npc = library.Load(library.ModularFile());

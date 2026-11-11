@@ -2492,5 +2492,6 @@
     "quadruped_bones": 27,
     "walk_and_run_rebaked": true
   },
-  "monster_surface_revision": "continuous weighted body with separately modeled accessories"
+  "monster_surface_revision": "continuous weighted body with separately modeled accessories",
+  "weapon_grip_revision": 2
 }

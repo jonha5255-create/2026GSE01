@@ -7,7 +7,14 @@ void PlayerActor::SelectYokai(YokaiForm form)
 {
     yokai = form;
     weapon = false;
+    weaponRaise = 0;
     transformPhase = 1;
+}
+
+float PlayerActor::WeaponGripBlend() const
+{
+    float raised = std::clamp(1.f - weaponRaise / WeaponRaiseDuration, 0.f, 1.f);
+    return raised * raised * (3 - 2 * raised);
 }
 
 const char* PlayerActor::YokaiName() const
@@ -160,6 +167,7 @@ void PlayerActor::Update(float dt, ActorUpdateContext& services)
     invulnerable = std::max(0.f, invulnerable - dt);
     magnetTime = std::max(0.f, magnetTime - dt);
     transformPhase = std::max(0.f, transformPhase - dt * 1.5f);
+    weaponRaise = std::max(0.f, weaponRaise - dt);
     if (context.state == RunState::Lost || context.state == RunState::Won)
     {
         movementBlend = 0;

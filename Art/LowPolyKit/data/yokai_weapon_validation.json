@@ -79,25 +79,25 @@
     {
       "file": "yokai/YK_01_SoulRifle_Weapon_E00.glb",
       "mesh_nodes": 1,
-      "vertices": 3717,
+      "vertices": 3705,
       "triangles": 1984
     },
     {
       "file": "yokai/YK_01_SoulRifle_Weapon_E01.glb",
       "mesh_nodes": 2,
-      "vertices": 5021,
+      "vertices": 5009,
       "triangles": 2548
     },
     {
       "file": "yokai/YK_01_SoulRifle_Weapon_E02.glb",
       "mesh_nodes": 3,
-      "vertices": 5221,
+      "vertices": 5209,
       "triangles": 2724
     },
     {
       "file": "yokai/YK_01_SoulRifle_Weapon_E03.glb",
       "mesh_nodes": 4,
-      "vertices": 6294,
+      "vertices": 6282,
       "triangles": 3388
     },
     {
@@ -127,26 +127,26 @@
     {
       "file": "yokai/YK_02_Claw_Weapon_E00.glb",
       "mesh_nodes": 1,
-      "vertices": 1055,
-      "triangles": 944
+      "vertices": 977,
+      "triangles": 688
     },
     {
       "file": "yokai/YK_02_Claw_Weapon_E01.glb",
       "mesh_nodes": 2,
-      "vertices": 1240,
-      "triangles": 1232
+      "vertices": 1409,
+      "triangles": 876
     },
     {
       "file": "yokai/YK_02_Claw_Weapon_E02.glb",
       "mesh_nodes": 3,
-      "vertices": 1702,
-      "triangles": 1400
+      "vertices": 1871,
+      "triangles": 1044
     },
     {
       "file": "yokai/YK_02_Claw_Weapon_E03.glb",
       "mesh_nodes": 4,
-      "vertices": 2118,
-      "triangles": 1772
+      "vertices": 2288,
+      "triangles": 1416
     },
     {
       "file": "yokai/YK_03_Soryeong_Companion_E00.glb",

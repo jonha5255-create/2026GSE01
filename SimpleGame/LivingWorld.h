@@ -39,7 +39,8 @@ enum class TownSite
     Shrine,
     Relay,
     Signal,
-    Station
+    Station,
+    ArenaGate
 };
 
 struct StoryProgress
@@ -51,7 +52,40 @@ struct StoryProgress
     bool guardianDefeated = false, echoRecovered = false, weaponAwakened = false,
          caseClosed = false;
     int suppliesDelivered = 0;
+    bool harinRescued = false;
 };
+
+enum class ArenaPattern { None, Circle, Charge, Pounce, Fan, Cross, Ring, BloodSeal, Poison, Core };
+
+struct ArenaAttack
+{
+    ArenaPattern pattern = ArenaPattern::None;
+    const char* name = "";
+    FarmPoint origin{}, direction{0, 1};
+    float remaining = 0, windup = 0, radius = 0, reach = 0, damage = 0, pulse = 0;
+    bool lingering = false;
+    bool Hits(FarmPoint target) const;
+};
+
+struct ArenaTrial
+{
+    int phase = 0;
+    bool active = false;
+    unsigned used = 0;
+    unsigned casts = 0;
+    float hold = 0;
+    float linkTime = 0;
+    int holdingDevice = -1;
+
+    unsigned DeviceCount() const { return unsigned(phase + 1); }
+    unsigned UsedCount() const
+    {
+        return (used & 1) + ((used >> 1) & 1) + ((used >> 2) & 1);
+    }
+};
+
+FarmPoint ArenaDevice(int region, unsigned index);
+const char* ArenaDeviceName(int region);
 
 struct TownNews
 {
@@ -89,6 +123,7 @@ class TownSiteActor : public Actor
     }
 
     TownSite site;
+    int bossRegion = -1;
 };
 
 class NpcActor : public Actor
@@ -123,6 +158,16 @@ class NpcActor : public Actor
     bool wilderness = false;
     bool fieldBoss = false;
     int bossRegion = -1;
+    float arenaWindup = .6f;
+    const char* arenaClip = "_AttackPrimary";
+    float AttackWindup() const
+    {
+        if (bossRegion >= 0)
+        {
+            return arenaWindup;
+        }
+        return monsterForm == 1 ? .22f : monsterForm == 2 ? .55f : .35f;
+    }
     int monsterForm = 0; // 0: horned wraith, 1: carrion hound, 2: stone brute.
     int appearancePreset = 0, artCreature = -1;
     float gaitPhase = 0, moveBlend = 0;
@@ -173,6 +218,13 @@ class LivingWorld
     void TogglePK();
     std::string Objective() const;
     int QuestStep() const;
+    int QuestStage() const;
+    void RestoreGuardian(SceneGraph& graph);
+    void SpawnArenaBoss(SceneGraph& graph, ActorId parent, int region);
+    bool UseArenaDevice(FarmPoint player, GameplayContext& context);
+    float LimitArenaDamage(NpcActor& boss, float damage);
+    ArenaAttack arenaAttack;
+    ArenaTrial arenaTrial;
     bool CombatQuest() const;
     std::string QuestInstruction() const;
     ActorId QuestTarget(const SceneGraph& graph) const;
@@ -190,6 +242,8 @@ class LivingWorld
 
     ActorId town = NoActor;
     ActorId guardian = NoActor;
+    ActorId arenaBoss = NoActor;
+    bool arenaCleared = false;
     unsigned bossRelics = 0;
     bool bossRelicReward = false;
     StoryProgress story;
@@ -216,6 +270,11 @@ class LivingWorld
     void Trade(NpcActor& npc, GameplayContext& context);
     void Defeat(NpcActor& victim, NpcActor* attacker, GameplayContext& context);
     void AdvanceStory(TownSite site);
+    void InteractArena(const TownSiteActor& gate, GameplayContext& context);
+    void UpdateArenaBoss(NpcActor& boss, float dt, GameplayContext& context);
+    void CompleteArenaDevice(NpcActor& boss, unsigned index);
+    unsigned arenaTurn_ = 0;
+    float arenaChase_ = 0;
     uint32_t Random();
     uint32_t random_ = 1;
     float summaryTimer_ = 0, strikeCooldown_ = 0;

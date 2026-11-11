@@ -1,0 +1,27 @@
+[
+  {
+    "clip": "NPC_Attack_Sword",
+    "frames": 28,
+    "max_arm_reach_error_m": 0
+  },
+  {
+    "clip": "NPC_Attack_SwordHeavy",
+    "frames": 40,
+    "max_arm_reach_error_m": 0
+  },
+  {
+    "clip": "NPC_Attack_DualPistol",
+    "frames": 25,
+    "max_arm_reach_error_m": 0
+  },
+  {
+    "clip": "NPC_Attack_Claw",
+    "frames": 31,
+    "max_arm_reach_error_m": 0
+  },
+  {
+    "clip": "NPC_Attack_Scissors",
+    "frames": 37,
+    "max_arm_reach_error_m": 0
+  }
+]

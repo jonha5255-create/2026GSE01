@@ -373,8 +373,9 @@ std::string WorldMonitor::Snapshot(const LevelOne& level,
         << ",\"maxHealth\":" << Number(level.Player().MaximumHealth())
         << ",\"level\":" << level.Player().level << ",\"gold\":" << sim.gold
         << ",\"goods\":" << sim.goods << "}"
-        << ",\"quest\":{\"step\":" << sim.QuestStep() << ",\"objective\":" << Quote(sim.Objective())
-        << ",\"complete\":" << Boolean(sim.story.caseClosed) << "}}";
+        << ",\"quest\":{\"stage\":" << sim.QuestStage() << ",\"step\":" << sim.QuestStep()
+        << ",\"objective\":" << Quote(sim.Objective())
+        << ",\"complete\":" << Boolean(sim.story.harinRescued) << "}}";
     return out.str();
 }
 

@@ -3,6 +3,8 @@
 #include "LevelOne.h"
 #include "WorldActors.h"
 #include <cstdint>
+#include <filesystem>
+#include <optional>
 #include <map>
 #include <utility>
 
@@ -20,6 +22,11 @@ class PrototypeWorld : private ActorRenderContext
     void MouseAttack(int x, int y, int width, int height);
     void MouseSkill();
     void PrepareArt();
+    void SaveGame(const std::filesystem::path& path) const;
+    static std::unique_ptr<PrototypeWorld> LoadGame(const std::filesystem::path& path, bool living);
+    void Respawn();
+    int ProgressCheckpoint() const;
+    uint32_t Seed() const { return seed_; }
     void Draw(PrototypeRenderer& r);
     void DrawUI(PrototypeRenderer& r);
     void Draw(const WeaponVfxActor& actor) override;
@@ -30,6 +37,7 @@ class PrototypeWorld : private ActorRenderContext
     void PreviewExpedition();
     void PreviewRoadJunction();
     void PreviewRuins();
+    void PreviewArena(int region);
 
   private:
     using Coord = std::pair<int64_t, int64_t>;
@@ -39,6 +47,11 @@ class PrototypeWorld : private ActorRenderContext
     bool Blocked(const Location& p, float radius = 12) const;
     bool Walkable(float x, float y, float radius) const;
     void Move(float dx, float dy);
+    void Relocate(const Location& target);
+    void EnterBossRoom(int region);
+    void LeaveBossRoom(bool defeated);
+    void DrawBossRoom(PrototypeRenderer& r);
+    void BossRoomHud(PrototypeRenderer& r);
     Point Project(float x, float y, float z = 0) const;
     void Floor(PrototypeRenderer& r, float x, float y, const CityChunk& chunk);
     void FloorGeometry(PrototypeRenderer& r, float x, float y, const CityChunk& chunk);
@@ -101,6 +114,9 @@ class PrototypeWorld : private ActorRenderContext
     Location player_;
     uint32_t seed_ = 2026;
     LevelOne level_;
+    std::optional<LevelOne> overworld_;
+    int arenaRegion_ = -1;
+    FarmPoint arenaPosition_{};
     bool keys_[256] = {};
     bool mapExpanded_ = false;
     bool distortion_ = true, memory_ = false, debug_ = false;

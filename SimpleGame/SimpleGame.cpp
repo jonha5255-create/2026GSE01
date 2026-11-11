@@ -43,12 +43,42 @@ namespace
     FramePacer framePacer;
     bool effectKeys[256] = {};
     auto lastTick = std::chrono::steady_clock::now();
+    std::filesystem::path savePath;
+    bool gameSession = false;
+    bool saveErrorReported = false;
+    int savedCheckpoint = 0;
+    auto lastSave = std::chrono::steady_clock::now();
+
+    void SaveProgress()
+    {
+        if (!gameSession || savePath.empty())
+        {
+            return;
+        }
+        lastSave = std::chrono::steady_clock::now();
+        savedCheckpoint = world->ProgressCheckpoint();
+        try
+        {
+            world->SaveGame(savePath);
+            saveErrorReported = false;
+        }
+        catch (const std::exception& error)
+        {
+            if (!saveErrorReported)
+            {
+                std::cerr << "[SAVE] " << error.what() << '\n';
+                RenderDiagnostics::Get().Event("save_error", error.what());
+                saveErrorReported = true;
+            }
+        }
+    }
 
     void Close()
     {
         WorldMonitor::Get().Stop();
         if (initialized)
         {
+            SaveProgress();
             RenderDiagnostics::Get().Event("session_end", "renderer shutdown");
             RenderDiagnostics::Get().Flush();
             renderer.Shutdown();
@@ -194,6 +224,11 @@ namespace
             }
         }
         effectKeys[key] = true;
+        if (gameSession && key == 'r')
+        {
+            world->Respawn();
+            return;
+        }
         world->Key(key, true);
     }
 
@@ -247,6 +282,12 @@ namespace
         else
         {
             world->Update(dt);
+            if (gameSession && !savePath.empty()
+                && (world->ProgressCheckpoint() != savedCheckpoint
+                    || now - lastSave >= std::chrono::seconds(5)))
+            {
+                SaveProgress();
+            }
         }
         FrameProfiler::Get().RecordUpdate(std::chrono::duration<double, std::milli>(
                                               std::chrono::steady_clock::now() - updateStart)
@@ -292,6 +333,7 @@ namespace
             auto& item = scene.Weapon();
             actor.SelectYokai(form);
             actor.weapon = true;
+            actor.weaponRaise = PlayerActor::WeaponRaiseDuration;
             auto services = scene.Context(
                 [](float, float, float)
                 {
@@ -327,7 +369,7 @@ namespace
                 renderer.CompositeScene();
                 renderer.Text(20,
                               20,
-                              std::string(actor.YokaiName()) + " / 이동 및 공격 전환 검증",
+                              std::string(actor.YokaiName()) + " / 장착, 이동 및 공격 전환 검증",
                               Color(220, 235, 230),
                               .7f);
                 renderer.Text(
@@ -583,6 +625,7 @@ int main(int argc, char** argv)
     bool yokaiArtTest = false;
     int swapInterval = 0;
     bool assetTest = false, assetSmoke = false, assetPreview = false;
+    bool noSave = false;
     std::filesystem::path assetRoot;
     unsigned short monitorPort = 8765;
     for (int i = 1; i < argc; ++i)
@@ -593,6 +636,7 @@ int main(int argc, char** argv)
         profileYokai |= std::string(argv[i]) == "--profile-yokai";
         rebuildCache |= std::string(argv[i]) == "--rebuild-mesh-cache";
         legacy |= std::string(argv[i]) == "--level-one";
+        noSave |= std::string(argv[i]) == "--no-save";
         monitorEnabled &= std::string(argv[i]) != "--no-monitor";
         monitorTest |= std::string(argv[i]) == "--monitor-test";
         platformTest |= std::string(argv[i]) == "--platform-test";
@@ -789,6 +833,7 @@ int main(int argc, char** argv)
     uint32_t seed =
         smoke ? 2026
               : static_cast<uint32_t>(std::chrono::system_clock::now().time_since_epoch().count());
+    bool explicitSeed = false;
     for (int i = 1; i < argc; ++i)
     {
         std::string argument = argv[i];
@@ -797,6 +842,7 @@ int main(int argc, char** argv)
             try
             {
                 seed = static_cast<uint32_t>(std::stoul(argument.substr(7)));
+                explicitSeed = true;
             }
             catch (...)
             {
@@ -807,7 +853,46 @@ int main(int argc, char** argv)
             }
         }
     }
-    world.reset(new PrototypeWorld(seed, !legacy));
+    const bool playing = !smoke && !profileTest && !platformTest && !playerMotionTest
+                         && !yokaiArtTest && !assetPreview && !assetSmoke;
+    if (playing && !noSave)
+    {
+        wchar_t localAppData[32768]{};
+        DWORD length = GetEnvironmentVariableW(L"LOCALAPPDATA", localAppData, 32768);
+        if (length > 0 && length < 32768)
+        {
+            std::wstring slot = legacy ? L"level-one" : L"world";
+            if (explicitSeed)
+            {
+                slot += L"-" + std::to_wstring(seed);
+            }
+            savePath = std::filesystem::path(localAppData) / L"2026GSE01" / (slot + L".json");
+            try
+            {
+                if (std::filesystem::exists(savePath))
+                {
+                    world = PrototypeWorld::LoadGame(savePath, !legacy);
+                    seed = world->Seed();
+                    std::cout << "[SAVE] Previous progress loaded.\n";
+                }
+            }
+            catch (const std::exception& error)
+            {
+                std::cerr << "[SAVE] Could not load progress; existing file preserved. "
+                          << error.what() << '\n';
+                RenderDiagnostics::Get().Event("load_error", error.what());
+                savePath.clear();
+            }
+        }
+        else
+        {
+            std::cerr << "[SAVE] LOCALAPPDATA unavailable.\n";
+        }
+    }
+    if (!world)
+    {
+        world = std::make_unique<PrototypeWorld>(seed, !legacy);
+    }
     if (profileTest && profileYokai)
     {
         world->PreviewRuins();
@@ -964,6 +1049,14 @@ int main(int argc, char** argv)
             world = std::make_unique<PrototypeWorld>(2026);
             world->PreviewRuins();
             ok = Snapshot(L"living-world-grounded-ruins.bmp") && ok;
+            for (int region = 0; region < int(BossArenas.size()); ++region)
+            {
+                world = std::make_unique<PrototypeWorld>(2026);
+                world->PrepareArt();
+                world->PreviewArena(region);
+                auto file = L"story-boss-arena-" + std::to_wstring(region) + L".bmp";
+                ok = Snapshot(file.c_str()) && ok;
+            }
             world = std::move(savedWorld);
         }
         for (int form = 0; form < 3; ++form)
@@ -1054,7 +1147,9 @@ int main(int argc, char** argv)
         platform.Close();
         return ok ? 0 : 6;
     }
-    lastTick = std::chrono::steady_clock::now();
+    gameSession = playing && !noSave;
+    savedCheckpoint = world->ProgressCheckpoint();
+    lastTick = lastSave = std::chrono::steady_clock::now();
     framePacer.Reset();
     FrameProfiler::Get().StartLogging();
     std::cout << "[PERF] Logging every 1s: FPS and actual GL draw calls (scene + post + UI).\n";

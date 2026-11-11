@@ -186,7 +186,7 @@
             "grip": [
               0,
               0,
-              0
+              0.128
             ],
             "forward": [
               0,
@@ -378,8 +378,8 @@
           "sockets": {
             "grip": [
               0,
-              0,
-              0
+              -0.085,
+              0.026
             ],
             "forward": [
               0,
@@ -388,8 +388,8 @@
             ],
             "support_hand": [
               0,
-              -0.09,
-              0.45
+              -0.127,
+              0.38
             ],
             "muzzle": [
               0,
@@ -588,6 +588,16 @@
               0,
               0,
               1
+            ],
+            "cuff_back": [
+              0,
+              0,
+              -0.16
+            ],
+            "knuckle": [
+              0,
+              0.105,
+              0.14
             ]
           },
           "export_nodes": {
@@ -794,12 +804,12 @@
             ],
             "grip_L": [
               -0.22,
-              0,
+              -0.06,
               0
             ],
             "grip_R": [
               0.22,
-              0,
+              -0.06,
               0
             ],
             "muzzle_L": [
@@ -1024,7 +1034,17 @@
               0,
               0.25
             ],
-            "split_blades": true
+            "split_blades": true,
+            "grip_L": [
+              -0.11,
+              0,
+              -0.12
+            ],
+            "grip_R": [
+              0.11,
+              0,
+              -0.12
+            ]
           },
           "export_nodes": {
             "SM_YK_04_Mes_Weapon_P00": [
@@ -1236,7 +1256,7 @@
       "form": "Weapon",
       "part_index": 0,
       "unlock_evolution": 0,
-      "triangles": 944
+      "triangles": 688
     },
     {
       "mesh": "SM_YK_02_Claw_Weapon_P01",
@@ -1245,7 +1265,7 @@
       "form": "Weapon",
       "part_index": 1,
       "unlock_evolution": 1,
-      "triangles": 288
+      "triangles": 188
     },
     {
       "mesh": "SM_YK_02_Claw_Weapon_P02",
@@ -1415,5 +1435,6 @@
     "Companion and weapon share material colors and visual motifs; not topology morph targets.",
     "Evolution GLBs contain separate base/additive mesh nodes; shared source mesh data.",
     "Soryeong paired guns and Mes scissor blades export as separate L/R nodes. Mes pivot stays at (0,0,0.25) in Blender space; no animation is baked."
-  ]
+  ],
+  "grip_revision": 2
 }

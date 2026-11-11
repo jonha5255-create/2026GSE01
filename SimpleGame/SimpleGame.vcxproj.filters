@@ -95,7 +95,9 @@
     <ClCompile Include="Actor.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="CityGenerator.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorld.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="BossCombat.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorldInteraction.cpp"><Filter>소스 파일</Filter></ClCompile>
+    <ClCompile Include="GameSave.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorldView.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="LivingWorldTests.cpp"><Filter>소스 파일</Filter></ClCompile>
     <ClCompile Include="SceneGraph.cpp"><Filter>소스 파일</Filter></ClCompile>

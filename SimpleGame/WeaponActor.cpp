@@ -8,7 +8,8 @@
 bool WeaponActor::CastSkill(GameplayContext& context)
 {
     auto* owner = Scene().Get<PlayerActor>(Parent());
-    if (!owner || !owner->weapon || owner->health <= 0 || context.state == RunState::Lost
+    if (!owner || !owner->weapon || owner->weaponRaise > 0 || owner->health <= 0
+        || context.state == RunState::Lost
         || context.state == RunState::Won || skillTime >= 0)
     {
         return false;
@@ -215,7 +216,7 @@ void WeaponActor::Update(float dt, ActorUpdateContext& services)
 bool WeaponActor::Shoot(GameplayContext& context)
 {
     auto* owner = Scene().Get<PlayerActor>(Parent());
-    if (!owner || owner->yokai != YokaiForm::Ranged || shotTimer_ > 0)
+    if (!owner || owner->weaponRaise > 0 || owner->yokai != YokaiForm::Ranged || shotTimer_ > 0)
     {
         return false;
     }
@@ -255,7 +256,7 @@ bool WeaponActor::Shoot(GameplayContext& context)
 bool WeaponActor::ShootAt(Actor& target, GameplayContext& context)
 {
     auto* owner = Scene().Get<PlayerActor>(Parent());
-    if (!owner || owner->yokai != YokaiForm::Ranged || shotTimer_ > 0
+    if (!owner || owner->weaponRaise > 0 || owner->yokai != YokaiForm::Ranged || shotTimer_ > 0
         || context.state == RunState::Lost || context.state == RunState::Won
         || Length(Minus(target.Position(), Position())) > owner->Range()
         || !Navigation::Sight(Position(), target.Position(), context.walkable))

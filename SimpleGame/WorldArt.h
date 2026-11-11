@@ -22,6 +22,8 @@ namespace Art
                     float zoom,
                     float time);
         void Enemy(PrototypeRenderer& r, const EnemyActor& enemy, Point p, float zoom, float time);
+        bool Arena(PrototypeRenderer& r, int region, Point p, float scale);
+        Point BossScreenBounds(int region);
         void Companion(
             PrototypeRenderer& r, const PlayerActor& player, Point p, float zoom, float time);
         void Vfx(PrototypeRenderer& r, const WeaponVfxActor& actor, Point p, float zoom);
@@ -70,7 +72,8 @@ namespace Art
                       float yaw,
                       const std::map<std::string, int>& parts,
                       float opacity = 1,
-                      bool authoredNormals = false);
+                      bool authoredNormals = false,
+                      bool linearMaterial = false);
         std::vector<std::array<float, 16>> Palette(const Model& model, const Pose& pose) const;
         const std::vector<PrototypeRenderer::ModelVertex>& Geometry(
             Source& source,
@@ -103,21 +106,24 @@ namespace Art
                           Point p,
                           float zoom,
                           float opacity);
-        void FitRifleHands(Source& body, Pose& pose);
+        void FitRifleHands(Source& body, Pose& pose, float gripBlend);
+        const Creature& CreatureModel(int index) const;
         void CreatureDraw(PrototypeRenderer& r,
-                          int index,
+                          const Creature& creature,
                           const std::string& action,
                           float seconds,
                           Point p,
                           float zoom,
                           float facingX,
-                          float facingY);
+                          float facingY,
+                          bool boss = false);
         AssetLibrary library_;
         std::map<std::string, Source> sources_;
         std::map<std::string, std::map<int, std::string>> files_;
         std::vector<std::vector<int>> regions_;
         uint64_t access_ = 0;
         PlayerAnimator playerAnimator_;
+        Pose rifleReady_;
         const YokaiAssets* yokai_ = nullptr;
         Vec3 muzzleBody_;
         float muzzleYaw_ = 0;
